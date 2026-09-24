@@ -97,7 +97,7 @@ export default function SignalsDisclosurePage() {
               type="checkbox"
               checked={checked}
               onChange={(e) => setChecked(e.target.checked)}
-              className="mt-0.5 h-4 w-4 rounded border-ink-100 text-brand-600 focus:ring-brand-400"
+              className="mt-0.5 h-4 w-4 rounded border-ink-100 text-brand-800 focus:ring-brand-400"
             />
             I have read and understood the risk disclosure above, and I
             accept it.
@@ -106,7 +106,7 @@ export default function SignalsDisclosurePage() {
           <button
             type="submit"
             disabled={!checked || status === "loading"}
-            className="flex w-full items-center justify-center gap-2 rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-700 disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-2 rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-ink-900 transition-colors hover:bg-brand-700 disabled:opacity-50"
           >
             {status === "loading" && <Loader2 className="h-4 w-4 animate-spin" />}
             Accept &amp; continue to signals

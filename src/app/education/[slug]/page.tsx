@@ -28,7 +28,7 @@ export default async function ArticlePage({
         </Link>
 
         <div className="mt-6">
-          <span className="text-xs font-semibold text-brand-600">{article.category}</span>
+          <span className="text-xs font-semibold text-brand-800">{article.category}</span>
           <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-ink-900 sm:text-4xl">
             {article.title}
           </h1>
@@ -63,7 +63,7 @@ export default async function ArticlePage({
             <ul className="mt-3 space-y-2">
               {related.map((r) => (
                 <li key={r.slug}>
-                  <Link href={`/education/${r.slug}`} className="text-sm font-medium text-brand-600 hover:underline">
+                  <Link href={`/education/${r.slug}`} className="text-sm font-medium text-brand-800 hover:underline">
                     {r.title}
                   </Link>
                 </li>
@@ -74,7 +74,7 @@ export default async function ArticlePage({
 
         <Link
           href="/join"
-          className="mt-10 block rounded-2xl bg-brand-600 p-6 text-center text-sm font-semibold text-white"
+          className="mt-10 block rounded-2xl bg-brand-600 p-6 text-center text-sm font-semibold text-ink-900"
         >
           Join the community for weekly education drops →
         </Link>

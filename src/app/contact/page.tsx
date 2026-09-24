@@ -5,8 +5,8 @@ const channels = [
   {
     icon: Mail,
     title: "Email",
-    detail: "hello@scoutcartel.trade",
-    href: "mailto:hello@scoutcartel.trade",
+    detail: "hello@scoutsfx.com",
+    href: "mailto:hello@scoutsfx.com",
   },
   {
     icon: MessageCircle,
@@ -23,7 +23,7 @@ const channels = [
   {
     icon: Linkedin,
     title: "LinkedIn",
-    detail: "Scout Cartel",
+    detail: "Scout FX",
     href: "#",
   },
 ];
@@ -50,7 +50,7 @@ export default function ContactPage() {
               className="flex items-start gap-4 rounded-2xl border border-ink-100 bg-white p-5 transition-shadow hover:shadow-card"
             >
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-50">
-                <c.icon className="h-4 w-4 text-brand-600" />
+                <c.icon className="h-4 w-4 text-ink-900" />
               </div>
               <div>
                 <p className="text-sm font-bold text-ink-900">{c.title}</p>

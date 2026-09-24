@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { adminDb } from "@/lib/firebaseAdmin";
-import { resend, FROM_EMAIL, REPLY_TO_EMAIL } from "@/lib/resend";
+import { getAdminDb } from "@/lib/firebaseAdmin";
+import { getResend, FROM_EMAIL, REPLY_TO_EMAIL } from "@/lib/resend";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     }
 
     const normalizedEmail = email.trim().toLowerCase();
-    const docRef = adminDb.collection("subscribers").doc(normalizedEmail);
+    const docRef = getAdminDb().collection("subscribers").doc(normalizedEmail);
     const existing = await docRef.get();
 
     if (existing.exists) {
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
     // Fire the welcome email. Don't let an email failure block the signup;
     // the subscriber is already saved either way.
     try {
-      await resend.emails.send({
+      await getResend().emails.send({
         from: FROM_EMAIL,
         to: normalizedEmail,
         replyTo: REPLY_TO_EMAIL,
@@ -50,9 +50,9 @@ export async function POST(req: NextRequest) {
             </p>
             <p style="color:#54545F; line-height:1.6;">
               In the meantime, take a look at the
-              <a href="https://scoutcartel.trade/education" style="color:#7C3AED;">education library</a>
+              <a href="https://scoutsfx.com/education" style="color:#0B0B10;">education library</a>
               or see the
-              <a href="https://scoutcartel.trade/signals" style="color:#7C3AED;">signal track record</a>.
+              <a href="https://scoutsfx.com/signals" style="color:#0B0B10;">signal track record</a>.
             </p>
           </div>
         `,

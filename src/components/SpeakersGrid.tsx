@@ -39,8 +39,8 @@ export default function SpeakersGrid({ speakers }: { speakers: Speaker[] }) {
               <span
                 className={`absolute left-3 top-3 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wide ${
                   s.tag === "Host"
-                    ? "bg-success text-white"
-                    : "bg-white/90 text-gold-800"
+                    ? "bg-brand-600 text-ink-900"
+                    : "bg-white/90 text-brand-800"
                 }`}
               >
                 {s.tag}
@@ -49,7 +49,7 @@ export default function SpeakersGrid({ speakers }: { speakers: Speaker[] }) {
             <div className="p-4 text-center">
               <p className="text-sm font-bold text-ink-900">{s.name}</p>
               <p className="mt-0.5 text-xs text-ink-500">{s.role}</p>
-              <p className="mt-2 text-xs font-semibold text-gold-800">
+              <p className="mt-2 text-xs font-semibold text-brand-800">
                 View bio
               </p>
             </div>
@@ -85,8 +85,8 @@ export default function SpeakersGrid({ speakers }: { speakers: Speaker[] }) {
               <span
                 className={`absolute left-3 top-3 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wide ${
                   active.tag === "Host"
-                    ? "bg-success text-white"
-                    : "bg-white/90 text-gold-800"
+                    ? "bg-brand-600 text-ink-900"
+                    : "bg-white/90 text-brand-800"
                 }`}
               >
                 {active.tag}
@@ -94,7 +94,7 @@ export default function SpeakersGrid({ speakers }: { speakers: Speaker[] }) {
             </div>
             <div className="p-6">
               <p className="text-lg font-extrabold text-ink-900">{active.name}</p>
-              <p className="mt-0.5 text-sm font-semibold text-gold-800">
+              <p className="mt-0.5 text-sm font-semibold text-brand-800">
                 {active.role}
               </p>
               <p className="mt-4 text-sm leading-relaxed text-ink-700">

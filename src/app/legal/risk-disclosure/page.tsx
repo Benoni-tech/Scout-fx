@@ -48,7 +48,7 @@ export default function RiskDisclosurePage() {
           </p>
           <p>
             <strong className="text-ink-900">Broker relationship.</strong>{" "}
-            Scout Cartel is an HFM affiliate (Affiliate ID: 30537791) and
+            Scout FX is an HFM affiliate (Affiliate ID: 30537791) and
             may receive compensation based on referrals, registrations and
             trading activity generated through this site. This is a
             potential conflict of interest you should be aware of when
@@ -63,7 +63,7 @@ export default function RiskDisclosurePage() {
           </p>
           <p>
             Questions about this disclosure can be sent to
-            hello@scoutcartel.trade.
+            hello@scoutsfx.com.
           </p>
         </div>
       </Container>

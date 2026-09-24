@@ -11,7 +11,7 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "Scout Cartel | Trading Education, Community & Signals",
+  title: "Scout FX | Trading Education, Community & Signals",
   description:
     "Structured trading education, an active trader community, and rule-based signals, built for traders in Ghana and beyond.",
 };

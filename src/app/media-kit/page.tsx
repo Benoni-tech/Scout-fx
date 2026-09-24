@@ -29,9 +29,9 @@ export default function MediaKitPage() {
           <div>
             <Eyebrow>Media kit</Eyebrow>
             <h1 className="mt-5 text-4xl font-extrabold tracking-tight text-ink-900 sm:text-5xl">
-              Scout Cartel
+              Scout FX
             </h1>
-            <p className="mt-2 text-base font-semibold text-brand-600">
+            <p className="mt-2 text-base font-semibold text-brand-800">
               Trader · Educator · Community Leader
             </p>
           </div>
@@ -41,7 +41,7 @@ export default function MediaKitPage() {
         </div>
 
         <p className="mt-6 max-w-2xl text-base leading-relaxed text-ink-500">
-          Scout Cartel is a trader, trading educator and community leader
+          Scout FX is a trader, trading educator and community leader
           teaching technical analysis, risk management and trading
           psychology to a Ghanaian audience across Forex, Gold and crypto
           markets. His approach is built on responsible trading rather than
@@ -58,10 +58,10 @@ export default function MediaKitPage() {
             Audience &amp; performance
           </h2>
           <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-4">
-            <StatCard icon={<Users className="h-4 w-4 text-brand-600" />} iconBg="bg-brand-50" label={stats[0].label} value={stats[0].value} />
-            <StatCard icon={<TrendingUp className="h-4 w-4 text-success" />} iconBg="bg-success/10" label={stats[1].label} value={stats[1].value} />
-            <StatCard icon={<Users className="h-4 w-4 text-brand-600" />} iconBg="bg-brand-50" label={stats[2].label} value={stats[2].value} />
-            <StatCard icon={<CalendarCheck className="h-4 w-4 text-success" />} iconBg="bg-success/10" label={stats[3].label} value={stats[3].value} />
+            <StatCard icon={<Users className="h-4 w-4 text-ink-900" />} iconBg="bg-brand-50" label={stats[0].label} value={stats[0].value} />
+            <StatCard icon={<TrendingUp className="h-4 w-4 text-ink-900" />} iconBg="bg-brand-600" label={stats[1].label} value={stats[1].value} />
+            <StatCard icon={<Users className="h-4 w-4 text-ink-900" />} iconBg="bg-brand-50" label={stats[2].label} value={stats[2].value} />
+            <StatCard icon={<CalendarCheck className="h-4 w-4 text-ink-900" />} iconBg="bg-brand-600" label={stats[3].label} value={stats[3].value} />
           </div>
         </div>
 
@@ -105,7 +105,7 @@ export default function MediaKitPage() {
           <div className="mt-5 grid gap-5 sm:grid-cols-3">
             {testimonials.map((t) => (
               <div key={t.name} className="rounded-2xl border border-ink-100 bg-white p-5">
-                <Quote className="h-4 w-4 text-brand-300" />
+                <Quote className="h-4 w-4 text-brand-800" />
                 <p className="mt-2 text-sm leading-relaxed text-ink-700">&ldquo;{t.quote}&rdquo;</p>
                 <p className="mt-3 text-xs font-bold text-ink-900">{t.name}</p>
                 <p className="text-xs text-ink-500">{t.role}</p>
@@ -116,8 +116,8 @@ export default function MediaKitPage() {
 
         {/* contact */}
         <div className="mt-16 rounded-3xl bg-brand-600 p-8 text-center">
-          <h3 className="text-xl font-extrabold text-white">For partnership inquiries</h3>
-          <p className="mt-1 text-sm text-brand-100">hello@scoutcartel.trade</p>
+          <h3 className="text-xl font-extrabold text-ink-900">For partnership inquiries</h3>
+          <p className="mt-1 text-sm text-ink-900">hello@scoutsfx.com</p>
         </div>
       </Container>
     </section>

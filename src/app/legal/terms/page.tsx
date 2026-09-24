@@ -39,7 +39,7 @@ export default function TermsPage() {
             updated terms.
           </p>
           <p>
-            Questions can be sent to hello@scoutcartel.trade.
+            Questions can be sent to hello@scoutsfx.com.
           </p>
         </div>
       </Container>

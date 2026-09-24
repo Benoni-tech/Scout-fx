@@ -35,7 +35,7 @@ export default function SignalsDashboardPage() {
         </p>
         <Link
           href="/signals/disclosure"
-          className="mt-6 inline-flex items-center rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-white"
+          className="mt-6 inline-flex items-center rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-ink-900"
         >
           Go to risk disclosure
         </Link>
@@ -57,7 +57,7 @@ export default function SignalsDashboardPage() {
           </div>
           <Link
             href="/signals/history"
-            className="whitespace-nowrap text-sm font-semibold text-brand-600"
+            className="whitespace-nowrap text-sm font-semibold text-brand-800"
           >
             Full history →
           </Link>
@@ -80,11 +80,11 @@ export default function SignalsDashboardPage() {
               <div className="flex items-center gap-3">
                 <div
                   className={`flex h-10 w-10 items-center justify-center rounded-xl ${
-                    s.direction === "BUY" ? "bg-success/10" : "bg-danger/10"
+                    s.direction === "BUY" ? "bg-brand-600" : "bg-danger/10"
                   }`}
                 >
                   {s.direction === "BUY" ? (
-                    <ArrowUpRight className="h-5 w-5 text-success" />
+                    <ArrowUpRight className="h-5 w-5 text-ink-900" />
                   ) : (
                     <ArrowDownRight className="h-5 w-5 text-danger" />
                   )}

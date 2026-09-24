@@ -25,7 +25,7 @@ export default function JoinPage() {
           <ul className="mt-8 space-y-3">
             {perks.map((p) => (
               <li key={p} className="flex items-start gap-3 text-sm text-ink-700">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand-800" />
                 {p}
               </li>
             ))}

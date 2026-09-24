@@ -15,8 +15,8 @@ export function Container({
 
 export function Badge({ children }: { children: ReactNode }) {
   return (
-    <span className="inline-flex items-center gap-2 rounded-full border border-success/30 bg-success/10 px-3 py-1 text-xs font-semibold text-success">
-      <span className="h-1.5 w-1.5 rounded-full bg-success" />
+    <span className="inline-flex items-center gap-2 rounded-full border border-brand-600 bg-brand-600 px-3 py-1 text-xs font-semibold text-ink-900">
+      <span className="h-1.5 w-1.5 rounded-full bg-ink-900" />
       {children}
     </span>
   );
@@ -44,7 +44,7 @@ export function SectionHeading({
   return (
     <div className={center ? "mx-auto max-w-2xl text-center" : "max-w-2xl"}>
       {eyebrow && (
-        <p className="mb-3 text-xs font-bold uppercase tracking-wider text-brand-600">
+        <p className="mb-3 text-xs font-bold uppercase tracking-wider text-brand-800">
           {eyebrow}
         </p>
       )}
@@ -86,7 +86,7 @@ export function StatCard({
         {delta && (
           <span
             className={`flex items-center gap-0.5 text-xs font-semibold ${
-              deltaPositive ? "text-success" : "text-danger"
+              deltaPositive ? "text-ink-900" : "text-danger"
             }`}
           >
             {deltaPositive ? (
@@ -116,7 +116,7 @@ export function PrimaryButton({
   return (
     <a
       href={href}
-      className={`inline-flex items-center justify-center rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-700 ${className}`}
+      className={`inline-flex items-center justify-center rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-ink-900 shadow-sm transition-colors hover:bg-brand-700 ${className}`}
     >
       {children}
     </a>

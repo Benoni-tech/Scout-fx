@@ -25,9 +25,9 @@ export default function SignalHistoryPage() {
         </p>
 
         <div className="mt-10 grid grid-cols-3 gap-4">
-          <StatCard icon={<ListChecks className="h-4 w-4 text-brand-600" />} iconBg="bg-brand-50" label="Total signals" value="312" />
-          <StatCard icon={<Target className="h-4 w-4 text-success" />} iconBg="bg-success/10" label="Win rate" value="58%" />
-          <StatCard icon={<TrendingUp className="h-4 w-4 text-brand-600" />} iconBg="bg-brand-50" label="Avg. R:R" value="1:1.8" />
+          <StatCard icon={<ListChecks className="h-4 w-4 text-ink-900" />} iconBg="bg-brand-50" label="Total signals" value="312" />
+          <StatCard icon={<Target className="h-4 w-4 text-ink-900" />} iconBg="bg-brand-600" label="Win rate" value="58%" />
+          <StatCard icon={<TrendingUp className="h-4 w-4 text-ink-900" />} iconBg="bg-brand-50" label="Avg. R:R" value="1:1.8" />
         </div>
 
         <div className="mt-10 overflow-x-auto rounded-2xl border border-ink-100">
@@ -49,7 +49,7 @@ export default function SignalHistoryPage() {
                   <td className="px-5 py-3">
                     <span
                       className={`inline-flex items-center gap-1 text-xs font-semibold ${
-                        h.direction === "BUY" ? "text-success" : "text-danger"
+                        h.direction === "BUY" ? "text-ink-900" : "text-danger"
                       }`}
                     >
                       {h.direction === "BUY" ? (
@@ -65,7 +65,7 @@ export default function SignalHistoryPage() {
                     <span
                       className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
                         h.result === "TARGET"
-                          ? "bg-success/10 text-success"
+                          ? "bg-brand-600 text-ink-900"
                           : "bg-danger/10 text-danger"
                       }`}
                     >
@@ -74,7 +74,7 @@ export default function SignalHistoryPage() {
                   </td>
                   <td
                     className={`px-5 py-3 font-semibold ${
-                      h.pnl.startsWith("+") ? "text-success" : "text-danger"
+                      h.pnl.startsWith("+") ? "text-ink-900" : "text-danger"
                     }`}
                   >
                     {h.pnl}

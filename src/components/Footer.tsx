@@ -44,15 +44,15 @@ const columns = [
 
 export default function Footer() {
   return (
-    <footer className="mt-24 border-t border-ink-100 bg-white">
+    <footer className="mt-24 bg-ink-900 text-white">
       <div className="mx-auto max-w-6xl px-4 py-14">
-        <div className="mb-12 flex flex-col items-start justify-between gap-6 rounded-3xl border border-ink-100 bg-brand-50/60 p-6 sm:flex-row sm:items-center">
+        <div className="mb-12 flex flex-col items-start justify-between gap-6 rounded-3xl border border-white/10 bg-white/5 p-6 sm:flex-row sm:items-center">
           <div>
-            <p className="text-sm font-semibold text-ink-900">
+            <p className="text-sm font-semibold text-white">
               Get one email a week: markets, education, and what I&apos;m
               watching.
             </p>
-            <p className="mt-1 text-sm text-ink-500">
+            <p className="mt-1 text-sm text-ink-300">
               No spam. Unsubscribe anytime.
             </p>
           </div>
@@ -62,12 +62,12 @@ export default function Footer() {
         <div className="grid grid-cols-2 gap-10 sm:grid-cols-3 lg:grid-cols-5">
           <div className="col-span-2 sm:col-span-3 lg:col-span-1">
             <Link href="/" className="flex items-center gap-2">
-              <Image src="/logo.png" alt="" width={22} height={26} className="h-6 w-auto" />
-              <span className="text-[15px] font-extrabold tracking-tight text-ink-900">
-                Scout Cartel
+              <Image src="/logo.png" alt="" width={22} height={25} className="h-6 w-auto" />
+              <span className="text-[15px] font-extrabold uppercase tracking-tight text-white">
+                Scout FX
               </span>
             </Link>
-            <p className="mt-3 max-w-[220px] text-sm text-ink-500">
+            <p className="mt-3 max-w-[220px] text-sm text-ink-300">
               Trading education, community and rule-based signals for
               Ghanaian traders.
             </p>
@@ -75,21 +75,21 @@ export default function Footer() {
               <a
                 aria-label="Twitter / X"
                 href="#"
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-ink-100 text-ink-700 hover:bg-ink-100/50"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-500 text-ink-900 transition-colors hover:bg-brand-700"
               >
                 <Twitter className="h-4 w-4" />
               </a>
               <a
                 aria-label="LinkedIn"
                 href="#"
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-ink-100 text-ink-700 hover:bg-ink-100/50"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-500 text-ink-900 transition-colors hover:bg-brand-700"
               >
                 <Linkedin className="h-4 w-4" />
               </a>
               <a
                 aria-label="WhatsApp community"
                 href="#"
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-ink-100 text-ink-700 hover:bg-ink-100/50"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-500 text-ink-900 transition-colors hover:bg-brand-700"
               >
                 <MessageCircle className="h-4 w-4" />
               </a>
@@ -98,7 +98,7 @@ export default function Footer() {
 
           {columns.map((col) => (
             <div key={col.title}>
-              <h4 className="text-sm font-semibold text-ink-900">
+              <h4 className="text-sm font-semibold text-white">
                 {col.title}
               </h4>
               <ul className="mt-4 space-y-3">
@@ -106,7 +106,7 @@ export default function Footer() {
                   <li key={l.label}>
                     <Link
                       href={l.href}
-                      className="text-sm text-ink-500 transition-colors hover:text-ink-900"
+                      className="text-sm text-ink-300 transition-colors hover:text-brand-500"
                     >
                       {l.label}
                     </Link>
@@ -117,7 +117,7 @@ export default function Footer() {
           ))}
         </div>
 
-        <div className="mt-12 border-t border-ink-100 pt-6">
+        <div className="mt-12 border-t border-white/10 pt-6">
           <p className="text-center text-xs leading-relaxed text-ink-300">
             Trading forex, gold and crypto carries a high level of risk and
             may not be suitable for all investors. Past performance is not
@@ -129,7 +129,7 @@ export default function Footer() {
             before trading.
           </p>
           <p className="mt-4 text-center text-xs text-ink-300">
-            © {new Date().getFullYear()} Scout Cartel. All rights reserved.
+            © {new Date().getFullYear()} Scout FX. All rights reserved.
           </p>
         </div>
       </div>

@@ -1,6 +1,9 @@
 import { initializeApp, getApps, cert, App } from "firebase-admin/app";
-import { getFirestore } from "firebase-admin/firestore";
+import { getFirestore, Firestore } from "firebase-admin/firestore";
+import { getAuth, Auth } from "firebase-admin/auth";
 
+// Initialised on first use rather than at import, so `next build` works
+// without credentials present.
 function getAdminApp(): App {
   if (getApps().length) return getApps()[0];
 
@@ -14,4 +17,10 @@ function getAdminApp(): App {
   });
 }
 
-export const adminDb = getFirestore(getAdminApp());
+export function getAdminDb(): Firestore {
+  return getFirestore(getAdminApp());
+}
+
+export function getAdminAuth(): Auth {
+  return getAuth(getAdminApp());
+}

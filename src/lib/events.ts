@@ -35,7 +35,7 @@ export const upcomingEvents: EventItem[] = [
     dateISO: "2026-10-31T11:00:00Z",
     location: "Miklin Hotel, Accra",
     free: true,
-    presentedBy: "Scout Cartel × HFM",
+    presentedBy: "Scout FX × HFM",
     theme: "The Young African & the Global Financial Market",
     description:
       "A full conference on how the global forex market actually works, covering trading sessions, chart reading, risk management, trading economic news, and a live trading session. Free to attend, in person at Miklin Hotel.",

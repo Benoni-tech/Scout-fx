@@ -12,7 +12,7 @@ export default function CompliancePage() {
 
         <div className="mt-8 space-y-6 text-sm leading-relaxed text-ink-700">
           <p>
-            Scout Cartel operates as a trading education and community
+            Scout FX operates as a trading education and community
             platform, not as a licensed broker, fund manager or investment
             adviser. This page summarizes how we handle affiliate
             relationships, disclosures and data. See the full{" "}
@@ -23,7 +23,7 @@ export default function CompliancePage() {
           </p>
           <p>
             <strong className="text-ink-900">Affiliate disclosure.</strong>{" "}
-            Scout Cartel is an HFM affiliate (Affiliate ID: 30537791) and may
+            Scout FX is an HFM affiliate (Affiliate ID: 30537791) and may
             earn compensation when someone registers or trades through a
             link on this site. This is disclosed wherever HFM is referenced,
             including in seminars and signal content.
@@ -56,7 +56,7 @@ export default function CompliancePage() {
             .
           </p>
           <p>
-            Compliance questions can be sent to hello@scoutcartel.trade.
+            Compliance questions can be sent to hello@scoutsfx.com.
           </p>
         </div>
       </Container>

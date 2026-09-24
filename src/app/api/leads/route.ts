@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { adminDb } from "@/lib/firebaseAdmin";
-import { resend, FROM_EMAIL, REPLY_TO_EMAIL } from "@/lib/resend";
+import { getAdminDb } from "@/lib/firebaseAdmin";
+import { getResend, FROM_EMAIL, REPLY_TO_EMAIL } from "@/lib/resend";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -30,10 +30,10 @@ export async function POST(req: NextRequest) {
       referredToHFM: false,
     };
 
-    await adminDb.collection("leads").add(lead);
+    await getAdminDb().collection("leads").add(lead);
 
     try {
-      await resend.emails.send({
+      await getResend().emails.send({
         from: FROM_EMAIL,
         to: lead.email,
         replyTo: REPLY_TO_EMAIL,

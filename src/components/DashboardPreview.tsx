@@ -30,9 +30,9 @@ export default function DashboardPreview() {
         {/* mini sidebar */}
         <div className="hidden w-40 shrink-0 border-r border-ink-100 p-4 sm:block">
           <div className="mb-6 flex items-center gap-1.5 px-1">
-            <span className="text-brand-600">✳</span>
+            <span className="text-brand-800">✳</span>
             <span className="text-sm font-extrabold text-ink-900">
-              Scout Cartel
+              Scout FX
             </span>
           </div>
           <nav className="space-y-1">
@@ -41,7 +41,7 @@ export default function DashboardPreview() {
                 key={item.label}
                 className={`flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-medium ${
                   item.active
-                    ? "bg-brand-50 text-brand-700"
+                    ? "bg-brand-50 text-brand-800"
                     : "text-ink-500"
                 }`}
               >
@@ -57,7 +57,7 @@ export default function DashboardPreview() {
           <div className="flex items-center justify-between gap-3">
             <div>
               <p className="text-sm font-bold text-ink-900">
-                Welcome back, Scout Cartel
+                Welcome back, Scout FX
               </p>
               <p className="text-xs text-ink-500">
                 Here&apos;s this week&apos;s campaign snapshot
@@ -71,7 +71,7 @@ export default function DashboardPreview() {
               <div className="flex h-8 w-8 items-center justify-center rounded-full border border-ink-100">
                 <Bell className="h-3.5 w-3.5 text-ink-500" />
               </div>
-              <div className="flex items-center gap-1 rounded-full bg-brand-600 px-3 py-1.5 text-xs font-semibold text-white">
+              <div className="flex items-center gap-1 rounded-full bg-brand-600 px-3 py-1.5 text-xs font-semibold text-ink-900">
                 <Plus className="h-3 w-3" />
                 New signal
               </div>
@@ -98,7 +98,7 @@ export default function DashboardPreview() {
                 <p className="mt-1 text-lg font-extrabold text-ink-900">
                   {s.value}
                 </p>
-                <p className="text-[10px] font-semibold text-success">
+                <p className="text-[10px] font-semibold text-ink-900">
                   {s.delta}
                 </p>
               </div>
@@ -113,7 +113,7 @@ export default function DashboardPreview() {
               <svg viewBox="0 0 300 80" className="mt-2 w-full">
                 <polyline
                   fill="none"
-                  stroke="#7C3AED"
+                  stroke="#0B0B10"
                   strokeWidth="2.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -137,7 +137,7 @@ export default function DashboardPreview() {
                     <span
                       className={
                         s.dir === "BUY"
-                          ? "font-semibold text-success"
+                          ? "font-semibold text-ink-900"
                           : "font-semibold text-danger"
                       }
                     >

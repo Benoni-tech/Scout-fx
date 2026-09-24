@@ -24,12 +24,12 @@ export default function EventsPage() {
               className="rounded-2xl border border-ink-100 bg-white p-6 transition-shadow hover:shadow-card"
             >
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50">
-                <CalendarDays className="h-5 w-5 text-brand-600" />
+                <CalendarDays className="h-5 w-5 text-ink-900" />
               </div>
               <div className="mt-4 flex items-center gap-2">
                 <h3 className="text-lg font-bold text-ink-900">{e.title}</h3>
                 {e.free && (
-                  <span className="rounded-full bg-success/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-success">
+                  <span className="rounded-full bg-brand-600 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-ink-900">
                     Free
                   </span>
                 )}
@@ -41,7 +41,7 @@ export default function EventsPage() {
                 <MapPin className="h-3.5 w-3.5" /> {e.location}
               </p>
               {typeof e.spotsLeft === "number" && (
-                <p className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-success">
+                <p className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-ink-900">
                   <Users className="h-3.5 w-3.5" /> {e.spotsLeft} spots left
                 </p>
               )}

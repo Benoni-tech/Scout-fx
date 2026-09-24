@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { adminDb } from "@/lib/firebaseAdmin";
+import { getAdminDb } from "@/lib/firebaseAdmin";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const DISCLOSURE_VERSION = "2026-08-v1";
@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
 
     const normalizedEmail = email.trim().toLowerCase();
 
-    await adminDb.collection("signalUsers").doc(normalizedEmail).set(
+    await getAdminDb().collection("signalUsers").doc(normalizedEmail).set(
       {
         email: normalizedEmail,
         disclosureAccepted: true,

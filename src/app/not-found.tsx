@@ -6,7 +6,7 @@ export default function NotFound() {
     <section className="py-24">
       <Container className="max-w-lg text-center">
         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-brand-50">
-          <Compass className="h-5 w-5 text-brand-600" />
+          <Compass className="h-5 w-5 text-ink-900" />
         </div>
         <h1 className="mt-5 text-3xl font-extrabold tracking-tight text-ink-900">
           Page not found

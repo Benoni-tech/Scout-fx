@@ -46,7 +46,7 @@ export default function Countdown({ targetISO }: { targetISO: string }) {
   if (isLive) {
     return (
       <div className="flex items-center justify-center gap-3 rounded-3xl border border-ink-100 bg-white p-6 shadow-card">
-        <PartyPopper className="h-5 w-5 text-gold-800" />
+        <PartyPopper className="h-5 w-5 text-brand-800" />
         <p className="text-sm font-bold text-ink-900">
           We&apos;re live. The event has started.
         </p>
@@ -58,7 +58,7 @@ export default function Countdown({ targetISO }: { targetISO: string }) {
     <div className="grid grid-cols-4 divide-x divide-ink-100 rounded-3xl border border-ink-100 bg-white p-4 shadow-card sm:p-6">
       {units.map((u) => (
         <div key={u.key} className="text-center">
-          <p className="text-2xl font-extrabold tabular-nums text-gold-800 sm:text-4xl">
+          <p className="text-2xl font-extrabold tabular-nums text-brand-800 sm:text-4xl">
             {String(timeLeft[u.key]).padStart(2, "0")}
           </p>
           <p className="mt-1 text-[10px] font-semibold uppercase tracking-wider text-ink-500 sm:text-xs">

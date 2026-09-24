@@ -51,9 +51,9 @@ export default function SignalsLandingPage() {
             Track record: all-time
           </h2>
           <div className="mt-5 grid grid-cols-3 gap-4">
-            <StatCard icon={<ListChecks className="h-4 w-4 text-brand-600" />} iconBg="bg-brand-50" label={stats[0].label} value={stats[0].value} />
-            <StatCard icon={<Target className="h-4 w-4 text-success" />} iconBg="bg-success/10" label={stats[1].label} value={stats[1].value} />
-            <StatCard icon={<TrendingUp className="h-4 w-4 text-brand-600" />} iconBg="bg-brand-50" label={stats[2].label} value={stats[2].value} />
+            <StatCard icon={<ListChecks className="h-4 w-4 text-ink-900" />} iconBg="bg-brand-50" label={stats[0].label} value={stats[0].value} />
+            <StatCard icon={<Target className="h-4 w-4 text-ink-900" />} iconBg="bg-brand-600" label={stats[1].label} value={stats[1].value} />
+            <StatCard icon={<TrendingUp className="h-4 w-4 text-ink-900" />} iconBg="bg-brand-50" label={stats[2].label} value={stats[2].value} />
           </div>
         </div>
 
@@ -66,7 +66,7 @@ export default function SignalsLandingPage() {
             {steps.map((s) => (
               <div key={s.title} className="rounded-2xl border border-ink-100 bg-white p-5">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50">
-                  <s.icon className="h-5 w-5 text-brand-600" />
+                  <s.icon className="h-5 w-5 text-ink-900" />
                 </div>
                 <h3 className="mt-3 text-sm font-bold text-ink-900">{s.title}</h3>
                 <p className="mt-1 text-xs leading-relaxed text-ink-500">{s.desc}</p>
@@ -76,7 +76,7 @@ export default function SignalsLandingPage() {
         </div>
 
         <div className="mt-16 flex items-center gap-4 rounded-3xl border border-ink-100 bg-ink-100/20 p-6">
-          <ShieldCheck className="h-6 w-6 shrink-0 text-brand-600" />
+          <ShieldCheck className="h-6 w-6 shrink-0 text-brand-800" />
           <p className="text-sm text-ink-700">
             All client and trading activity applies to verified adults and
             remains subject to HFM compliance and reporting rules.

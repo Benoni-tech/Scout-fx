@@ -44,7 +44,7 @@ export default function NewsletterForm({ source, compact = false }: Props) {
 
   if (status === "success") {
     return (
-      <div className="flex items-center gap-2 rounded-full border border-success/30 bg-success/10 px-4 py-2.5 text-sm font-medium text-success">
+      <div className="flex items-center gap-2 rounded-full border border-brand-600 bg-brand-600 px-4 py-2.5 text-sm font-medium text-ink-900">
         <CheckCircle2 className="h-4 w-4 shrink-0" />
         You&apos;re on the list. Check your inbox.
       </div>
@@ -68,7 +68,7 @@ export default function NewsletterForm({ source, compact = false }: Props) {
         <button
           type="submit"
           disabled={status === "loading"}
-          className="whitespace-nowrap rounded-full bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700 disabled:opacity-60"
+          className="whitespace-nowrap rounded-full bg-brand-600 px-5 py-2.5 text-sm font-semibold text-ink-900 transition-colors hover:bg-brand-700 disabled:opacity-60"
         >
           {status === "loading" ? (
             <Loader2 className="h-4 w-4 animate-spin" />

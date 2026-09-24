@@ -59,7 +59,7 @@ export default function OpenAccountPage() {
         <div className="mx-auto mt-16 grid max-w-3xl gap-6 text-left sm:grid-cols-3">
           {reasons.map((r) => (
             <div key={r.title} className="rounded-2xl border border-ink-100 bg-white p-5">
-              <ShieldCheck className="h-5 w-5 text-brand-600" />
+              <ShieldCheck className="h-5 w-5 text-brand-800" />
               <h3 className="mt-3 text-sm font-bold text-ink-900">{r.title}</h3>
               <p className="mt-1 text-xs leading-relaxed text-ink-500">{r.desc}</p>
             </div>
@@ -67,13 +67,13 @@ export default function OpenAccountPage() {
         </div>
 
         <div className="mx-auto mt-16 max-w-2xl">
-          <p className="text-xs font-semibold uppercase tracking-wide text-brand-600">
+          <p className="text-xs font-semibold uppercase tracking-wide text-brand-800">
             What happens next
           </p>
           <div className="mt-6 grid gap-6 sm:grid-cols-3">
             {steps.map((s) => (
               <div key={s.n} className="text-left">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-600 text-sm font-bold text-white">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-600 text-sm font-bold text-ink-900">
                   {s.n}
                 </div>
                 <h4 className="mt-3 text-sm font-bold text-ink-900">{s.label}</h4>

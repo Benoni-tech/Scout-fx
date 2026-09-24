@@ -32,7 +32,7 @@ export default function LeadForm({ source }: { source: string }) {
 
   if (status === "success") {
     return (
-      <div className="flex items-center gap-3 rounded-2xl border border-success/30 bg-success/10 p-5 text-success">
+      <div className="flex items-center gap-3 rounded-2xl border border-brand-600 bg-brand-600 p-5 text-ink-900">
         <CheckCircle2 className="h-5 w-5 shrink-0" />
         <div>
           <p className="text-sm font-semibold">You&apos;re in.</p>
@@ -86,7 +86,7 @@ export default function LeadForm({ source }: { source: string }) {
       <button
         type="submit"
         disabled={status === "loading"}
-        className="flex w-full items-center justify-center gap-2 rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-700 disabled:opacity-60"
+        className="flex w-full items-center justify-center gap-2 rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-ink-900 transition-colors hover:bg-brand-700 disabled:opacity-60"
       >
         {status === "loading" && <Loader2 className="h-4 w-4 animate-spin" />}
         Join free

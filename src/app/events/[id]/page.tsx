@@ -38,7 +38,7 @@ function GoldSectionHeading({
   return (
     <div className="mx-auto max-w-2xl text-center">
       {eyebrow && (
-        <p className="mb-3 text-xs font-bold uppercase tracking-wider text-gold-800">
+        <p className="mb-3 text-xs font-bold uppercase tracking-wider text-brand-800">
           {eyebrow}
         </p>
       )}
@@ -98,7 +98,7 @@ export default async function EventDetailPage({
           </Link>
 
           <Eyebrow>
-            <span className="h-1.5 w-1.5 rounded-full bg-success" />
+            <span className="h-1.5 w-1.5 rounded-full bg-ink-900" />
             {event.free ? "Free to attend" : "Register now"}
             {event.presentedBy ? ` · ${event.presentedBy}` : ""}
           </Eyebrow>
@@ -116,7 +116,7 @@ export default async function EventDetailPage({
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <a
               href="#register"
-              className="inline-flex items-center justify-center rounded-full bg-gold-600 px-6 py-3 text-sm font-semibold text-ink-900 shadow-sm transition-colors hover:bg-gold-500"
+              className="inline-flex items-center justify-center rounded-full bg-gold-600 px-6 py-3 text-sm font-semibold text-ink-900 shadow-sm transition-colors hover:bg-gold-700"
             >
               Register free
             </a>
@@ -146,7 +146,7 @@ export default async function EventDetailPage({
                 className="flex items-start gap-3 rounded-2xl border border-ink-100 bg-white p-5"
               >
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gold-100">
-                  <d.icon className="h-4 w-4 text-gold-800" />
+                  <d.icon className="h-4 w-4 text-ink-900" />
                 </div>
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wide text-ink-300">
@@ -165,7 +165,7 @@ export default async function EventDetailPage({
         <section id="lessons" className="scroll-mt-28 border-t border-ink-100 bg-ink-100/20 py-20">
           <Container>
             <div className="mx-auto max-w-md text-center">
-              <p className="text-xs font-bold uppercase tracking-wider text-gold-800">
+              <p className="text-xs font-bold uppercase tracking-wider text-brand-800">
                 Curriculum
               </p>
               <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-ink-900 sm:text-4xl">
@@ -244,7 +244,7 @@ export default async function EventDetailPage({
               href={whatsappLink}
               className="mt-6 inline-flex items-center gap-3 rounded-2xl border border-ink-100 bg-white p-4 text-sm text-ink-700 transition-shadow hover:shadow-card"
             >
-              <MessageCircle className="h-4 w-4 shrink-0 text-gold-800" />
+              <MessageCircle className="h-4 w-4 shrink-0 text-brand-800" />
               <span>
                 Prefer WhatsApp? Contact{" "}
                 <span className="font-semibold text-ink-900">

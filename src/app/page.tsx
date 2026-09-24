@@ -80,7 +80,7 @@ export default function Home() {
         <Container className="flex flex-col items-center text-center">
           <Link href="/media-kit">
             <Eyebrow>
-              <span className="h-1.5 w-1.5 rounded-full bg-success" />
+              <span className="h-1.5 w-1.5 rounded-full bg-ink-900" />
               Check out the media kit
               <ArrowRight className="h-3 w-3" />
             </Eyebrow>
@@ -137,7 +137,7 @@ export default function Home() {
                 className="group rounded-2xl border border-ink-100 bg-white p-6 transition-shadow hover:shadow-card"
               >
                 <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50">
-                  <p.icon className="h-5 w-5 text-brand-600" />
+                  <p.icon className="h-5 w-5 text-ink-900" />
                 </div>
                 <h3 className="mt-4 text-lg font-bold text-ink-900">
                   {p.title}
@@ -145,7 +145,7 @@ export default function Home() {
                 <p className="mt-2 text-sm leading-relaxed text-ink-500">
                   {p.desc}
                 </p>
-                <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-brand-600">
+                <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-brand-800">
                   Explore
                   <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
                 </span>
@@ -166,7 +166,7 @@ export default function Home() {
             />
             <Link
               href="/education"
-              className="inline-flex items-center gap-1 text-sm font-semibold text-brand-600"
+              className="inline-flex items-center gap-1 text-sm font-semibold text-brand-800"
             >
               See all articles
               <ArrowRight className="h-3.5 w-3.5" />
@@ -180,7 +180,7 @@ export default function Home() {
                 href={`/education/${a.slug}`}
                 className="rounded-2xl border border-ink-100 bg-white p-5 transition-shadow hover:shadow-card"
               >
-                <span className="text-xs font-semibold text-brand-600">
+                <span className="text-xs font-semibold text-brand-800">
                   {a.category}
                 </span>
                 <h3 className="mt-2 text-base font-bold leading-snug text-ink-900">
@@ -198,11 +198,11 @@ export default function Home() {
           <Container>
             <div className="flex flex-col items-center gap-6 rounded-3xl border border-ink-100 bg-white p-8 shadow-card sm:flex-row sm:justify-between">
               <div className="flex items-center gap-4">
-                <div className="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-2xl bg-brand-600 text-white">
+                <div className="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-2xl bg-brand-600 text-ink-900">
                   <CalendarDays className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-brand-600">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-brand-800">
                     {upcomingEvents[0].free ? "Free upcoming event" : "Upcoming event"}
                   </p>
                   <h3 className="text-lg font-bold text-ink-900">
@@ -234,7 +234,7 @@ export default function Home() {
                 key={t.name}
                 className="rounded-2xl border border-ink-100 bg-white p-6"
               >
-                <Quote className="h-5 w-5 text-brand-300" />
+                <Quote className="h-5 w-5 text-brand-800" />
                 <p className="mt-3 text-sm leading-relaxed text-ink-700">
                   &ldquo;{t.quote}&rdquo;
                 </p>
@@ -253,17 +253,17 @@ export default function Home() {
         <Container>
           <div className="flex flex-col items-center justify-between gap-6 rounded-3xl bg-brand-600 p-8 text-center sm:flex-row sm:text-left">
             <div>
-              <h3 className="text-xl font-extrabold text-white">
+              <h3 className="text-xl font-extrabold text-ink-900">
                 Ready to put the education to work?
               </h3>
-              <p className="mt-1 text-sm text-brand-100">
+              <p className="mt-1 text-sm text-ink-900">
                 Open an account with HFM, the broker I trade and teach
                 through.
               </p>
             </div>
             <Link
               href="/open-account"
-              className="whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-brand-700 shadow-sm transition-colors hover:bg-brand-50"
+              className="whitespace-nowrap rounded-full bg-ink-900 px-6 py-3 text-sm font-semibold text-brand-500 shadow-sm transition-colors hover:bg-ink-700"
             >
               Open HFM account
             </Link>
