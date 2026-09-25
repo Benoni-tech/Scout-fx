@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAdminDb } from "@/lib/firebaseAdmin";
 import { getEventById } from "@/lib/events";
-import { generateTicketCode, sendTicketEmail, Rsvp } from "@/lib/tickets";
+import { generateTicketCode, Rsvp } from "@/lib/tickets";
+import { sendTicketEmail } from "@/lib/emails";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 

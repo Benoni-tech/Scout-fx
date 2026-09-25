@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Twitter, Linkedin, MessageCircle } from "lucide-react";
-import NewsletterForm from "@/components/NewsletterForm";
 
 const columns = [
   {
@@ -44,19 +43,27 @@ const columns = [
 
 export default function Footer() {
   return (
-    <footer className="mt-24 bg-ink-900 text-white">
+    <footer className="mt-24 border-t border-white/10 bg-black text-white">
       <div className="mx-auto max-w-6xl px-4 py-14">
-        <div className="mb-12 flex flex-col items-start justify-between gap-6 rounded-3xl border border-white/10 bg-white/5 p-6 sm:flex-row sm:items-center">
-          <div>
-            <p className="text-sm font-semibold text-white">
-              Get one email a week: markets, education, and what I&apos;m
-              watching.
-            </p>
-            <p className="mt-1 text-sm text-ink-300">
-              No spam. Unsubscribe anytime.
-            </p>
+        <div className="relative mb-14 overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.05] to-transparent p-8 sm:p-10">
+          <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-brand-500/20 blur-3xl" />
+          <div className="relative flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
+            <div>
+              <p className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
+                We scout opportunities and make{" "}
+                <span className="text-brand-500">trading easier.</span>
+              </p>
+              <p className="mt-2 text-sm text-zinc-400">
+                Crypto, forex, stocks and commodities, taught properly.
+              </p>
+            </div>
+            <Link
+              href="/join"
+              className="whitespace-nowrap rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-black transition-all hover:bg-brand-700 hover:shadow-glow"
+            >
+              Get started
+            </Link>
           </div>
-          <NewsletterForm source="footer" compact />
         </div>
 
         <div className="grid grid-cols-2 gap-10 sm:grid-cols-3 lg:grid-cols-5">
@@ -67,7 +74,7 @@ export default function Footer() {
                 Scout FX
               </span>
             </Link>
-            <p className="mt-3 max-w-[220px] text-sm text-ink-300">
+            <p className="mt-3 max-w-[220px] text-sm text-zinc-400">
               Trading education, community and rule-based signals for
               Ghanaian traders.
             </p>
@@ -75,21 +82,21 @@ export default function Footer() {
               <a
                 aria-label="Twitter / X"
                 href="#"
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-500 text-ink-900 transition-colors hover:bg-brand-700"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-500 text-black transition-colors hover:bg-brand-700"
               >
                 <Twitter className="h-4 w-4" />
               </a>
               <a
                 aria-label="LinkedIn"
                 href="#"
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-500 text-ink-900 transition-colors hover:bg-brand-700"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-500 text-black transition-colors hover:bg-brand-700"
               >
                 <Linkedin className="h-4 w-4" />
               </a>
               <a
                 aria-label="WhatsApp community"
                 href="#"
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-500 text-ink-900 transition-colors hover:bg-brand-700"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-500 text-black transition-colors hover:bg-brand-700"
               >
                 <MessageCircle className="h-4 w-4" />
               </a>
@@ -106,7 +113,7 @@ export default function Footer() {
                   <li key={l.label}>
                     <Link
                       href={l.href}
-                      className="text-sm text-ink-300 transition-colors hover:text-brand-500"
+                      className="text-sm text-zinc-400 transition-colors hover:text-brand-500"
                     >
                       {l.label}
                     </Link>
@@ -118,7 +125,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-12 border-t border-white/10 pt-6">
-          <p className="text-center text-xs leading-relaxed text-ink-300">
+          <p className="text-center text-xs leading-relaxed text-zinc-500">
             Trading forex, gold and crypto carries a high level of risk and
             may not be suitable for all investors. Past performance is not
             indicative of future results. Nothing on this site is a guarantee
@@ -128,7 +135,7 @@ export default function Footer() {
             </Link>{" "}
             before trading.
           </p>
-          <p className="mt-4 text-center text-xs text-ink-300">
+          <p className="mt-4 text-center text-xs text-zinc-500">
             © {new Date().getFullYear()} Scout FX. All rights reserved.
           </p>
         </div>

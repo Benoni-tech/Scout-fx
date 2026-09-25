@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/ui";
+import ArticleCover from "@/components/ArticleCover";
 import { AlertTriangle, ArrowLeft } from "lucide-react";
 import { articles, getArticleBySlug, getRelatedArticles } from "@/lib/articles";
 
@@ -23,31 +24,33 @@ export default async function ArticlePage({
   return (
     <article className="py-16">
       <Container className="max-w-2xl">
-        <Link href="/education" className="inline-flex items-center gap-1 text-sm font-medium text-ink-500 hover:text-ink-900">
+        <Link href="/education" className="inline-flex items-center gap-1 text-sm font-medium text-zinc-400 hover:text-white">
           <ArrowLeft className="h-4 w-4" /> Back to education
         </Link>
 
         <div className="mt-6">
-          <span className="text-xs font-semibold text-brand-800">{article.category}</span>
-          <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-ink-900 sm:text-4xl">
+          <span className="text-xs font-semibold text-brand-500">{article.category}</span>
+          <h1 className="text-gradient mt-3 text-3xl font-bold leading-tight tracking-tight sm:text-5xl">
             {article.title}
           </h1>
-          <p className="mt-2 text-sm text-ink-300">
+          <p className="mt-3 text-sm text-zinc-500">
             {article.date} · {article.readTime} read
           </p>
         </div>
 
+        <ArticleCover article={article} className="mt-8 aspect-[16/8] rounded-2xl border border-white/10" />
+
         <div className="mt-8 space-y-5">
           {article.body.map((p, i) => (
-            <p key={i} className="text-base leading-relaxed text-ink-700">
+            <p key={i} className="text-[17px] leading-relaxed text-zinc-300">
               {p}
             </p>
           ))}
         </div>
 
-        <div className="mt-8 flex items-start gap-3 rounded-2xl border border-ink-100 bg-ink-100/20 p-4">
-          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-ink-500" />
-          <p className="text-xs leading-relaxed text-ink-500">
+        <div className="mt-8 flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-zinc-400" />
+          <p className="text-xs leading-relaxed text-zinc-400">
             This article is educational and does not constitute financial or
             investment advice. See the full{" "}
             <Link href="/legal/risk-disclosure" className="underline">
@@ -58,23 +61,29 @@ export default async function ArticlePage({
         </div>
 
         {related.length > 0 && (
-          <div className="mt-12 border-t border-ink-100 pt-8">
-            <p className="text-sm font-bold text-ink-900">Related</p>
-            <ul className="mt-3 space-y-2">
+          <div className="mt-12 border-t border-white/10 pt-8">
+            <p className="text-sm font-bold text-white">Related</p>
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
               {related.map((r) => (
-                <li key={r.slug}>
-                  <Link href={`/education/${r.slug}`} className="text-sm font-medium text-brand-800 hover:underline">
-                    {r.title}
-                  </Link>
-                </li>
+                <Link
+                  key={r.slug}
+                  href={`/education/${r.slug}`}
+                  className="card card-hover group overflow-hidden"
+                >
+                  <ArticleCover article={r} className="aspect-[16/8]" />
+                  <div className="p-4">
+                    <span className="text-xs font-semibold text-brand-500">{r.category}</span>
+                    <p className="mt-1 text-sm font-semibold leading-snug text-white">{r.title}</p>
+                  </div>
+                </Link>
               ))}
-            </ul>
+            </div>
           </div>
         )}
 
         <Link
           href="/join"
-          className="mt-10 block rounded-2xl bg-brand-600 p-6 text-center text-sm font-semibold text-ink-900"
+          className="mt-10 block rounded-2xl bg-brand-600 p-6 text-center text-sm font-semibold text-black transition-all hover:shadow-glow"
         >
           Join the community for weekly education drops →
         </Link>

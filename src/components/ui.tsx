@@ -15,8 +15,8 @@ export function Container({
 
 export function Badge({ children }: { children: ReactNode }) {
   return (
-    <span className="inline-flex items-center gap-2 rounded-full border border-brand-600 bg-brand-600 px-3 py-1 text-xs font-semibold text-ink-900">
-      <span className="h-1.5 w-1.5 rounded-full bg-ink-900" />
+    <span className="inline-flex items-center gap-2 rounded-full border border-brand-600 bg-brand-600 px-3 py-1 text-xs font-semibold text-black">
+      <span className="h-1.5 w-1.5 rounded-full bg-black" />
       {children}
     </span>
   );
@@ -24,7 +24,7 @@ export function Badge({ children }: { children: ReactNode }) {
 
 export function Eyebrow({ children }: { children: ReactNode }) {
   return (
-    <span className="inline-flex items-center gap-2 rounded-full border border-ink-100 bg-white px-3 py-1.5 text-xs font-semibold text-ink-700 shadow-sm">
+    <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs font-semibold text-zinc-300 backdrop-blur transition-colors hover:border-brand-500/40">
       {children}
     </span>
   );
@@ -37,22 +37,22 @@ export function SectionHeading({
   center = true,
 }: {
   eyebrow?: string;
-  title: string;
+  title: ReactNode;
   subtitle?: string;
   center?: boolean;
 }) {
   return (
     <div className={center ? "mx-auto max-w-2xl text-center" : "max-w-2xl"}>
       {eyebrow && (
-        <p className="mb-3 text-xs font-bold uppercase tracking-wider text-brand-800">
+        <p className="mb-3 text-xs font-bold uppercase tracking-wider text-brand-500">
           {eyebrow}
         </p>
       )}
-      <h2 className="text-3xl font-extrabold tracking-tight text-ink-900 sm:text-4xl">
+      <h2 className="text-gradient text-3xl font-bold leading-[1.1] tracking-tight sm:text-5xl">
         {title}
       </h2>
       {subtitle && (
-        <p className="mt-3 text-base leading-relaxed text-ink-500">
+        <p className="mt-4 text-base leading-relaxed text-zinc-400">
           {subtitle}
         </p>
       )}
@@ -76,7 +76,7 @@ export function StatCard({
   deltaPositive?: boolean;
 }) {
   return (
-    <div className="rounded-2xl border border-ink-100 bg-white p-4">
+    <div className="card p-4">
       <div className="flex items-center justify-between">
         <div
           className={`flex h-8 w-8 items-center justify-center rounded-full ${iconBg}`}
@@ -86,7 +86,7 @@ export function StatCard({
         {delta && (
           <span
             className={`flex items-center gap-0.5 text-xs font-semibold ${
-              deltaPositive ? "text-ink-900" : "text-danger"
+              deltaPositive ? "text-brand-500" : "text-danger"
             }`}
           >
             {deltaPositive ? (
@@ -98,8 +98,8 @@ export function StatCard({
           </span>
         )}
       </div>
-      <p className="mt-3 text-2xl font-extrabold text-ink-900">{value}</p>
-      <p className="text-xs text-ink-500">{label}</p>
+      <p className="mt-3 text-2xl font-extrabold text-white">{value}</p>
+      <p className="text-xs text-zinc-400">{label}</p>
     </div>
   );
 }
@@ -116,7 +116,7 @@ export function PrimaryButton({
   return (
     <a
       href={href}
-      className={`inline-flex items-center justify-center rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-ink-900 shadow-sm transition-colors hover:bg-brand-700 ${className}`}
+      className={`inline-flex items-center justify-center gap-2 rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-black transition-all hover:bg-brand-700 hover:shadow-glow ${className}`}
     >
       {children}
     </a>
@@ -135,7 +135,7 @@ export function SecondaryButton({
   return (
     <a
       href={href}
-      className={`inline-flex items-center justify-center rounded-full border border-ink-100 bg-white px-6 py-3 text-sm font-semibold text-ink-900 transition-colors hover:bg-ink-100/50 ${className}`}
+      className={`inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.03] px-6 py-3 text-sm font-semibold text-white backdrop-blur transition-colors hover:border-white/30 hover:bg-white/[0.06] ${className}`}
     >
       {children}
     </a>

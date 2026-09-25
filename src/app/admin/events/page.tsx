@@ -106,34 +106,34 @@ export default function AdminEventsPage() {
       <Container>
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight text-ink-900">
+            <h1 className="text-3xl font-extrabold tracking-tight text-white">
               Registrations
             </h1>
             {upcomingEvents.length > 1 ? (
               <select
                 value={eventId}
                 onChange={(e) => setEventId(e.target.value)}
-                className="mt-2 rounded-xl border border-ink-100 px-3 py-2 text-sm text-ink-900"
+                className="mt-2 rounded-xl border border-white/10 px-3 py-2 text-sm text-white"
               >
                 {upcomingEvents.map((e) => (
                   <option key={e.id} value={e.id}>{e.title}</option>
                 ))}
               </select>
             ) : (
-              <p className="mt-2 text-sm text-ink-500">{upcomingEvents[0]?.title}</p>
+              <p className="mt-2 text-sm text-zinc-400">{upcomingEvents[0]?.title}</p>
             )}
           </div>
           <div className="flex gap-2">
             <button
               onClick={load}
-              className="flex items-center gap-1.5 rounded-full border border-ink-100 px-4 py-2 text-sm font-semibold text-ink-900 hover:bg-ink-100/50"
+              className="flex items-center gap-1.5 rounded-full border border-white/10 px-4 py-2 text-sm font-semibold text-white hover:bg-white/5"
             >
               <RefreshCw className="h-4 w-4" /> Refresh
             </button>
             <button
               onClick={exportCsv}
               disabled={!rows?.length}
-              className="flex items-center gap-1.5 rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-ink-900 disabled:opacity-50"
+              className="flex items-center gap-1.5 rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-black disabled:opacity-50"
             >
               <Download className="h-4 w-4" /> Export CSV
             </button>
@@ -141,18 +141,18 @@ export default function AdminEventsPage() {
         </div>
 
         <div className="mt-6 grid grid-cols-2 gap-4 sm:max-w-md">
-          <StatCard icon={<Users className="h-4 w-4 text-ink-900" />} iconBg="bg-brand-600" label="Registered" value={rows ? String(rows.length) : "…"} />
-          <StatCard icon={<ScanLine className="h-4 w-4 text-ink-900" />} iconBg="bg-brand-600" label="Checked in" value={rows ? String(checkedIn) : "…"} />
+          <StatCard icon={<Users className="h-4 w-4 text-black" />} iconBg="bg-brand-600" label="Registered" value={rows ? String(rows.length) : "…"} />
+          <StatCard icon={<ScanLine className="h-4 w-4 text-black" />} iconBg="bg-brand-600" label="Checked in" value={rows ? String(checkedIn) : "…"} />
         </div>
 
         <div className="mt-6 flex flex-wrap items-center gap-3">
           <div className="relative w-full sm:w-72">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-300" />
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search name, email, phone, code"
-              className="w-full rounded-full border border-ink-100 py-2 pl-9 pr-4 text-sm text-ink-900 placeholder:text-ink-300 focus:border-brand-400"
+              className="w-full rounded-full border border-white/10 py-2 pl-9 pr-4 text-sm text-white placeholder:text-zinc-600 focus:border-brand-400"
             />
           </div>
           <div className="flex gap-1">
@@ -161,7 +161,7 @@ export default function AdminEventsPage() {
                 key={k}
                 onClick={() => setFilter(k)}
                 className={`rounded-full px-3 py-1.5 text-sm font-semibold ${
-                  filter === k ? "bg-ink-900 text-white" : "text-ink-700 hover:bg-ink-100/50"
+                  filter === k ? "bg-white text-black" : "text-zinc-300 hover:bg-white/5"
                 }`}
               >
                 {label}
@@ -172,9 +172,9 @@ export default function AdminEventsPage() {
 
         {error && <p className="mt-4 text-sm text-danger">{error}</p>}
 
-        <div className="mt-4 overflow-x-auto rounded-2xl border border-ink-100">
+        <div className="mt-4 overflow-x-auto rounded-2xl border border-white/10">
           <table className="w-full min-w-[720px] text-left text-sm">
-            <thead className="bg-ink-100/30 text-xs uppercase tracking-wide text-ink-500">
+            <thead className="bg-white/[0.03] text-xs uppercase tracking-wide text-zinc-400">
               <tr>
                 <th className="px-4 py-3 font-semibold">Name</th>
                 <th className="px-4 py-3 font-semibold">Contact</th>
@@ -183,37 +183,37 @@ export default function AdminEventsPage() {
                 <th className="px-4 py-3 font-semibold">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-ink-100">
+            <tbody className="divide-y divide-white/10">
               {rows === null && (
                 <tr>
                   <td colSpan={5} className="px-4 py-10 text-center">
-                    <Loader2 className="mx-auto h-5 w-5 animate-spin text-ink-500" />
+                    <Loader2 className="mx-auto h-5 w-5 animate-spin text-zinc-400" />
                   </td>
                 </tr>
               )}
               {rows && visible.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-4 py-10 text-center text-ink-500">
+                  <td colSpan={5} className="px-4 py-10 text-center text-zinc-400">
                     {rows.length ? "No matches." : "No registrations yet."}
                   </td>
                 </tr>
               )}
               {visible.map((r) => (
                 <tr key={r.id}>
-                  <td className="px-4 py-3 font-semibold text-ink-900">{r.name}</td>
-                  <td className="px-4 py-3 text-ink-700">
+                  <td className="px-4 py-3 font-semibold text-white">{r.name}</td>
+                  <td className="px-4 py-3 text-zinc-300">
                     <div>{r.email}</div>
                     <a
                       href={`https://wa.me/${r.whatsapp.replace(/[^\d]/g, "")}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-ink-500 hover:underline"
+                      className="text-zinc-400 hover:underline"
                     >
                       {r.whatsapp}
                     </a>
                   </td>
-                  <td className="px-4 py-3 font-mono text-xs text-ink-700">{r.id}</td>
-                  <td className="px-4 py-3 text-ink-500">{fmt(r.createdAt)}</td>
+                  <td className="px-4 py-3 font-mono text-xs text-zinc-300">{r.id}</td>
+                  <td className="px-4 py-3 text-zinc-400">{fmt(r.createdAt)}</td>
                   <td className="px-4 py-3">
                     <button
                       onClick={() => toggle(r)}
@@ -221,8 +221,8 @@ export default function AdminEventsPage() {
                       title={r.attended ? `By ${r.checkedInBy ?? "unknown"}. Click to undo.` : "Admit"}
                       className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50 ${
                         r.attended
-                          ? "bg-brand-600 text-ink-900"
-                          : "border border-ink-100 text-ink-700 hover:bg-ink-100/50"
+                          ? "bg-brand-600 text-black"
+                          : "border border-white/10 text-zinc-300 hover:bg-white/5"
                       }`}
                     >
                       {busyId === r.id && <Loader2 className="h-3 w-3 animate-spin" />}

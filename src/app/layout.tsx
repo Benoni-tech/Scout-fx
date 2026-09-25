@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Manrope } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
@@ -9,6 +9,8 @@ const manrope = Manrope({
   variable: "--font-manrope",
   weight: ["400", "500", "600", "700", "800"],
 });
+
+export const viewport: Viewport = { themeColor: "#000000" };
 
 export const metadata: Metadata = {
   title: "Scout FX | Trading Education, Community & Signals",
@@ -21,9 +23,10 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={manrope.variable}>
-      <body className="font-sans antialiased">
+      <body className="relative font-sans antialiased">
+        <div className="spotlight pointer-events-none absolute inset-x-0 top-0 h-[520px]" aria-hidden />
         <Navbar />
-        <main className="pt-24">{children}</main>
+        <main className="relative pt-24">{children}</main>
         <Footer />
       </body>
     </html>

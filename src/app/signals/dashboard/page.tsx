@@ -27,15 +27,15 @@ export default function SignalsDashboardPage() {
     return (
       <Container className="py-24 text-center">
         <AlertTriangle className="mx-auto h-8 w-8 text-danger" />
-        <h1 className="mt-4 text-2xl font-extrabold text-ink-900">
+        <h1 className="mt-4 text-2xl font-extrabold text-white">
           Risk disclosure required
         </h1>
-        <p className="mt-2 text-sm text-ink-500">
+        <p className="mt-2 text-sm text-zinc-400">
           You need to accept the risk disclosure before viewing live signals.
         </p>
         <Link
           href="/signals/disclosure"
-          className="mt-6 inline-flex items-center rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-ink-900"
+          className="mt-6 inline-flex items-center rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-black"
         >
           Go to risk disclosure
         </Link>
@@ -48,16 +48,16 @@ export default function SignalsDashboardPage() {
       <Container>
         <div className="flex items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight text-ink-900">
+            <h1 className="text-3xl font-extrabold tracking-tight text-white">
               Live signals
             </h1>
-            <p className="mt-1 text-sm text-ink-500">
+            <p className="mt-1 text-sm text-zinc-400">
               Updated automatically as new signals fire.
             </p>
           </div>
           <Link
             href="/signals/history"
-            className="whitespace-nowrap text-sm font-semibold text-brand-800"
+            className="whitespace-nowrap text-sm font-semibold text-brand-500"
           >
             Full history →
           </Link>
@@ -65,7 +65,7 @@ export default function SignalsDashboardPage() {
 
         <div className="mt-4 flex items-start gap-3 rounded-2xl border border-danger/20 bg-danger/5 p-4">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-danger" />
-          <p className="text-xs leading-relaxed text-ink-700">
+          <p className="text-xs leading-relaxed text-zinc-300">
             Signals are not guaranteed outcomes. Trade at your own risk and
             within your own risk tolerance.
           </p>
@@ -75,7 +75,7 @@ export default function SignalsDashboardPage() {
           {liveSignals.map((s, i) => (
             <div
               key={i}
-              className="flex flex-col gap-4 rounded-2xl border border-ink-100 bg-white p-5 sm:flex-row sm:items-center sm:justify-between"
+              className="flex flex-col gap-4 card p-5 sm:flex-row sm:items-center sm:justify-between"
             >
               <div className="flex items-center gap-3">
                 <div
@@ -84,35 +84,35 @@ export default function SignalsDashboardPage() {
                   }`}
                 >
                   {s.direction === "BUY" ? (
-                    <ArrowUpRight className="h-5 w-5 text-ink-900" />
+                    <ArrowUpRight className="h-5 w-5 text-white" />
                   ) : (
                     <ArrowDownRight className="h-5 w-5 text-danger" />
                   )}
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-ink-900">
+                  <p className="text-sm font-bold text-white">
                     {s.pair} · {s.direction}
                   </p>
-                  <p className="text-xs text-ink-500">{s.rule}</p>
+                  <p className="text-xs text-zinc-400">{s.rule}</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-3 gap-6 text-xs sm:gap-8">
                 <div>
-                  <p className="text-ink-300">Entry</p>
-                  <p className="font-semibold text-ink-900">{s.entry}</p>
+                  <p className="text-zinc-500">Entry</p>
+                  <p className="font-semibold text-white">{s.entry}</p>
                 </div>
                 <div>
-                  <p className="text-ink-300">Stop</p>
-                  <p className="font-semibold text-ink-900">{s.stop}</p>
+                  <p className="text-zinc-500">Stop</p>
+                  <p className="font-semibold text-white">{s.stop}</p>
                 </div>
                 <div>
-                  <p className="text-ink-300">Target</p>
-                  <p className="font-semibold text-ink-900">{s.target}</p>
+                  <p className="text-zinc-500">Target</p>
+                  <p className="font-semibold text-white">{s.target}</p>
                 </div>
               </div>
 
-              <p className="whitespace-nowrap text-xs text-ink-300">{s.time}</p>
+              <p className="whitespace-nowrap text-xs text-zinc-500">{s.time}</p>
             </div>
           ))}
         </div>

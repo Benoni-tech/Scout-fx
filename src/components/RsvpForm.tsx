@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, FormEvent } from "react";
-import { Loader2, CheckCircle2 } from "lucide-react";
+import { Loader2, CheckCircle2, User, Mail, Phone, Ticket, ArrowRight } from "lucide-react";
 
 export default function RsvpForm({ eventId }: { eventId: string }) {
   const [form, setForm] = useState({ name: "", email: "", whatsapp: "" });
@@ -38,8 +38,8 @@ export default function RsvpForm({ eventId }: { eventId: string }) {
 
   if (status === "success") {
     return (
-      <div className="flex items-start gap-3 rounded-2xl border border-brand-600 bg-brand-600 p-5 text-ink-900">
-        <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0" />
+      <div className="flex animate-fade-up items-start gap-4 rounded-2xl bg-brand-600 p-6 text-black shadow-glow">
+        <CheckCircle2 className="mt-0.5 h-6 w-6 shrink-0" />
         <div>
           <p className="text-sm font-semibold">
             {result.alreadyRegistered
@@ -56,7 +56,7 @@ export default function RsvpForm({ eventId }: { eventId: string }) {
           {result.ticketCode && (
             <a
               href={`/ticket/${result.ticketCode}`}
-              className="mt-3 inline-flex rounded-full bg-ink-900 px-4 py-2 text-sm font-semibold text-white"
+              className="mt-4 inline-flex rounded-full bg-black px-5 py-2.5 text-sm font-semibold text-brand-500"
             >
               View my ticket
             </a>
@@ -66,42 +66,50 @@ export default function RsvpForm({ eventId }: { eventId: string }) {
     );
   }
 
+  const fields = [
+    { key: "name", label: "Full name", type: "text", placeholder: "Your name", icon: User, autoComplete: "name" },
+    { key: "email", label: "Email", type: "email", placeholder: "you@email.com", icon: Mail, autoComplete: "email" },
+    { key: "whatsapp", label: "WhatsApp number", type: "tel", placeholder: "+233 ...", icon: Phone, autoComplete: "tel" },
+  ] as const;
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-3">
-      <input
-        type="text"
-        required
-        placeholder="Your name"
-        value={form.name}
-        onChange={(e) => setForm({ ...form, name: e.target.value })}
-        className="w-full rounded-xl border border-ink-100 px-4 py-2.5 text-sm text-ink-900 placeholder:text-ink-300 focus:border-gold-500"
-      />
-      <input
-        type="email"
-        required
-        placeholder="you@email.com"
-        value={form.email}
-        onChange={(e) => setForm({ ...form, email: e.target.value })}
-        className="w-full rounded-xl border border-ink-100 px-4 py-2.5 text-sm text-ink-900 placeholder:text-ink-300 focus:border-gold-500"
-      />
-      <input
-        type="tel"
-        required
-        placeholder="WhatsApp number"
-        value={form.whatsapp}
-        onChange={(e) => setForm({ ...form, whatsapp: e.target.value })}
-        className="w-full rounded-xl border border-ink-100 px-4 py-2.5 text-sm text-ink-900 placeholder:text-ink-300 focus:border-gold-500"
-      />
+    <form onSubmit={handleSubmit}>
+      <div className="grid gap-4 lg:grid-cols-3">
+        {fields.map((f) => (
+          <label key={f.key} className="block">
+            <span className="mb-2 block text-xs font-semibold uppercase tracking-widest text-zinc-400">
+              {f.label}
+            </span>
+            <span className="group relative block">
+              <f.icon className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500 transition-colors group-focus-within:text-brand-500" />
+              <input
+                type={f.type}
+                required
+                autoComplete={f.autoComplete}
+                placeholder={f.placeholder}
+                value={form[f.key]}
+                onChange={(e) => setForm({ ...form, [f.key]: e.target.value })}
+                className="w-full rounded-2xl border border-white/10 py-4 pl-11 pr-4 text-base text-white outline-none transition-all placeholder:text-zinc-600 focus:border-brand-500 focus:bg-white/[0.05] focus:ring-4 focus:ring-brand-500/10"
+              />
+            </span>
+          </label>
+        ))}
+      </div>
       <button
         type="submit"
         disabled={status === "loading"}
-        className="flex w-full items-center justify-center gap-2 rounded-full bg-gold-600 px-6 py-3 text-sm font-semibold text-ink-900 transition-colors hover:bg-gold-700 disabled:opacity-60"
+        className="group mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-brand-600 px-6 py-4 text-base font-bold text-black transition-all hover:bg-brand-700 hover:shadow-glow disabled:opacity-60"
       >
-        {status === "loading" && <Loader2 className="h-4 w-4 animate-spin" />}
+        {status === "loading" ? (
+          <Loader2 className="h-5 w-5 animate-spin" />
+        ) : (
+          <Ticket className="h-5 w-5" />
+        )}
         Reserve my spot
+        <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
       </button>
       {status === "error" && (
-        <p className="text-center text-sm text-danger">{errorMsg}</p>
+        <p className="mt-4 text-center text-sm text-danger">{errorMsg}</p>
       )}
     </form>
   );

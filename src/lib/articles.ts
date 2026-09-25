@@ -5,6 +5,8 @@ export type Article = {
   readTime: string;
   date: string;
   body: string[];
+  /** Optional featured image in /public (e.g. "/articles/rsi.jpg"); falls back to a generated cover. */
+  image?: string;
 };
 
 export const articles: Article[] = [

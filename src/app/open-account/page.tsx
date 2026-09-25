@@ -30,16 +30,16 @@ export default function OpenAccountPage() {
     <section className="bg-grid py-16">
       <Container className="text-center">
         <Eyebrow>HFM Affiliate ID: 30537791</Eyebrow>
-        <h1 className="mx-auto mt-5 max-w-2xl text-4xl font-extrabold tracking-tight text-ink-900 sm:text-5xl">
+        <h1 className="mx-auto mt-5 max-w-2xl text-4xl font-bold leading-[1.05] tracking-tight text-gradient animate-fade-up pb-1 sm:text-5xl">
           Trade with HFM
         </h1>
-        <p className="mx-auto mt-4 max-w-lg text-base leading-relaxed text-ink-500">
+        <p className="mx-auto mt-4 max-w-lg text-base leading-relaxed text-zinc-400">
           The broker I use and teach through. One link, one place to start.
         </p>
 
         <div className="mx-auto mt-6 flex max-w-lg items-start gap-3 rounded-2xl border border-danger/20 bg-danger/5 p-4 text-left">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-danger" />
-          <p className="text-xs leading-relaxed text-ink-700">
+          <p className="text-xs leading-relaxed text-zinc-300">
             Trading forex, gold and CFDs carries a high level of risk and can
             result in the loss of your capital. Nothing here is a guarantee
             of profit. Read the{" "}
@@ -58,26 +58,26 @@ export default function OpenAccountPage() {
 
         <div className="mx-auto mt-16 grid max-w-3xl gap-6 text-left sm:grid-cols-3">
           {reasons.map((r) => (
-            <div key={r.title} className="rounded-2xl border border-ink-100 bg-white p-5">
-              <ShieldCheck className="h-5 w-5 text-brand-800" />
-              <h3 className="mt-3 text-sm font-bold text-ink-900">{r.title}</h3>
-              <p className="mt-1 text-xs leading-relaxed text-ink-500">{r.desc}</p>
+            <div key={r.title} className="card p-5">
+              <ShieldCheck className="h-5 w-5 text-brand-500" />
+              <h3 className="mt-3 text-sm font-bold text-white">{r.title}</h3>
+              <p className="mt-1 text-xs leading-relaxed text-zinc-400">{r.desc}</p>
             </div>
           ))}
         </div>
 
         <div className="mx-auto mt-16 max-w-2xl">
-          <p className="text-xs font-semibold uppercase tracking-wide text-brand-800">
+          <p className="text-xs font-semibold uppercase tracking-wide text-brand-500">
             What happens next
           </p>
           <div className="mt-6 grid gap-6 sm:grid-cols-3">
             {steps.map((s) => (
               <div key={s.n} className="text-left">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-600 text-sm font-bold text-ink-900">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-600 text-sm font-bold text-black">
                   {s.n}
                 </div>
-                <h4 className="mt-3 text-sm font-bold text-ink-900">{s.label}</h4>
-                <p className="mt-1 text-xs leading-relaxed text-ink-500">{s.desc}</p>
+                <h4 className="mt-3 text-sm font-bold text-white">{s.label}</h4>
+                <p className="mt-1 text-xs leading-relaxed text-zinc-400">{s.desc}</p>
               </div>
             ))}
           </div>

@@ -15,24 +15,24 @@ export default function JoinPage() {
       <Container className="grid gap-12 lg:grid-cols-2 lg:items-center">
         <div>
           <Eyebrow>Free to join</Eyebrow>
-          <h1 className="mt-5 text-4xl font-extrabold tracking-tight text-ink-900 sm:text-5xl">
+          <h1 className="mt-5 text-4xl font-bold leading-[1.05] tracking-tight text-gradient animate-fade-up pb-1 sm:text-5xl">
             Join the community
           </h1>
-          <p className="mt-4 max-w-md text-base leading-relaxed text-ink-500">
+          <p className="mt-4 max-w-md text-base leading-relaxed text-zinc-400">
             One place for education, event invites and updates, no
             algorithm deciding what you see.
           </p>
           <ul className="mt-8 space-y-3">
             {perks.map((p) => (
-              <li key={p} className="flex items-start gap-3 text-sm text-ink-700">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand-800" />
+              <li key={p} className="flex items-start gap-3 text-sm text-zinc-300">
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand-500" />
                 {p}
               </li>
             ))}
           </ul>
         </div>
 
-        <div className="rounded-3xl border border-ink-100 bg-white p-8 shadow-card">
+        <div className="card rounded-3xl p-8 shadow-card">
           <LeadForm source="join-page" />
         </div>
       </Container>

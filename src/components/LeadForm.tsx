@@ -32,7 +32,7 @@ export default function LeadForm({ source }: { source: string }) {
 
   if (status === "success") {
     return (
-      <div className="flex items-center gap-3 rounded-2xl border border-brand-600 bg-brand-600 p-5 text-ink-900">
+      <div className="flex items-center gap-3 rounded-2xl border border-brand-600 bg-brand-600 p-5 text-black">
         <CheckCircle2 className="h-5 w-5 shrink-0" />
         <div>
           <p className="text-sm font-semibold">You&apos;re in.</p>
@@ -45,7 +45,7 @@ export default function LeadForm({ source }: { source: string }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="mb-1.5 block text-sm font-medium text-ink-700">
+        <label className="mb-1.5 block text-sm font-medium text-zinc-300">
           Name
         </label>
         <input
@@ -53,11 +53,11 @@ export default function LeadForm({ source }: { source: string }) {
           value={form.name}
           onChange={(e) => setForm({ ...form, name: e.target.value })}
           placeholder="Your name"
-          className="w-full rounded-xl border border-ink-100 px-4 py-2.5 text-sm text-ink-900 placeholder:text-ink-300 focus:border-brand-400"
+          className="w-full rounded-xl border border-white/10 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-brand-400"
         />
       </div>
       <div>
-        <label className="mb-1.5 block text-sm font-medium text-ink-700">
+        <label className="mb-1.5 block text-sm font-medium text-zinc-300">
           Email <span className="text-danger">*</span>
         </label>
         <input
@@ -66,11 +66,11 @@ export default function LeadForm({ source }: { source: string }) {
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
           placeholder="you@email.com"
-          className="w-full rounded-xl border border-ink-100 px-4 py-2.5 text-sm text-ink-900 placeholder:text-ink-300 focus:border-brand-400"
+          className="w-full rounded-xl border border-white/10 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-brand-400"
         />
       </div>
       <div>
-        <label className="mb-1.5 block text-sm font-medium text-ink-700">
+        <label className="mb-1.5 block text-sm font-medium text-zinc-300">
           WhatsApp <span className="text-danger">*</span>
         </label>
         <input
@@ -79,14 +79,14 @@ export default function LeadForm({ source }: { source: string }) {
           value={form.whatsapp}
           onChange={(e) => setForm({ ...form, whatsapp: e.target.value })}
           placeholder="+233 ..."
-          className="w-full rounded-xl border border-ink-100 px-4 py-2.5 text-sm text-ink-900 placeholder:text-ink-300 focus:border-brand-400"
+          className="w-full rounded-xl border border-white/10 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-brand-400"
         />
       </div>
 
       <button
         type="submit"
         disabled={status === "loading"}
-        className="flex w-full items-center justify-center gap-2 rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-ink-900 transition-colors hover:bg-brand-700 disabled:opacity-60"
+        className="flex w-full items-center justify-center gap-2 rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-black transition-colors hover:bg-brand-700 disabled:opacity-60"
       >
         {status === "loading" && <Loader2 className="h-4 w-4 animate-spin" />}
         Join free
@@ -95,7 +95,7 @@ export default function LeadForm({ source }: { source: string }) {
       {status === "error" && (
         <p className="text-center text-sm text-danger">{errorMsg}</p>
       )}
-      <p className="text-center text-xs text-ink-300">
+      <p className="text-center text-xs text-zinc-500">
         No spam. Unsubscribe anytime.
       </p>
     </form>

@@ -58,7 +58,7 @@ export default function CheckinView({ code }: { code: string }) {
   }
 
   if (state === "loading") {
-    return <Loader2 className="mx-auto h-6 w-6 animate-spin text-ink-500" />;
+    return <Loader2 className="mx-auto h-6 w-6 animate-spin text-zinc-400" />;
   }
 
   if (state === "notFound") {
@@ -100,16 +100,16 @@ export default function CheckinView({ code }: { code: string }) {
   }
 
   return (
-    <div className="rounded-3xl border border-ink-100 bg-white p-6 text-center shadow-card">
-      <p className="text-xs font-bold uppercase tracking-wider text-ink-500">Valid ticket</p>
-      <p className="mt-2 text-3xl font-extrabold text-ink-900">{t.name}</p>
-      <p className="mt-1 text-sm text-ink-500">{t.email} · {t.whatsapp}</p>
-      <p className="mt-1 text-sm text-ink-500">{eventTitle}</p>
-      <p className="mt-3 font-mono text-sm text-ink-700">{t.id}</p>
+    <div className="card rounded-3xl p-6 text-center shadow-card">
+      <p className="text-xs font-bold uppercase tracking-wider text-zinc-400">Valid ticket</p>
+      <p className="mt-2 text-3xl font-extrabold text-white">{t.name}</p>
+      <p className="mt-1 text-sm text-zinc-400">{t.email} · {t.whatsapp}</p>
+      <p className="mt-1 text-sm text-zinc-400">{eventTitle}</p>
+      <p className="mt-3 font-mono text-sm text-zinc-300">{t.id}</p>
       <button
         onClick={admit}
         disabled={state === "admitting"}
-        className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-brand-600 px-6 py-4 text-lg font-extrabold text-ink-900 disabled:opacity-60"
+        className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-brand-600 px-6 py-4 text-lg font-extrabold text-black disabled:opacity-60"
       >
         {state === "admitting" && <Loader2 className="h-5 w-5 animate-spin" />}
         Admit
@@ -130,8 +130,8 @@ function Panel({
   children: React.ReactNode;
 }) {
   const styles = {
-    good: "bg-brand-600 text-ink-900",
-    warn: "bg-ink-900 text-white",
+    good: "bg-brand-600 text-black",
+    warn: "bg-white text-black",
     bad: "bg-danger text-white",
   }[tone];
   return (

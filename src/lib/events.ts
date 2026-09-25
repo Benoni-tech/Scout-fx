@@ -11,6 +11,11 @@ export type Lesson = {
   blurb: string;
 };
 
+export type Faq = {
+  q: string;
+  a: string;
+};
+
 export type EventItem = {
   id: string;
   title: string;
@@ -24,6 +29,7 @@ export type EventItem = {
   description: string;
   agenda?: Lesson[];
   speakers?: Speaker[];
+  faqs?: Faq[];
   contactPhone: string;
 };
 
@@ -91,6 +97,32 @@ export const upcomingEvents: EventItem[] = [
         tag: "Speaker",
         photo: "/speakers/dr-newman.jpg",
         bio: "Dr. Newman is an active trader leading the risk management and live trading portions of the conference, walking attendees through a real setup from entry to exit.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Is the conference really free?",
+        a: "Yes. Entry is free, but you need to register so we can reserve your seat and send your ticket.",
+      },
+      {
+        q: "Where and when is it?",
+        a: "Saturday, October 31, 2026 at 11:00 AM GMT, at Miklin Hotel in Accra. Arriving 20–30 minutes early makes check-in smoother.",
+      },
+      {
+        q: "How do I get my ticket?",
+        a: "Once you register, a ticket with a QR code is emailed to you and saved on your ticket page. Show the QR code at the gate; it works offline too.",
+      },
+      {
+        q: "I've never traded before. Is this for me?",
+        a: "Yes. The day starts from how the forex market works and builds up to chart reading, risk management and a live trading session.",
+      },
+      {
+        q: "Can I bring a friend?",
+        a: "Please ask them to register separately. Every attendee needs their own ticket to get in.",
+      },
+      {
+        q: "Who do I contact with questions?",
+        a: "Message us on WhatsApp at +233 54 462 4401 and we'll get back to you.",
       },
     ],
     contactPhone: "+233 54 462 4401",

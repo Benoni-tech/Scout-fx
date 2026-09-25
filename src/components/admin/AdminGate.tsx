@@ -76,7 +76,7 @@ export default function AdminGate({ children }: { children: ReactNode }) {
   if (phase === "loading") {
     return (
       <div className="flex min-h-[50vh] items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-ink-500" />
+        <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
       </div>
     );
   }
@@ -86,11 +86,11 @@ export default function AdminGate({ children }: { children: ReactNode }) {
   if (phase === "denied") {
     return (
       <Container className="max-w-md py-20 text-center">
-        <p className="text-sm font-semibold text-ink-900">{deniedMsg}</p>
-        <p className="mt-1 text-sm text-ink-500">Signed in as {user?.email}</p>
+        <p className="text-sm font-semibold text-white">{deniedMsg}</p>
+        <p className="mt-1 text-sm text-zinc-400">Signed in as {user?.email}</p>
         <button
           onClick={() => signOut(auth)}
-          className="mt-6 rounded-full border border-ink-100 px-5 py-2.5 text-sm font-semibold text-ink-900 hover:bg-ink-100/50"
+          className="mt-6 rounded-full border border-white/10 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/5"
         >
           Sign out
         </button>
@@ -100,7 +100,7 @@ export default function AdminGate({ children }: { children: ReactNode }) {
 
   return (
     <AdminContext.Provider value={{ email: user!.email || "", authFetch }}>
-      <div className="border-b border-ink-100 bg-white">
+      <div className="border-b border-white/10 bg-zinc-950">
         <Container className="flex flex-wrap items-center justify-between gap-3 py-3 text-sm">
           <nav className="flex flex-wrap gap-1">
             {[
@@ -111,7 +111,7 @@ export default function AdminGate({ children }: { children: ReactNode }) {
               <a
                 key={href}
                 href={href}
-                className="rounded-full px-3 py-1.5 font-semibold text-ink-700 hover:bg-ink-100/50"
+                className="rounded-full px-3 py-1.5 font-semibold text-zinc-300 hover:bg-white/5"
               >
                 {label}
               </a>
@@ -119,7 +119,7 @@ export default function AdminGate({ children }: { children: ReactNode }) {
           </nav>
           <button
             onClick={() => signOut(auth)}
-            className="flex items-center gap-1.5 text-ink-500 hover:text-ink-900"
+            className="flex items-center gap-1.5 text-zinc-400 hover:text-white"
           >
             <LogOut className="h-4 w-4" />
             <span className="hidden sm:inline">{user?.email}</span>
@@ -164,9 +164,9 @@ function SignIn() {
   return (
     <Container className="max-w-sm py-20">
       <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-brand-600">
-        <LockKeyhole className="h-5 w-5 text-ink-900" />
+        <LockKeyhole className="h-5 w-5 text-white" />
       </div>
-      <h1 className="mt-4 text-center text-2xl font-extrabold text-ink-900">
+      <h1 className="mt-4 text-center text-2xl font-extrabold text-white">
         Staff sign in
       </h1>
       <form onSubmit={handleSubmit} className="mt-6 space-y-3">
@@ -177,7 +177,7 @@ function SignIn() {
           placeholder="you@email.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full rounded-xl border border-ink-100 px-4 py-2.5 text-sm text-ink-900 placeholder:text-ink-300 focus:border-brand-400"
+          className="w-full rounded-xl border border-white/10 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-brand-400"
         />
         <input
           type="password"
@@ -186,12 +186,12 @@ function SignIn() {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full rounded-xl border border-ink-100 px-4 py-2.5 text-sm text-ink-900 placeholder:text-ink-300 focus:border-brand-400"
+          className="w-full rounded-xl border border-white/10 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-brand-400"
         />
         <button
           type="submit"
           disabled={busy}
-          className="flex w-full items-center justify-center gap-2 rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-ink-900 disabled:opacity-60"
+          className="flex w-full items-center justify-center gap-2 rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-black disabled:opacity-60"
         >
           {busy && <Loader2 className="h-4 w-4 animate-spin" />}
           Sign in

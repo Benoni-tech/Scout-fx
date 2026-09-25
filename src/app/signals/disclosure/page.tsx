@@ -41,14 +41,14 @@ export default function SignalsDisclosurePage() {
   return (
     <section className="py-16">
       <Container className="max-w-xl">
-        <h1 className="text-3xl font-extrabold tracking-tight text-ink-900">
+        <h1 className="text-3xl font-extrabold tracking-tight text-white">
           Risk disclosure
         </h1>
-        <p className="mt-2 text-sm text-ink-500">
+        <p className="mt-2 text-sm text-zinc-400">
           Read this in full before you get access to live signals.
         </p>
 
-        <div className="mt-6 max-h-72 space-y-4 overflow-y-auto rounded-2xl border border-ink-100 bg-ink-100/20 p-5 text-sm leading-relaxed text-ink-700">
+        <div className="mt-6 max-h-72 space-y-4 overflow-y-auto rounded-2xl border border-white/10 bg-white/[0.02] p-5 text-sm leading-relaxed text-zinc-300">
           <p>
             Trading foreign exchange, gold, cryptocurrency and other leveraged
             products carries a high level of risk and may not be suitable
@@ -89,15 +89,15 @@ export default function SignalsDisclosurePage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@email.com"
-            className="w-full rounded-xl border border-ink-100 px-4 py-2.5 text-sm text-ink-900 placeholder:text-ink-300 focus:border-brand-400"
+            className="w-full rounded-xl border border-white/10 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-brand-400"
           />
 
-          <label className="flex items-start gap-3 text-sm text-ink-700">
+          <label className="flex items-start gap-3 text-sm text-zinc-300">
             <input
               type="checkbox"
               checked={checked}
               onChange={(e) => setChecked(e.target.checked)}
-              className="mt-0.5 h-4 w-4 rounded border-ink-100 text-brand-800 focus:ring-brand-400"
+              className="mt-0.5 h-4 w-4 rounded border-white/10 text-brand-500 focus:ring-brand-400"
             />
             I have read and understood the risk disclosure above, and I
             accept it.
@@ -106,7 +106,7 @@ export default function SignalsDisclosurePage() {
           <button
             type="submit"
             disabled={!checked || status === "loading"}
-            className="flex w-full items-center justify-center gap-2 rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-ink-900 transition-colors hover:bg-brand-700 disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-2 rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-black transition-colors hover:bg-brand-700 disabled:opacity-50"
           >
             {status === "loading" && <Loader2 className="h-4 w-4 animate-spin" />}
             Accept &amp; continue to signals

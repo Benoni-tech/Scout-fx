@@ -5,13 +5,13 @@ export default function NotFound() {
   return (
     <section className="py-24">
       <Container className="max-w-lg text-center">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-brand-50">
-          <Compass className="h-5 w-5 text-ink-900" />
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-brand-500/10">
+          <Compass className="h-5 w-5 text-white" />
         </div>
-        <h1 className="mt-5 text-3xl font-extrabold tracking-tight text-ink-900">
+        <h1 className="mt-5 text-3xl font-bold leading-[1.05] tracking-tight text-gradient animate-fade-up pb-1">
           Page not found
         </h1>
-        <p className="mt-2 text-sm leading-relaxed text-ink-500">
+        <p className="mt-2 text-sm leading-relaxed text-zinc-400">
           The page you&apos;re looking for doesn&apos;t exist or may have
           moved.
         </p>

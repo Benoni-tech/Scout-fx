@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAdminDb } from "@/lib/firebaseAdmin";
-import { getResend, FROM_EMAIL, REPLY_TO_EMAIL } from "@/lib/resend";
+import { sendWelcomeEmail } from "@/lib/emails";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -33,21 +33,7 @@ export async function POST(req: NextRequest) {
     await getAdminDb().collection("leads").add(lead);
 
     try {
-      await getResend().emails.send({
-        from: FROM_EMAIL,
-        to: lead.email,
-        replyTo: REPLY_TO_EMAIL,
-        subject: "Welcome to the community",
-        html: `
-          <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
-            <h2 style="color:#0B0B10;">You're in${lead.name ? `, ${lead.name}` : ""}</h2>
-            <p style="color:#54545F; line-height:1.6;">
-              You'll hear about upcoming seminars, new education content,
-              and community updates. No spam, unsubscribe anytime.
-            </p>
-          </div>
-        `,
-      });
+      await sendWelcomeEmail(lead.email, lead.name);
     } catch (emailErr) {
       console.error("Resend welcome email failed:", emailErr);
     }

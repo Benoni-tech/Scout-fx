@@ -17,7 +17,7 @@ export default function CheckinCodePage({
     <section className="py-10">
       <Container className="max-w-md">
         <CheckinView key={normalized} code={normalized} />
-        <p className="mt-8 text-center text-sm text-ink-500">
+        <p className="mt-8 text-center text-sm text-zinc-400">
           Next guest: scan their QR with your phone camera, or type the code.
         </p>
         <div className="mt-3">

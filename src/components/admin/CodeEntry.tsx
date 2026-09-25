@@ -23,11 +23,11 @@ export default function CodeEntry() {
         placeholder="Ticket code"
         autoCapitalize="characters"
         autoComplete="off"
-        className="w-full flex-1 rounded-full border border-ink-100 px-4 py-2.5 font-mono text-sm uppercase tracking-widest text-ink-900 placeholder:font-sans placeholder:normal-case placeholder:tracking-normal placeholder:text-ink-300 focus:border-brand-400"
+        className="w-full flex-1 rounded-full border border-white/10 px-4 py-2.5 font-mono text-sm uppercase tracking-widest text-white placeholder:font-sans placeholder:normal-case placeholder:tracking-normal placeholder:text-zinc-600 focus:border-brand-400"
       />
       <button
         type="submit"
-        className="rounded-full bg-ink-900 px-5 py-2.5 text-sm font-semibold text-white"
+        className="rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-black"
       >
         Look up
       </button>

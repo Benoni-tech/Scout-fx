@@ -4,17 +4,22 @@
 
 html {
   scroll-behavior: smooth;
+  color-scheme: dark;
 }
 
 body {
-  background-color: #ffffff;
-  color: #0b0b10;
+  background-color: #000000;
+  color: #fafafa;
 }
 
-/* visible keyboard focus everywhere (black ring on light surfaces, yellow on dark) */
+::selection {
+  background: #fbfe00;
+  color: #000000;
+}
+
+/* visible keyboard focus everywhere */
 :focus-visible {
-  outline: 2px solid #0b0b10;
-  box-shadow: 0 0 0 2px #fbfe00;
+  outline: 2px solid #fbfe00;
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -30,7 +35,99 @@ body {
   }
 }
 
+/* faded grid drawn on a pseudo-layer so the mask never dims the content */
 .bg-grid {
-  background-image: radial-gradient(circle, rgba(11, 11, 16, 0.07) 1px, transparent 1px);
-  background-size: 22px 22px;
+  isolation: isolate;
+}
+.bg-grid::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse at top, #000 30%, transparent 75%);
+}
+
+@layer base {
+  input:not([type="checkbox"]):not([type="radio"]),
+  textarea,
+  select {
+    background-color: rgb(255 255 255 / 0.03);
+  }
+}
+
+@layer components {
+  /* headline gradient: white fading to grey, like the Resend site */
+  .text-gradient {
+    @apply bg-gradient-to-b from-white to-zinc-500 bg-clip-text text-transparent;
+  }
+
+  /* soft yellow spotlight behind heroes and CTAs */
+  .spotlight {
+    background: radial-gradient(
+      ellipse 60% 50% at 50% 0%,
+      rgba(251, 254, 0, 0.14),
+      transparent 70%
+    );
+  }
+
+  /* dark glass card with a faint top highlight */
+  .card {
+    @apply rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] shadow-card;
+  }
+  .card-hover {
+    @apply transition-colors duration-300 hover:border-white/20 hover:from-white/[0.07];
+  }
+}
+
+/* scroll reveal (see components/Reveal.tsx) */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal[data-visible="true"] {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.mask-fade-x {
+  mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+}
+
+/* site-wide: cards fade up as they scroll into view (progressive enhancement) */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .card {
+      animation: card-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 35%;
+    }
+    .reveal .card,
+    header .card {
+      animation: none;
+    }
+  }
+}
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
