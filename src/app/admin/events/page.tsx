@@ -102,12 +102,13 @@ export default function AdminEventsPage() {
   }
 
   return (
-    <section className="py-12">
-      <Container>
+    <section className="py-8">
+      <Container className="max-w-none px-6">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight text-white">
-              Registrations
+            <p className="text-xs font-bold uppercase tracking-widest text-brand-500">Events</p>
+            <h1 className="mt-1 text-3xl font-bold tracking-tight text-white">
+              Event registrations
             </h1>
             {upcomingEvents.length > 1 ? (
               <select

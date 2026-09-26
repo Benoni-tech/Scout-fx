@@ -7,16 +7,18 @@ export async function GET(req: NextRequest) {
   if (admin instanceof NextResponse) return admin;
 
   const db = getAdminDb();
-  const [leads, rsvps, checkedIn] = await Promise.all([
+  const [leads, rsvps, checkedIn, applications] = await Promise.all([
     db.collection("leads").count().get(),
     db.collection("rsvps").count().get(),
     db.collection("rsvps").where("attended", "==", true).count().get(),
+    db.collection("applications").count().get(),
   ]);
 
   return NextResponse.json({
     leads: leads.data().count,
     rsvps: rsvps.data().count,
     checkedIn: checkedIn.data().count,
+    applications: applications.data().count,
     email: admin.email,
   });
 }

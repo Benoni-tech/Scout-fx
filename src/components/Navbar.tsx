@@ -11,7 +11,7 @@ const links = [
   { href: "/education", label: "Education" },
   { href: "/events", label: "Events" },
   { href: "/signals", label: "Signals" },
-  { href: "/media-kit", label: "Media Kit" },
+  { href: "/seed-program", label: "Seed Program" },
 ];
 
 export default function Navbar() {

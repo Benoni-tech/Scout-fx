@@ -161,10 +161,10 @@ export default function Home() {
 
         <Container className="relative flex flex-col items-center text-center">
           <div className="animate-fade-up">
-            <Link href="/media-kit">
+            <Link href="/seed-program">
               <Eyebrow>
-                <span className="h-1.5 w-1.5 rounded-full bg-brand-500 shadow-glow" />
-                We are live. Your trading journey begins today
+                <span className="rounded-full bg-brand-500 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-black">New</span>
+                Seed Program: free training + a shot at $50 seed capital
                 <ArrowRight className="h-3 w-3" />
               </Eyebrow>
             </Link>

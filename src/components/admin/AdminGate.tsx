@@ -15,7 +15,18 @@ import {
   signOut,
   User,
 } from "firebase/auth";
-import { Loader2, LockKeyhole, LogOut } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
+import {
+  CalendarDays,
+  Home,
+  Loader2,
+  LockKeyhole,
+  LogOut,
+  ScanLine,
+  Sprout,
+} from "lucide-react";
 import { auth } from "@/lib/firebase";
 import { Container } from "@/components/ui";
 
@@ -100,35 +111,96 @@ export default function AdminGate({ children }: { children: ReactNode }) {
 
   return (
     <AdminContext.Provider value={{ email: user!.email || "", authFetch }}>
-      <div className="border-b border-white/10 bg-zinc-950">
-        <Container className="flex flex-wrap items-center justify-between gap-3 py-3 text-sm">
-          <nav className="flex flex-wrap gap-1">
-            {[
-              ["/admin", "Overview"],
-              ["/admin/events", "Registrations"],
-              ["/admin/checkin", "Check-in"],
-            ].map(([href, label]) => (
-              <a
-                key={href}
-                href={href}
-                className="rounded-full px-3 py-1.5 font-semibold text-zinc-300 hover:bg-white/5"
-              >
-                {label}
-              </a>
-            ))}
-          </nav>
-          <button
-            onClick={() => signOut(auth)}
-            className="flex items-center gap-1.5 text-zinc-400 hover:text-white"
-          >
-            <LogOut className="h-4 w-4" />
-            <span className="hidden sm:inline">{user?.email}</span>
-            <span className="sm:hidden">Sign out</span>
-          </button>
-        </Container>
-      </div>
-      {children}
+      <AdminShell email={user?.email || ""}>{children}</AdminShell>
     </AdminContext.Provider>
+  );
+}
+
+const NAV = [
+  { href: "/admin", label: "Home", icon: Home },
+  { href: "/admin/events", label: "Events", icon: CalendarDays },
+  { href: "/admin/seed", label: "Seed registrations", icon: Sprout },
+  { href: "/admin/checkin", label: "Check-in", icon: ScanLine },
+];
+
+function AdminShell({ email, children }: { email: string; children: ReactNode }) {
+  const pathname = usePathname();
+  const active = (href: string) =>
+    href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
+
+  return (
+    <div className="mx-auto max-w-7xl px-4 pb-12 pt-4">
+      <div className="flex min-h-[75vh] overflow-hidden rounded-3xl border border-white/10 bg-zinc-950/80 shadow-card backdrop-blur">
+        {/* sidebar */}
+        <aside className="hidden w-60 shrink-0 border-r border-white/10 md:block">
+          <div className="sticky top-24 flex h-[75vh] flex-col p-5">
+            <Link href="/admin" className="mb-8 flex items-center gap-2 px-1">
+              <Image src="/logo.png" alt="" width={16} height={18} className="h-4 w-auto" />
+              <span className="text-sm font-extrabold uppercase tracking-tight text-white">Scout FX</span>
+              <span className="rounded-full bg-brand-500/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-brand-500">
+                Admin
+              </span>
+            </Link>
+
+            <nav className="space-y-1">
+              {NAV.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${
+                    active(item.href)
+                      ? "bg-brand-500/10 text-brand-500"
+                      : "text-zinc-400 hover:bg-white/5 hover:text-white"
+                  }`}
+                >
+                  <item.icon className="h-4 w-4" />
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+
+            <div className="mt-auto space-y-3 border-t border-white/10 pt-4">
+              <p className="truncate px-1 text-xs text-zinc-500" title={email}>
+                {email}
+              </p>
+              <button
+                onClick={() => signOut(auth)}
+                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-zinc-400 transition-colors hover:bg-white/5 hover:text-white"
+              >
+                <LogOut className="h-4 w-4" />
+                Sign out
+              </button>
+            </div>
+          </div>
+        </aside>
+
+        <div className="min-w-0 flex-1">
+          {/* mobile tabs */}
+          <div className="flex items-center gap-2 overflow-x-auto border-b border-white/10 px-3 py-3 md:hidden">
+            {NAV.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex shrink-0 items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium ${
+                  active(item.href) ? "bg-brand-500 text-black" : "text-zinc-400"
+                }`}
+              >
+                <item.icon className="h-4 w-4" />
+                {item.label}
+              </Link>
+            ))}
+            <button
+              onClick={() => signOut(auth)}
+              aria-label="Sign out"
+              className="ml-auto shrink-0 rounded-full p-2 text-zinc-400"
+            >
+              <LogOut className="h-4 w-4" />
+            </button>
+          </div>
+          {children}
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -164,7 +236,7 @@ function SignIn() {
   return (
     <Container className="max-w-sm py-20">
       <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-brand-600">
-        <LockKeyhole className="h-5 w-5 text-white" />
+        <LockKeyhole className="h-5 w-5 text-black" />
       </div>
       <h1 className="mt-4 text-center text-2xl font-extrabold text-white">
         Staff sign in

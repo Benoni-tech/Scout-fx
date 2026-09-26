@@ -2,6 +2,7 @@ import { getResend, FROM_EMAIL, REPLY_TO_EMAIL } from "@/lib/resend";
 import type { EventItem } from "@/lib/events";
 import { SITE_URL, ticketUrl, type Rsvp } from "@/lib/tickets";
 import { ticketImagePng } from "@/lib/ticketImage";
+import { SEED_PROGRAM } from "@/lib/seedProgram";
 
 const Y = "#FBFE00";
 const FONT =
@@ -163,5 +164,46 @@ export async function sendWelcomeEmail(to: string, name?: string) {
     replyTo: REPLY_TO_EMAIL,
     subject: "Welcome to the Scout FX community",
     html: emailLayout({ preheader: "You're in. Here's where to start.", body }),
+  });
+}
+
+type SeedRegistration = { ref: string; name: string; email: string };
+
+/** HTML for the Seed Program registration confirmation. */
+export function applicationEmailHtml(app: SeedRegistration) {
+  const first = escapeHtml(app.name.split(" ")[0] || app.name);
+
+  const body = `
+    <p style="margin:0; font-size:12px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:${Y};">You're registered</p>
+    <h1 style="margin:10px 0 0; font-size:28px; line-height:1.15; font-weight:800; letter-spacing:-0.5px; color:#FFFFFF;">Your training place is confirmed, ${first}.</h1>
+    <p style="margin:14px 0 0; font-size:15px; line-height:1.65; color:#A1A1AA;">
+      Thanks for registering for the <strong style="color:#FFFFFF;">${escapeHtml(SEED_PROGRAM.name)}</strong>.
+      Your place in the free training is guaranteed, and we'll send you the schedule by email or WhatsApp.
+    </p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:28px 0 0; font-family:${FONT};">
+      ${detailRow("Reference", `<span style="letter-spacing:3px; color:${Y};">${app.ref}</span>`)}
+      ${detailRow("Program", escapeHtml(SEED_PROGRAM.name))}
+      ${detailRow("Training", "Free · place confirmed")}
+      ${detailRow("Seed capital", `Up to USD ${SEED_PROGRAM.seedAmount}, at Scout FX's discretion`)}
+    </table>
+    <p style="margin:24px 0 0; font-size:14px; line-height:1.65; color:#A1A1AA;">
+      While you wait, get a head start in the education library.
+    </p>
+    <div style="margin:24px 0 0;">${button(`${SITE_URL}/education`, "Start learning &rarr;")}</div>
+    <p style="margin:28px 0 0; font-size:12px; line-height:1.7; color:#71717A; text-align:center;">
+      Registration guarantees training only. Seed capital is awarded at Scout FX's sole discretion and is not guaranteed. Trading carries risk.
+    </p>`;
+
+  return emailLayout({ preheader: `Your training place is confirmed. Reference ${app.ref}.`, body });
+}
+
+/** Sent as soon as someone registers for the Seed Program (see /api/applications). */
+export async function sendApplicationEmail(app: SeedRegistration) {
+  await getResend().emails.send({
+    from: FROM_EMAIL,
+    to: app.email,
+    replyTo: REPLY_TO_EMAIL,
+    subject: `You're registered: ${SEED_PROGRAM.name}`,
+    html: applicationEmailHtml(app),
   });
 }

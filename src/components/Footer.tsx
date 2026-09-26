@@ -16,6 +16,7 @@ const columns = [
     title: "Community",
     links: [
       { href: "/join", label: "Join free" },
+      { href: "/seed-program", label: "Seed Program" },
       { href: "/media-kit", label: "Media kit" },
       { href: "/events", label: "Upcoming seminars" },
       { href: "/open-account", label: "Open HFM account" },

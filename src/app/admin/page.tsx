@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Users, CalendarCheck, ScanLine, ArrowRight } from "lucide-react";
+import { Users, CalendarCheck, ScanLine, Sprout, ArrowRight } from "lucide-react";
 import { Container, StatCard } from "@/components/ui";
 import { useAdmin } from "@/components/admin/AdminGate";
 
@@ -9,10 +9,11 @@ type Stats = {
   leads: number;
   rsvps: number;
   checkedIn: number;
+  applications: number;
 };
 
 export default function AdminOverviewPage() {
-  const { authFetch } = useAdmin();
+  const { authFetch, email } = useAdmin();
   const [stats, setStats] = useState<Stats | null>(null);
   const [error, setError] = useState("");
 
@@ -28,44 +29,41 @@ export default function AdminOverviewPage() {
 
   const v = (n?: number) => (stats ? n!.toLocaleString() : "…");
 
+  const links = [
+    { href: "/admin/events", icon: CalendarCheck, title: "Event registrations", desc: "See who signed up for events, check people in, export to CSV." },
+    { href: "/admin/seed", icon: Sprout, title: "Seed registrations", desc: "Track trainees and decide who gets seed capital." },
+    { href: "/admin/checkin", icon: ScanLine, title: "Gate check-in", desc: "Scan a ticket QR or type the code at the door." },
+  ];
+
   return (
-    <section className="py-12">
-      <Container>
-        <h1 className="text-3xl font-extrabold tracking-tight text-white">
-          Admin overview
-        </h1>
-        <p className="mt-2 text-sm text-zinc-400">
-          Live counts from Firestore.
-        </p>
+    <section className="py-8">
+      <Container className="max-w-none px-6">
+        <p className="text-sm text-zinc-400">Welcome back{email ? `, ${email.split("@")[0]}` : ""}</p>
+        <h1 className="mt-1 text-3xl font-bold tracking-tight text-white">Overview</h1>
         {error && <p className="mt-4 text-sm text-danger">{error}</p>}
 
-        <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3">
+        <p className="mb-3 mt-8 text-xs font-semibold uppercase tracking-widest text-zinc-500">Live counts</p>
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           <StatCard icon={<CalendarCheck className="h-4 w-4 text-black" />} iconBg="bg-brand-600" label="Event registrations" value={v(stats?.rsvps)} />
-          <StatCard icon={<ScanLine className="h-4 w-4 text-black" />} iconBg="bg-brand-600" label="Checked in" value={v(stats?.checkedIn)} />
-          <StatCard icon={<Users className="h-4 w-4 text-black" />} iconBg="bg-brand-600" label="Community leads" value={v(stats?.leads)} />
+          <StatCard icon={<ScanLine className="h-4 w-4 text-brand-500" />} iconBg="bg-brand-500/10" label="Checked in" value={v(stats?.checkedIn)} />
+          <StatCard icon={<Sprout className="h-4 w-4 text-black" />} iconBg="bg-brand-600" label="Seed registrations" value={v(stats?.applications)} />
+          <StatCard icon={<Users className="h-4 w-4 text-brand-500" />} iconBg="bg-brand-500/10" label="Community leads" value={v(stats?.leads)} />
         </div>
 
-        <div className="mt-8 grid gap-4 sm:grid-cols-2">
-          <a
-            href="/admin/events"
-            className="flex items-center justify-between card p-5 card-hover"
-          >
-            <div>
-              <p className="text-sm font-bold text-white">Event registrations</p>
-              <p className="text-sm text-zinc-400">See who signed up, export to CSV.</p>
-            </div>
-            <ArrowRight className="h-4 w-4 text-white" />
-          </a>
-          <a
-            href="/admin/checkin"
-            className="flex items-center justify-between card p-5 card-hover"
-          >
-            <div>
-              <p className="text-sm font-bold text-white">Gate check-in</p>
-              <p className="text-sm text-zinc-400">Scan a ticket QR or type the code.</p>
-            </div>
-            <ArrowRight className="h-4 w-4 text-white" />
-          </a>
+        <p className="mb-3 mt-10 text-xs font-semibold uppercase tracking-widest text-zinc-500">Go to</p>
+        <div className="grid gap-4 md:grid-cols-3">
+          {links.map((l) => (
+            <a key={l.href} href={l.href} className="card card-hover group flex flex-col p-6">
+              <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white/5 text-zinc-400 transition-colors group-hover:bg-brand-500 group-hover:text-black">
+                <l.icon className="h-5 w-5" />
+              </span>
+              <p className="mt-5 text-base font-bold text-white">{l.title}</p>
+              <p className="mt-1 flex-1 text-sm text-zinc-400">{l.desc}</p>
+              <span className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-white">
+                Open <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </span>
+            </a>
+          ))}
         </div>
       </Container>
     </section>
