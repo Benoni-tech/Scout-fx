@@ -37,7 +37,6 @@ export async function POST(req: NextRequest) {
     const hasHfmAccount = str(body.hasHfmAccount, 10);
     const hasBinanceAccount = str(body.hasBinanceAccount, 10);
     const hasMt5Account = str(body.hasMt5Account, 10);
-    const motivation = str(body.motivation, 1000);
 
     if (name.length < 2) return bad("Enter your full name.");
     if (!EMAIL_RE.test(email)) return bad("Enter a valid email address.");
@@ -51,7 +50,6 @@ export async function POST(req: NextRequest) {
     if (!HFM.includes(hasHfmAccount)) return bad("Tell us whether you have an HFM account.");
     if (!HFM.includes(hasBinanceAccount)) return bad("Tell us whether you have a Binance account.");
     if (!HFM.includes(hasMt5Account)) return bad("Tell us whether you have an MT5 account.");
-    if (motivation.length < 20) return bad("Tell us a bit more about why you want to join (at least 20 characters).");
     if (body.termsAccepted !== true) return bad("You must accept the Terms & Conditions.");
     if (body.termsVersion !== TERMS_VERSION) {
       return bad("The terms have been updated. Refresh the page and review them again.");
@@ -70,7 +68,6 @@ export async function POST(req: NextRequest) {
       hasHfmAccount,
       hasBinanceAccount,
       hasMt5Account,
-      motivation,
       termsAccepted: true,
       termsVersion: TERMS_VERSION,
       termsAcceptedAt: new Date().toISOString(),

@@ -305,7 +305,7 @@ export default function SeedProgramPage() {
               <div className="bg-grid pointer-events-none absolute inset-0" />
               <div className="pointer-events-none absolute left-1/2 top-0 h-56 w-[640px] -translate-x-1/2 -translate-y-1/2 animate-pulse-glow rounded-full bg-brand-500/25 blur-3xl" />
 
-              <div className="relative px-6 py-14 sm:px-12 lg:px-16 lg:py-20">
+              <div className="relative px-3 py-12 sm:px-12 sm:py-14 lg:px-16 lg:py-20">
                 <div className="mx-auto max-w-2xl text-center">
                   <Eyebrow>
                     <Sprout className="h-3.5 w-3.5 text-brand-500" />
@@ -320,7 +320,7 @@ export default function SeedProgramPage() {
                   </p>
                 </div>
 
-                <div className="mx-auto mt-12 max-w-4xl rounded-3xl border border-white/10 bg-black/60 p-6 shadow-card backdrop-blur sm:p-10">
+                <div className="mx-auto mt-10 max-w-4xl rounded-3xl border border-white/10 bg-black/60 p-4 shadow-card backdrop-blur sm:mt-12 sm:p-10">
                   <SeedApplicationForm />
                 </div>
               </div>

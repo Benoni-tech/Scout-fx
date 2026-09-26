@@ -29,7 +29,6 @@ type Row = {
   hasHfmAccount: string;
   hasBinanceAccount?: string;
   hasMt5Account?: string;
-  motivation: string;
   termsVersion: string;
   termsAcceptedAt: string;
   status: SeedStatus | "new";
@@ -142,9 +141,9 @@ export default function AdminSeedPage() {
   }
 
   function exportCsv() {
-    const header = ["Ref", "Name", "Email", "WhatsApp", "Age", "Location", "Education", "Experience", "HFM account", "Binance account", "MT5 account", "Status", "Seed amount", "Registered", "Terms version", "Why join", "Note"];
+    const header = ["Ref", "Name", "Email", "WhatsApp", "Age", "Location", "Education", "Experience", "HFM account", "Binance account", "MT5 account", "Status", "Seed amount", "Registered", "Terms version", "Note"];
     const lines = (rows ?? []).map((r) =>
-      [r.ref, r.name, r.email, r.whatsapp, age(r.dob), r.location, eduLabel(r.education), EXPERIENCE[r.experience] ?? r.experience, r.hasHfmAccount, r.hasBinanceAccount ?? "", r.hasMt5Account ?? "", statusLabel(norm(r)), r.seedAmount ?? "", r.createdAt, r.termsVersion, r.motivation, r.note ?? ""]
+      [r.ref, r.name, r.email, r.whatsapp, age(r.dob), r.location, eduLabel(r.education), EXPERIENCE[r.experience] ?? r.experience, r.hasHfmAccount, r.hasBinanceAccount ?? "", r.hasMt5Account ?? "", statusLabel(norm(r)), r.seedAmount ?? "", r.createdAt, r.termsVersion, r.note ?? ""]
         .map(csvCell)
         .join(",")
     );
@@ -317,9 +316,11 @@ export default function AdminSeedPage() {
                         <td colSpan={6} className="px-4 pb-5 pt-1">
                           <div className="grid gap-5 md:grid-cols-[1.4fr_1fr]">
                             <div>
-                              <p className="text-[11px] font-semibold uppercase tracking-widest text-zinc-500">Why they want to join</p>
-                              <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-zinc-300">{r.motivation}</p>
-                              <p className="mt-4 text-xs text-zinc-500">
+                              <p className="text-[11px] font-semibold uppercase tracking-widest text-zinc-500">Registration</p>
+                              <p className="mt-2 text-sm text-zinc-300">
+                                Born {r.dob} · {eduLabel(r.education) || "Education not given"}
+                              </p>
+                              <p className="mt-2 text-xs text-zinc-500">
                                 Accepted terms v{r.termsVersion} on {fmt(r.termsAcceptedAt)}
                                 {r.statusUpdatedBy ? ` · last updated by ${r.statusUpdatedBy}` : ""}
                               </p>

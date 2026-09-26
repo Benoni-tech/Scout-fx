@@ -50,14 +50,16 @@ function Choice({
   options,
   value,
   onChange,
+  inline = false,
 }: {
+  inline?: boolean;
   name: string;
   options: readonly { value: string; label: string }[];
   value: string;
   onChange: (v: string) => void;
 }) {
   return (
-    <div className="grid gap-2 sm:grid-cols-3" role="radiogroup">
+    <div className={`grid gap-2 ${inline ? "grid-cols-3" : "sm:grid-cols-3"}`} role="radiogroup">
       {options.map((o) => {
         const on = value === o.value;
         return (
@@ -98,7 +100,6 @@ export default function SeedApplicationForm() {
     hasHfmAccount: "",
     hasBinanceAccount: "",
     hasMt5Account: "",
-    motivation: "",
   });
   const [agreed, setAgreed] = useState(false);
   const [termsOpen, setTermsOpen] = useState(false);
@@ -222,25 +223,13 @@ export default function SeedApplicationForm() {
             <Choice name="experience" options={EXPERIENCE} value={form.experience} onChange={set("experience")} />
           </Field>
           <Field label="Do you already have an HFM account?">
-            <Choice name="hasHfmAccount" options={YES_NO_UNSURE} value={form.hasHfmAccount} onChange={set("hasHfmAccount")} />
+            <Choice inline name="hasHfmAccount" options={YES_NO_UNSURE} value={form.hasHfmAccount} onChange={set("hasHfmAccount")} />
           </Field>
           <Field label="Do you have a Binance account?">
-            <Choice name="hasBinanceAccount" options={YES_NO_UNSURE} value={form.hasBinanceAccount} onChange={set("hasBinanceAccount")} />
+            <Choice inline name="hasBinanceAccount" options={YES_NO_UNSURE} value={form.hasBinanceAccount} onChange={set("hasBinanceAccount")} />
           </Field>
           <Field label="Do you have an MT5 (MetaTrader 5) account?">
-            <Choice name="hasMt5Account" options={YES_NO_UNSURE} value={form.hasMt5Account} onChange={set("hasMt5Account")} />
-          </Field>
-          <Field label="Why do you want to join?">
-            <textarea
-              required
-              minLength={20}
-              maxLength={1000}
-              rows={4}
-              placeholder="Tell us a little about your goals and why you want to learn to trade."
-              value={form.motivation}
-              onChange={(e) => set("motivation")(e.target.value)}
-              className="w-full resize-y rounded-2xl border border-white/10 px-4 py-4 text-base text-white outline-none transition-all placeholder:text-zinc-600 focus:border-brand-500 focus:bg-white/[0.05] focus:ring-4 focus:ring-brand-500/10"
-            />
+            <Choice inline name="hasMt5Account" options={YES_NO_UNSURE} value={form.hasMt5Account} onChange={set("hasMt5Account")} />
           </Field>
         </fieldset>
         </div>
