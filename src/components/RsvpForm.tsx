@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useEffect, useRef, useState, FormEvent } from "react";
 import { Loader2, CheckCircle2, User, Mail, Phone, Ticket, ArrowRight } from "lucide-react";
 import { trackPixel } from "@/lib/metaPixel";
+import { captureUtm, Utm } from "@/lib/utm";
 import Honeypot, { honeypotValue } from "@/components/Honeypot";
 
 export default function RsvpForm({ eventId, eventName }: { eventId: string; eventName?: string }) {
@@ -16,6 +17,11 @@ export default function RsvpForm({ eventId, eventName }: { eventId: string; even
     alreadyRegistered?: boolean;
     emailSent?: boolean;
   }>({});
+  const utm = useRef<Utm | null>(null);
+
+  useEffect(() => {
+    utm.current = captureUtm();
+  }, []);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     const company = honeypotValue(e);
@@ -23,11 +29,12 @@ export default function RsvpForm({ eventId, eventName }: { eventId: string; even
     setStatus("loading");
     setErrorMsg("");
 
+    const tags = utm.current ?? captureUtm();
     try {
       const res = await fetch("/api/rsvp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, eventId, source: "event-page", company }),
+        body: JSON.stringify({ ...form, eventId, source: "event-page", company, ...tags }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Something went wrong");
@@ -37,7 +44,7 @@ export default function RsvpForm({ eventId, eventName }: { eventId: string; even
       if (!data.alreadyRegistered) {
         trackPixel(
           "CompleteRegistration",
-          { content_name: eventName ?? eventId, content_ids: [eventId], status: true },
+          { content_name: eventName ?? eventId, content_ids: [eventId], status: true, source: tags.utm_source },
           data.ticketCode ? `rsvp-${data.ticketCode}` : undefined
         );
       }

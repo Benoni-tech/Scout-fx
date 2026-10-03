@@ -26,7 +26,9 @@ export default function PrivacyPage() {
             your name, email address and WhatsApp number (and, for the Seed
             Program, the extra details on that form). We use them to run the
             event or program, send your ticket or confirmation, and contact
-            you about it. We do not sell your information.
+            you about it. When you register for an event we also note how
+            you reached us (for example a WhatsApp or Facebook link), so we
+            know which channels work. We do not sell your information.
           </p>
           <p>
             <strong className="text-white">Meta Pixel on event pages.</strong>{" "}

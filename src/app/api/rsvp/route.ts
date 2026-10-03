@@ -4,6 +4,7 @@ import { getEventById } from "@/lib/events";
 import { generateTicketCode, Rsvp } from "@/lib/tickets";
 import { sendTicketEmail } from "@/lib/emails";
 import { rateLimit, isHoneypotFilled } from "@/lib/rateLimit";
+import { cleanSource, cleanUtm } from "@/lib/utm";
 
 const RESEND_COOLDOWN_MS = 15 * 60 * 1000;
 
@@ -80,6 +81,9 @@ export async function POST(req: NextRequest) {
       email: normalizedEmail,
       whatsapp: whatsapp.trim(),
       source,
+      utm_source: cleanSource(body.utm_source) || "direct",
+      utm_medium: cleanUtm(body.utm_medium),
+      utm_campaign: cleanUtm(body.utm_campaign),
       attended: false,
       checkedInAt: null,
       checkedInBy: null,

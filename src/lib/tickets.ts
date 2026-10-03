@@ -12,6 +12,9 @@ export type Rsvp = {
   email: string;
   whatsapp: string;
   source: string;
+  utm_source?: string;
+  utm_medium?: string;
+  utm_campaign?: string;
   attended: boolean;
   checkedInAt: string | null;
   checkedInBy: string | null;
