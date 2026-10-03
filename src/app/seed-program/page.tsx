@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import {
   AlertTriangle,
@@ -27,11 +26,15 @@ import Reveal from "@/components/Reveal";
 import Faq from "@/components/Faq";
 import SeedApplicationForm from "@/components/SeedApplicationForm";
 import { SEED_PROGRAM, seedFaqs } from "@/lib/seedProgram";
+import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: `${SEED_PROGRAM.name} | Free trading training`,
+export const metadata = buildMetadata({
+  title: { absolute: `${SEED_PROGRAM.name} | Free trading training` },
+  shareTitle: `${SEED_PROGRAM.name}: free trading training`,
+  path: "/seed-program",
+  image: "/seed-program/opengraph-image",
   description: `Register for free trading training from Scout FX. Participants may also qualify for up to $${SEED_PROGRAM.seedAmount} seed capital, awarded at Scout FX's discretion.`,
-};
+});
 
 const $ = `$${SEED_PROGRAM.seedAmount}`;
 

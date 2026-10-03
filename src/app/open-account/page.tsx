@@ -1,5 +1,6 @@
 import { Container, Eyebrow } from "@/components/ui";
 import { ShieldCheck, AlertTriangle, Clock, MessageCircle } from "lucide-react";
+import { buildMetadata } from "@/lib/seo";
 
 const reasons = [
   {
@@ -27,6 +28,12 @@ const WHATSAPP_NUMBER = "+233 54 462 4401";
 const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(
   "Hi Scout FX, I'd like to open an HFM account."
 )}`;
+
+export const metadata = buildMetadata({
+  title: "Trade with HFM",
+  description: "Open an HFM trading account through Scout FX, the broker we trade and teach through. Sign-up opening soon. Message us on WhatsApp for help.",
+  path: "/open-account",
+});
 
 export default function OpenAccountPage() {
   return (

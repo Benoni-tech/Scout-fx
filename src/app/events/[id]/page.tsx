@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
@@ -14,6 +15,7 @@ import TestimonialSlider from "@/components/TestimonialSlider";
 import Faq from "@/components/Faq";
 import Reveal from "@/components/Reveal";
 import EventPixel from "@/components/EventPixel";
+import { buildMetadata, eventCity, eventTime, shortEventDate } from "@/lib/seo";
 import {
   ArrowLeft,
   ArrowRight,
@@ -38,6 +40,25 @@ const LESSON_ICONS = [Globe, Clock, LineChart, ShieldCheck, Newspaper, Radio];
 
 export function generateStaticParams() {
   return upcomingEvents.map((e) => ({ id: e.id }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const event = getEventById((await params).id);
+  if (!event) return {};
+  const when = `${shortEventDate(event)}, ${eventTime(event)}`;
+  const title = `${event.free ? "Free " : ""}${event.title} · ${eventCity(event)}, ${shortEventDate(event)}`;
+  // First sentence of the description: what it covers. Then the practical details.
+  const about = event.description.split(/(?<=\.)\s/)[0];
+  return buildMetadata({
+    title,
+    path: `/events/${event.id}`,
+    image: `/events/${event.id}/opengraph-image`,
+    description: `${when} at ${event.location}. ${about}${event.free ? " Free to attend, register for your ticket." : ""}`,
+  });
 }
 
 export default async function EventDetailPage({

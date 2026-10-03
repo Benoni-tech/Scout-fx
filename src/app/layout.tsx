@@ -4,6 +4,8 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import UtmCapture from "@/components/UtmCapture";
+import { SITE_URL } from "@/lib/tickets";
+import { SITE_NAME } from "@/lib/seo";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -14,9 +16,14 @@ const manrope = Manrope({
 export const viewport: Viewport = { themeColor: "#000000" };
 
 export const metadata: Metadata = {
-  title: "Scout FX | Trading Education, Community & Signals",
+  // Makes generated image and canonical URLs absolute, as link previews require.
+  metadataBase: new URL(SITE_URL),
+  title: { default: "Scout FX | Trading Education, Community & Signals", template: "%s | Scout FX" },
   description:
     "Structured trading education, an active trader community, and rule-based signals, built for traders in Ghana and beyond.",
+  // Fallback for pages without their own tags. No url here, or every page would claim the home page's.
+  openGraph: { siteName: SITE_NAME, type: "website", locale: "en_GB" },
+  twitter: { card: "summary_large_image" },
 };
 
 export default function RootLayout({

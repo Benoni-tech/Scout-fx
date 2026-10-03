@@ -1,6 +1,7 @@
 import { testimonials } from "@/lib/testimonials";
 import { Container, Eyebrow, StatCard, SecondaryButton } from "@/components/ui";
 import { Users, TrendingUp, CalendarCheck, Download, Quote } from "lucide-react";
+import { buildMetadata } from "@/lib/seo";
 
 const stats = [
   { label: "Community members", value: "4,200+" },
@@ -16,6 +17,12 @@ const platforms = [
   { name: "WhatsApp community", followers: "1.6K" },
 ];
 
+
+export const metadata = buildMetadata({
+  title: "Media kit",
+  description: "Scout FX audience, channels and partnership details.",
+  path: "/media-kit",
+});
 
 export default function MediaKitPage() {
   return (

@@ -1,4 +1,11 @@
 import { Container } from "@/components/ui";
+import { buildMetadata } from "@/lib/seo";
+
+export const metadata = buildMetadata({
+  title: "Terms of use",
+  description: "The terms for using the Scout FX website.",
+  path: "/legal/terms",
+});
 
 export default function TermsPage() {
   return (

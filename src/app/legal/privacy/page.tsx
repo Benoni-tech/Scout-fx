@@ -1,9 +1,11 @@
-import type { Metadata } from "next";
 import { Container } from "@/components/ui";
+import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Privacy Policy | Scout FX",
-};
+export const metadata = buildMetadata({
+  title: "Privacy policy",
+  description: "What information Scout FX collects, why, and the choices you have.",
+  path: "/legal/privacy",
+});
 
 export default function PrivacyPage() {
   return (

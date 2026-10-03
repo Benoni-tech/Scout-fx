@@ -2,6 +2,13 @@ import Link from "next/link";
 import { Container, Eyebrow } from "@/components/ui";
 import { CalendarDays, MapPin, Users } from "lucide-react";
 import { upcomingEvents, pastEvents } from "@/lib/events";
+import { buildMetadata } from "@/lib/seo";
+
+export const metadata = buildMetadata({
+  title: "Seminars & workshops",
+  description: "Free in-person and online sessions from Scout FX on trading fundamentals, risk management and strategy.",
+  path: "/events",
+});
 
 export default function EventsPage() {
   return (

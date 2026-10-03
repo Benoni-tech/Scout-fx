@@ -1,5 +1,6 @@
 import { Container, Eyebrow, StatCard, SecondaryButton } from "@/components/ui";
 import { Users, TrendingUp, CalendarCheck, Handshake, Mic, Megaphone } from "lucide-react";
+import { buildMetadata } from "@/lib/seo";
 
 const stats = [
   { label: "Community members", value: "4,200+" },
@@ -25,6 +26,12 @@ const opportunities = [
     body: "Currently partnered with HFM. Open to conversations with other regulated brokers and trading-adjacent tools.",
   },
 ];
+
+export const metadata = buildMetadata({
+  title: "Partnerships",
+  description: "Partner with Scout FX to reach an engaged Ghanaian trading audience. Brokers, fintech products and events that support responsible trading.",
+  path: "/partnerships",
+});
 
 export default function PartnershipsPage() {
   return (

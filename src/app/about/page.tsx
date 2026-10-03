@@ -1,5 +1,6 @@
 import { Container, Eyebrow, SecondaryButton } from "@/components/ui";
 import { ShieldCheck, GraduationCap, Users } from "lucide-react";
+import { buildMetadata } from "@/lib/seo";
 
 const values = [
   {
@@ -18,6 +19,12 @@ const values = [
     body: "Built with and for Ghanaian traders: seminars, workshops and an active community, not a one-way broadcast.",
   },
 ];
+
+export const metadata = buildMetadata({
+  title: "About",
+  description: "Scout FX is a trading education brand teaching technical analysis, risk management and trading psychology to traders in Ghana.",
+  path: "/about",
+});
 
 export default function AboutPage() {
   return (

@@ -1,28 +1,13 @@
-import { readFile } from "fs/promises";
-import { join } from "path";
 import { ImageResponse } from "next/og";
 import QRCode from "qrcode";
 import type { EventItem } from "@/lib/events";
 import { checkinUrl } from "@/lib/tickets";
 import { LOGO_DATA_URL, LOGO_WIDTH, LOGO_HEIGHT } from "@/lib/logoData";
+import { loadFonts } from "@/lib/brandFonts";
 
 const Y = "#FBFE00";
 const W = 800;
 const H = 1500;
-
-// Manrope (the site font), bundled so the ticket matches the website.
-// Included in the serverless bundle via outputFileTracingIncludes in next.config.ts.
-let fonts: Promise<{ name: string; data: Buffer; weight: 400 | 700 | 800; style: "normal" }[]> | undefined;
-function loadFonts() {
-  return (fonts ??= Promise.all(
-    ([400, 700, 800] as const).map(async (weight) => ({
-      name: "Manrope",
-      data: await readFile(join(process.cwd(), "src/lib/fonts", `manrope-${weight}.woff`)),
-      weight,
-      style: "normal" as const,
-    }))
-  ));
-}
 
 /** Splits "Saturday, October 31, 2026 · 11:00 AM GMT" into date and time. */
 function splitDate(date: string) {

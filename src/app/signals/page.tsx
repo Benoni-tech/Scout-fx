@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Container, Eyebrow, StatCard, PrimaryButton, SecondaryButton } from "@/components/ui";
 import { Activity, Target, TrendingUp, AlertTriangle, ListChecks, Bell, ShieldCheck } from "lucide-react";
+import { buildMetadata } from "@/lib/seo";
 
 const stats = [
   { label: "Logged signals", value: "312" },
@@ -13,6 +14,12 @@ const steps = [
   { icon: ListChecks, title: "The signal is logged", desc: "Pair, direction, entry, stop and target are recorded immediately and permanently, before the outcome is known." },
   { icon: Bell, title: "You get notified", desc: "In-app, Telegram or email, your choice, set after you accept the risk disclosure." },
 ];
+
+export const metadata = buildMetadata({
+  title: "Signals with a public track record",
+  description: "Rule-based trading signals, logged the moment they fire and never edited. The full history, including losses, is public.",
+  path: "/signals",
+});
 
 export default function SignalsLandingPage() {
   return (

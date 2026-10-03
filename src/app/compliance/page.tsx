@@ -1,5 +1,12 @@
 import { Container } from "@/components/ui";
 import Link from "next/link";
+import { buildMetadata } from "@/lib/seo";
+
+export const metadata = buildMetadata({
+  title: "Compliance & affiliate disclosure",
+  description: "How Scout FX handles affiliate relationships, signals and education responsibly.",
+  path: "/compliance",
+});
 
 export default function CompliancePage() {
   return (

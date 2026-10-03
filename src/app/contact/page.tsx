@@ -1,5 +1,6 @@
 import { Container, Eyebrow, PrimaryButton, SecondaryButton } from "@/components/ui";
 import { Mail, MessageCircle, Twitter, Linkedin } from "lucide-react";
+import { buildMetadata } from "@/lib/seo";
 
 const channels = [
   {
@@ -27,6 +28,12 @@ const channels = [
     href: "#",
   },
 ];
+
+export const metadata = buildMetadata({
+  title: "Contact",
+  description: "Questions about the community, an event or a partnership? Get in touch with Scout FX.",
+  path: "/contact",
+});
 
 export default function ContactPage() {
   return (

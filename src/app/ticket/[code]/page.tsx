@@ -10,7 +10,7 @@ import { normalizeTicketCode } from "@/lib/tickets";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Your ticket | Scout FX",
+  title: "Your ticket",
   robots: { index: false, follow: false },
 };
 

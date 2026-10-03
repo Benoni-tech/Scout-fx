@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     "/api/tickets/[code]/image": ["./src/lib/fonts/**"],
     "/api/rsvp": ["./src/lib/fonts/**"],
+    // link-preview images (opengraph-image.tsx) use the same font
+    "/opengraph-image*": ["./src/lib/fonts/**"],
+    "/**/opengraph-image*": ["./src/lib/fonts/**"],
   },
   // Only local images are used, so the image optimizer isn't open to other sites.
   poweredByHeader: false,

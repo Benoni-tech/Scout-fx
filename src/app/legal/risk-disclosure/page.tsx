@@ -1,4 +1,11 @@
 import { Container } from "@/components/ui";
+import { buildMetadata } from "@/lib/seo";
+
+export const metadata = buildMetadata({
+  title: "Risk disclosure",
+  description: "Trading forex, gold and CFDs carries a high level of risk. Read the Scout FX risk disclosure before you trade.",
+  path: "/legal/risk-disclosure",
+});
 
 export default function RiskDisclosurePage() {
   return (

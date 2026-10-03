@@ -4,8 +4,15 @@ import { Container, Eyebrow } from "@/components/ui";
 import ArticleCover from "@/components/ArticleCover";
 import Reveal from "@/components/Reveal";
 import { articles } from "@/lib/articles";
+import { buildMetadata } from "@/lib/seo";
 
 const categories = ["All", "Technical Analysis", "Risk Management", "Trading Psychology", "Market Basics"];
+
+export const metadata = buildMetadata({
+  title: "Trading education",
+  description: "Clear articles on how markets and indicators work, from technical analysis to risk management. Education, not trade recommendations.",
+  path: "/education",
+});
 
 export default async function EducationPage({
   searchParams,

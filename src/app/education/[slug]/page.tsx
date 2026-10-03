@@ -1,12 +1,30 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/ui";
 import ArticleCover from "@/components/ArticleCover";
 import { AlertTriangle, ArrowLeft } from "lucide-react";
 import { articles, getArticleBySlug, getRelatedArticles } from "@/lib/articles";
+import { buildMetadata } from "@/lib/seo";
 
 export function generateStaticParams() {
   return articles.map((a) => ({ slug: a.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const article = getArticleBySlug((await params).slug);
+  if (!article) return {};
+  const intro = article.body[0] ?? "";
+  return buildMetadata({
+    title: article.title,
+    path: `/education/${article.slug}`,
+    image: `/education/${article.slug}/opengraph-image`,
+    description: intro.length > 180 ? `${intro.slice(0, 177).replace(/\s+\S*$/, "")}...` : intro,
+  });
 }
 
 export default async function ArticlePage({

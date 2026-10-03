@@ -31,6 +31,7 @@ import Reveal from "@/components/Reveal";
 import { upcomingEvents } from "@/lib/events";
 import { articles } from "@/lib/articles";
 import { testimonials } from "@/lib/testimonials";
+import { buildMetadata } from "@/lib/seo";
 
 const kpis = [
   { value: "250", label: "Registrations / mo" },
@@ -147,6 +148,13 @@ const trackRecord = [
   { label: "Avg. R:R", value: "1:1.8" },
 ];
 
+
+export const metadata = buildMetadata({
+  title: { absolute: "Scout FX | Trading Education, Community & Signals" },
+  description: "Structured trading education, free seminars, an active trader community and rule-based signals, built for traders in Ghana and beyond.",
+  path: "/",
+  shareTitle: "Scout FX: trade smarter with real education",
+});
 
 export default function Home() {
   const latest = articles.slice(0, 3);

@@ -1,5 +1,6 @@
 import { Container, Eyebrow, StatCard } from "@/components/ui";
 import { ListChecks, Target, TrendingUp, TrendingDown } from "lucide-react";
+import { buildMetadata } from "@/lib/seo";
 
 // TODO: replace with a live Firestore query against `signals`, all statuses,
 // and computed stats from `signalPerformance`
@@ -10,6 +11,12 @@ const history = [
   { pair: "XAU/USD", direction: "SELL", entry: 2421.0, result: "TARGET", pnl: "+1.4R", date: "Aug 15" },
   { pair: "EUR/USD", direction: "BUY", entry: 1.0835, result: "STOP", pnl: "-1R", date: "Aug 12" },
 ];
+
+export const metadata = buildMetadata({
+  title: "Signal track record",
+  description: "Every Scout FX signal ever issued, wins and losses, logged the moment it fired.",
+  path: "/signals/history",
+});
 
 export default function SignalHistoryPage() {
   return (

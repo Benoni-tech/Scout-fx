@@ -1,6 +1,7 @@
 import { Container, Eyebrow } from "@/components/ui";
 import LeadForm from "@/components/LeadForm";
 import { CheckCircle2 } from "lucide-react";
+import { buildMetadata } from "@/lib/seo";
 
 const perks = [
   "Weekly education drops: technical analysis, risk, psychology",
@@ -8,6 +9,13 @@ const perks = [
   "Access to the signals track record as it's published",
   "No spam, no pressure to trade, ever",
 ];
+
+export const metadata = buildMetadata({
+  title: "Join the community free",
+  description: "Join the Scout FX community for free: weekly trading education, first word on seminars and workshops, and no pressure to trade.",
+  path: "/join",
+  image: "/join/opengraph-image",
+});
 
 export default function JoinPage() {
   return (
