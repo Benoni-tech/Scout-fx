@@ -2,8 +2,9 @@
 
 import { useState, FormEvent } from "react";
 import { Loader2, CheckCircle2, User, Mail, Phone, Ticket, ArrowRight } from "lucide-react";
+import { trackPixel } from "@/lib/metaPixel";
 
-export default function RsvpForm({ eventId }: { eventId: string }) {
+export default function RsvpForm({ eventId, eventName }: { eventId: string; eventName?: string }) {
   const [form, setForm] = useState({ name: "", email: "", whatsapp: "" });
   const [status, setStatus] = useState<
     "idle" | "loading" | "success" | "error"
@@ -30,6 +31,14 @@ export default function RsvpForm({ eventId }: { eventId: string }) {
       if (!res.ok) throw new Error(data?.error || "Something went wrong");
       setResult(data);
       setStatus("success");
+      // Ad conversion: only genuinely new registrations, keyed by ticket code.
+      if (!data.alreadyRegistered) {
+        trackPixel(
+          "CompleteRegistration",
+          { content_name: eventName ?? eventId, content_ids: [eventId], status: true },
+          data.ticketCode ? `rsvp-${data.ticketCode}` : undefined
+        );
+      }
     } catch (err) {
       setStatus("error");
       setErrorMsg(err instanceof Error ? err.message : "Something went wrong");

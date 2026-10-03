@@ -13,6 +13,7 @@ import SpeakersGrid from "@/components/SpeakersGrid";
 import TestimonialSlider from "@/components/TestimonialSlider";
 import Faq from "@/components/Faq";
 import Reveal from "@/components/Reveal";
+import EventPixel from "@/components/EventPixel";
 import {
   ArrowLeft,
   ArrowRight,
@@ -75,6 +76,8 @@ export default async function EventDetailPage({
 
   return (
     <>
+      <EventPixel eventId={event.id} eventName={event.title} />
+
       {/* HERO */}
       <section className="relative -mt-24 overflow-hidden pb-24 pt-36">
         <div className="bg-grid pointer-events-none absolute inset-0" />
@@ -299,7 +302,7 @@ export default async function EventDetailPage({
                 </div>
 
                 <div className="mx-auto mt-12 max-w-5xl rounded-3xl border border-white/10 bg-black/60 p-6 shadow-card backdrop-blur sm:p-10">
-                  <RsvpForm eventId={event.id} />
+                  <RsvpForm eventId={event.id} eventName={event.title} />
                 </div>
 
                 <div className="mx-auto mt-8 flex max-w-5xl flex-col items-center justify-between gap-4 text-sm text-zinc-400 sm:flex-row">
@@ -316,6 +319,15 @@ export default async function EventDetailPage({
                     <span className="font-semibold text-white">{event.contactPhone}</span>
                   </a>
                 </div>
+
+                <p className="mx-auto mt-6 max-w-5xl text-center text-xs leading-relaxed text-zinc-600">
+                  This page uses the Meta Pixel to measure our Facebook ads.
+                  See our{" "}
+                  <Link href="/legal/privacy" className="underline hover:text-zinc-400">
+                    privacy policy
+                  </Link>{" "}
+                  for details and how to opt out.
+                </p>
               </div>
             </div>
           </Reveal>

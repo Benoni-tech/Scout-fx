@@ -29,6 +29,7 @@ const columns = [
       { href: "/signals/history", label: "Signal track record" },
       { href: "/legal/risk-disclosure", label: "Risk disclosure" },
       { href: "/legal/terms", label: "Terms of service" },
+      { href: "/legal/privacy", label: "Privacy policy" },
     ],
   },
   {
