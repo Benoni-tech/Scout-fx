@@ -1,5 +1,5 @@
-import { Container, Eyebrow, PrimaryButton } from "@/components/ui";
-import { ShieldCheck, ArrowRight, AlertTriangle } from "lucide-react";
+import { Container, Eyebrow } from "@/components/ui";
+import { ShieldCheck, AlertTriangle, Clock, MessageCircle } from "lucide-react";
 
 const reasons = [
   {
@@ -17,13 +17,16 @@ const reasons = [
 ];
 
 const steps = [
-  { n: "1", label: "Open an account", desc: "Register through the link below. Takes a few minutes." },
+  { n: "1", label: "Open an account", desc: "Register through our HFM link. Takes a few minutes." },
   { n: "2", label: "Verify", desc: "Complete HFM's standard KYC verification." },
   { n: "3", label: "Start trading", desc: "Fund your account and apply what you've learned." },
 ];
 
-// TODO: replace with the live HFM affiliate link (Affiliate ID: 30537791)
-const HFM_AFFILIATE_LINK = "https://www.hfm.com/register?ref=30537791";
+// The HFM sign-up link isn't live yet. Enquiries go to WhatsApp until it is.
+const WHATSAPP_NUMBER = "+233 54 462 4401";
+const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(
+  "Hi Scout FX, I'd like to open an HFM account."
+)}`;
 
 export default function OpenAccountPage() {
   return (
@@ -50,10 +53,22 @@ export default function OpenAccountPage() {
           </p>
         </div>
 
-        <div className="mt-8">
-          <PrimaryButton href={HFM_AFFILIATE_LINK}>
-            Open HFM account <ArrowRight className="ml-2 h-4 w-4" />
-          </PrimaryButton>
+        <div className="mx-auto mt-8 max-w-lg rounded-2xl border border-brand-500/30 bg-brand-500/5 p-6">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-600 px-3 py-1 text-xs font-bold uppercase tracking-wide text-black">
+            <Clock className="h-3.5 w-3.5" /> Coming soon
+          </span>
+          <p className="mt-4 text-sm leading-relaxed text-zinc-300">
+            Account sign-up through Scout FX is opening soon. For enquiries or
+            help getting set up, message us on WhatsApp.
+          </p>
+          <a
+            href={WHATSAPP_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-5 inline-flex items-center justify-center gap-2 rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-black transition-all hover:bg-brand-700 hover:shadow-glow"
+          >
+            <MessageCircle className="h-4 w-4" /> WhatsApp {WHATSAPP_NUMBER}
+          </a>
         </div>
 
         <div className="mx-auto mt-16 grid max-w-3xl gap-6 text-left sm:grid-cols-3">
