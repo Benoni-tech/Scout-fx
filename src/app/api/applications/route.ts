@@ -3,6 +3,7 @@ import { getAdminDb } from "@/lib/firebaseAdmin";
 import { generateTicketCode } from "@/lib/tickets";
 import { sendApplicationEmail } from "@/lib/emails";
 import { EDUCATION_LEVELS, TERMS_VERSION } from "@/lib/seedProgram";
+import { rateLimit, isHoneypotFilled } from "@/lib/rateLimit";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const EXPERIENCE = ["none", "beginner", "some"];
@@ -27,6 +28,7 @@ const bad = (error: string) => NextResponse.json({ error }, { status: 400 });
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+    if (isHoneypotFilled(body)) return NextResponse.json({ ok: true });
     const name = str(body.name, 120);
     const email = str(body.email, 200).toLowerCase();
     const whatsapp = str(body.whatsapp, 40);
@@ -53,6 +55,13 @@ export async function POST(req: NextRequest) {
     if (body.termsAccepted !== true) return bad("You must accept the Terms & Conditions.");
     if (body.termsVersion !== TERMS_VERSION) {
       return bad("The terms have been updated. Refresh the page and review them again.");
+    }
+
+    if (!(await rateLimit(req, "applications", { limit: 5, windowSec: 600 }))) {
+      return NextResponse.json(
+        { error: "Too many attempts. Please wait a few minutes and try again." },
+        { status: 429 }
+      );
     }
 
     const ref = `SFX-${generateTicketCode(6)}`;
@@ -82,8 +91,8 @@ export async function POST(req: NextRequest) {
       await doc.create(application);
     } catch (err) {
       if ((err as { code?: number }).code === 6) {
-        const existing = await doc.get();
-        return NextResponse.json({ ok: true, alreadyApplied: true, ref: existing.data()?.ref });
+        // Don't reveal anything about the existing registration to whoever is asking.
+        return NextResponse.json({ ok: true, alreadyApplied: true });
       }
       throw err;
     }

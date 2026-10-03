@@ -3,6 +3,7 @@
 import { useState, FormEvent } from "react";
 import { Loader2, CheckCircle2, User, Mail, Phone, Ticket, ArrowRight } from "lucide-react";
 import { trackPixel } from "@/lib/metaPixel";
+import Honeypot, { honeypotValue } from "@/components/Honeypot";
 
 export default function RsvpForm({ eventId, eventName }: { eventId: string; eventName?: string }) {
   const [form, setForm] = useState({ name: "", email: "", whatsapp: "" });
@@ -16,7 +17,8 @@ export default function RsvpForm({ eventId, eventName }: { eventId: string; even
     emailSent?: boolean;
   }>({});
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    const company = honeypotValue(e);
     e.preventDefault();
     setStatus("loading");
     setErrorMsg("");
@@ -25,7 +27,7 @@ export default function RsvpForm({ eventId, eventName }: { eventId: string; even
       const res = await fetch("/api/rsvp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, eventId, source: "event-page" }),
+        body: JSON.stringify({ ...form, eventId, source: "event-page", company }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Something went wrong");
@@ -83,6 +85,7 @@ export default function RsvpForm({ eventId, eventName }: { eventId: string; even
 
   return (
     <form onSubmit={handleSubmit}>
+      <Honeypot />
       <div className="grid gap-4 lg:grid-cols-3">
         {fields.map((f) => (
           <label key={f.key} className="block">

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAdminDb } from "@/lib/firebaseAdmin";
+import { rateLimit } from "@/lib/rateLimit";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const DISCLOSURE_VERSION = "2026-08-v1";
@@ -8,11 +9,15 @@ export async function POST(req: NextRequest) {
   try {
     const { email } = await req.json();
 
-    if (!email || typeof email !== "string" || !EMAIL_RE.test(email)) {
+    if (!email || typeof email !== "string" || email.length > 200 || !EMAIL_RE.test(email)) {
       return NextResponse.json(
         { error: "Enter a valid email address." },
         { status: 400 }
       );
+    }
+
+    if (!(await rateLimit(req, "disclosure", { limit: 10, windowSec: 600 }))) {
+      return NextResponse.json({ error: "Too many attempts. Try again later." }, { status: 429 });
     }
 
     const normalizedEmail = email.trim().toLowerCase();

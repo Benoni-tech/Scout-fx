@@ -72,7 +72,9 @@ function fmt(iso?: string) {
 }
 
 function csvCell(v: unknown) {
-  const s = String(v ?? "");
+  let s = String(v ?? "");
+  // Stop spreadsheet apps treating user-entered text as a formula.
+  if (/^[=+\-@\t\r]/.test(s)) s = `'${s}`;
   return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
 }
 

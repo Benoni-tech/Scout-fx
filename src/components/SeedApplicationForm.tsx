@@ -16,6 +16,7 @@ import {
   User,
 } from "lucide-react";
 import TermsModal from "@/components/TermsModal";
+import Honeypot, { honeypotValue } from "@/components/Honeypot";
 import { EDUCATION_LEVELS, SEED_PROGRAM, TERMS_VERSION, YES_NO_UNSURE, seedTerms } from "@/lib/seedProgram";
 
 const EXPERIENCE = [
@@ -110,7 +111,8 @@ export default function SeedApplicationForm() {
   const set = (k: keyof typeof form) => (v: string) => setForm((f) => ({ ...f, [k]: v }));
   const closeTerms = useCallback(() => setTermsOpen(false), []);
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    const company = honeypotValue(e);
     e.preventDefault();
     if (!agreed) {
       setStatus("error");
@@ -123,7 +125,7 @@ export default function SeedApplicationForm() {
       const res = await fetch("/api/applications", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, termsAccepted: true, termsVersion: TERMS_VERSION }),
+        body: JSON.stringify({ ...form, termsAccepted: true, termsVersion: TERMS_VERSION, company }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Something went wrong");
@@ -161,6 +163,7 @@ export default function SeedApplicationForm() {
   return (
     <>
       <form onSubmit={handleSubmit} className="space-y-8">
+        <Honeypot />
         {/* about you */}
         <fieldset className="grid gap-4 md:grid-cols-2">
           <legend className="mb-4 text-sm font-bold text-white">

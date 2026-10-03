@@ -26,6 +26,7 @@ import {
   LogOut,
   ScanLine,
   Sprout,
+  Users,
 } from "lucide-react";
 import { auth } from "@/lib/firebase";
 import { Container } from "@/components/ui";
@@ -120,6 +121,7 @@ const NAV = [
   { href: "/admin", label: "Home", icon: Home },
   { href: "/admin/events", label: "Events", icon: CalendarDays },
   { href: "/admin/seed", label: "Seed registrations", icon: Sprout },
+  { href: "/admin/community", label: "Community", icon: Users },
   { href: "/admin/checkin", label: "Check-in", icon: ScanLine },
 ];
 

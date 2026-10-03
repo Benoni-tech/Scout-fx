@@ -32,6 +32,7 @@ export default function AdminOverviewPage() {
   const links = [
     { href: "/admin/events", icon: CalendarCheck, title: "Event registrations", desc: "See who signed up for events, check people in, export to CSV." },
     { href: "/admin/seed", icon: Sprout, title: "Seed registrations", desc: "Track trainees and decide who gets seed capital." },
+    { href: "/admin/community", icon: Users, title: "Community", desc: "Everyone who joined through the website, with CSV export." },
     { href: "/admin/checkin", icon: ScanLine, title: "Gate check-in", desc: "Scan a ticket QR or type the code at the door." },
   ];
 
@@ -51,7 +52,7 @@ export default function AdminOverviewPage() {
         </div>
 
         <p className="mb-3 mt-10 text-xs font-semibold uppercase tracking-widest text-zinc-500">Go to</p>
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {links.map((l) => (
             <a key={l.href} href={l.href} className="card card-hover group flex flex-col p-6">
               <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white/5 text-zinc-400 transition-colors group-hover:bg-brand-500 group-hover:text-black">

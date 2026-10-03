@@ -3,12 +3,21 @@ import { getAdminDb } from "@/lib/firebaseAdmin";
 import { getEventById } from "@/lib/events";
 import { generateTicketCode, Rsvp } from "@/lib/tickets";
 import { sendTicketEmail } from "@/lib/emails";
+import { rateLimit, isHoneypotFilled } from "@/lib/rateLimit";
+
+const RESEND_COOLDOWN_MS = 15 * 60 * 1000;
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(req: NextRequest) {
   try {
-    const { eventId, name, email, whatsapp, source } = await req.json();
+    const body = await req.json();
+    if (isHoneypotFilled(body)) return NextResponse.json({ ok: true, emailSent: true });
+    const { eventId } = body;
+    const name = typeof body.name === "string" ? body.name.trim().slice(0, 120) : "";
+    const email = typeof body.email === "string" ? body.email.trim().slice(0, 200) : "";
+    const whatsapp = typeof body.whatsapp === "string" ? body.whatsapp.trim().slice(0, 40) : "";
+    const source = typeof body.source === "string" ? body.source.slice(0, 40) : "unknown";
 
     const event = typeof eventId === "string" ? getEventById(eventId) : undefined;
     if (!event) {
@@ -30,6 +39,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    if (!(await rateLimit(req, "rsvp", { limit: 5, windowSec: 600 }))) {
+      return NextResponse.json(
+        { error: "Too many attempts. Please wait a few minutes and try again." },
+        { status: 429 }
+      );
+    }
+
     const db = getAdminDb();
     const normalizedEmail = email.trim().toLowerCase();
 
@@ -44,10 +60,15 @@ export async function POST(req: NextRequest) {
 
     if (!existing.empty) {
       const doc = existing.docs[0];
-      try {
-        await sendTicketEmail({ ...(doc.data() as Omit<Rsvp, "id">), id: doc.id }, event);
-      } catch (emailErr) {
-        console.error("Resend ticket re-send failed:", emailErr);
+      // Re-send at most every 15 minutes so this can't be used to spam an inbox.
+      const last = Date.parse(doc.data().lastTicketSentAt ?? doc.data().createdAt ?? 0) || 0;
+      if (Date.now() - last > RESEND_COOLDOWN_MS) {
+        try {
+          await sendTicketEmail({ ...(doc.data() as Omit<Rsvp, "id">), id: doc.id }, event);
+          await doc.ref.update({ lastTicketSentAt: new Date().toISOString() });
+        } catch (emailErr) {
+          console.error("Resend ticket re-send failed:", emailErr);
+        }
       }
       return NextResponse.json({ ok: true, alreadyRegistered: true });
     }
@@ -58,7 +79,7 @@ export async function POST(req: NextRequest) {
       name: name.trim(),
       email: normalizedEmail,
       whatsapp: whatsapp.trim(),
-      source: typeof source === "string" ? source : "unknown",
+      source,
       attended: false,
       checkedInAt: null,
       checkedInBy: null,

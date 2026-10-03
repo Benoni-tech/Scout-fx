@@ -2,6 +2,7 @@
 
 import { useState, FormEvent } from "react";
 import { Loader2, CheckCircle2 } from "lucide-react";
+import Honeypot, { honeypotValue } from "@/components/Honeypot";
 
 export default function LeadForm({ source }: { source: string }) {
   const [form, setForm] = useState({ name: "", email: "", whatsapp: "" });
@@ -10,7 +11,8 @@ export default function LeadForm({ source }: { source: string }) {
   >("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    const company = honeypotValue(e);
     e.preventDefault();
     setStatus("loading");
     setErrorMsg("");
@@ -19,7 +21,7 @@ export default function LeadForm({ source }: { source: string }) {
       const res = await fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, source }),
+        body: JSON.stringify({ ...form, source, company }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Something went wrong");
@@ -44,6 +46,7 @@ export default function LeadForm({ source }: { source: string }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      <Honeypot />
       <div>
         <label className="mb-1.5 block text-sm font-medium text-zinc-300">
           Name
