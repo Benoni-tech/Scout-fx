@@ -15,6 +15,9 @@ export type Rsvp = {
   utm_source?: string;
   utm_medium?: string;
   utm_campaign?: string;
+  utm_content?: string;
+  /** Who shared the link (speaker or "scoutfx"), from ?ref= */
+  ref?: string;
   attended: boolean;
   checkedInAt: string | null;
   checkedInBy: string | null;

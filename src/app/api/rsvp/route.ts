@@ -84,6 +84,8 @@ export async function POST(req: NextRequest) {
       utm_source: cleanSource(body.utm_source) || "direct",
       utm_medium: cleanUtm(body.utm_medium),
       utm_campaign: cleanUtm(body.utm_campaign),
+      utm_content: cleanUtm(body.utm_content),
+      ref: cleanUtm(body.ref),
       attended: false,
       checkedInAt: null,
       checkedInBy: null,

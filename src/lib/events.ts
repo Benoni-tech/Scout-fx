@@ -31,11 +31,28 @@ export type EventItem = {
   speakers?: Speaker[];
   faqs?: Faq[];
   contactPhone: string;
+  /** utm_campaign used in this event's share links, e.g. "conference2026". */
+  campaign?: string;
 };
+
+/** Short id used in a sharer's ?ref= link, e.g. "dr-newman" (from the photo file name). */
+export function speakerRef(s: Speaker) {
+  const fromPhoto = s.photo.split("/").pop()?.replace(/\.[a-z]+$/i, "");
+  return fromPhoto || s.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
+/** Everyone who gets their own share link for an event: Scout FX plus each speaker. */
+export function eventSharers(event: EventItem) {
+  return [
+    { ref: "scoutfx", name: "Scout FX" },
+    ...(event.speakers ?? []).map((s) => ({ ref: speakerRef(s), name: s.name })),
+  ];
+}
 
 export const upcomingEvents: EventItem[] = [
   {
     id: "forex-trading-conference-2026",
+    campaign: "conference2026",
     title: "Forex Trading Conference 2026",
     date: "Saturday, October 31, 2026 · 11:00 AM GMT",
     dateISO: "2026-10-31T11:00:00Z",

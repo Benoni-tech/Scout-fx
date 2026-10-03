@@ -1,8 +1,17 @@
 // Where a registration came from (WhatsApp broadcast, Facebook ad, direct...).
 // Read from the landing URL's utm_* tags and kept for the browser tab's session,
 // so it survives the visitor clicking around before they register.
+// `ref` is who shared the link (a speaker, or Scout FX itself), from ?ref=.
 
-export type Utm = { utm_source: string; utm_medium: string; utm_campaign: string };
+export type Utm = {
+  utm_source: string;
+  utm_medium: string;
+  utm_campaign: string;
+  utm_content: string;
+  ref: string;
+};
+
+const EMPTY: Utm = { utm_source: "", utm_medium: "", utm_campaign: "", utm_content: "", ref: "" };
 
 const KEY = "sfx_utm";
 
@@ -64,9 +73,9 @@ function guessSource(params: URLSearchParams): Utm | null {
   // Checked first so an Instagram click (which also carries fbclid) isn't counted as Facebook.
   const hit = external ? REFERRERS.find(([re]) => re.test(host)) : undefined;
   const clickId = CLICK_IDS.find(([p]) => params.get(p));
-  if (hit) return { utm_source: hit[1], utm_medium: clickId ? "" : "referral", utm_campaign: "" };
-  if (clickId) return { utm_source: clickId[1], utm_medium: "", utm_campaign: "" };
-  if (external) return { utm_source: cleanUtm(host), utm_medium: "referral", utm_campaign: "" };
+  if (hit) return { ...EMPTY, utm_source: hit[1], utm_medium: clickId ? "" : "referral" };
+  if (clickId) return { ...EMPTY, utm_source: clickId[1] };
+  if (external) return { ...EMPTY, utm_source: cleanUtm(host), utm_medium: "referral" };
   return null;
 }
 
@@ -74,19 +83,25 @@ function guessSource(params: URLSearchParams): Utm | null {
 export function captureUtm(): Utm {
   const params = new URLSearchParams(window.location.search);
   let found: Utm | null = null;
+  const ref = cleanUtm(params.get("ref"));
   if (params.get("utm_source")) {
     found = {
       utm_source: cleanSource(params.get("utm_source")),
       utm_medium: cleanUtm(params.get("utm_medium")),
       utm_campaign: cleanUtm(params.get("utm_campaign")),
+      utm_content: cleanUtm(params.get("utm_content")),
+      ref,
     };
+  } else if (ref) {
+    // A ?ref= link without platform tags still gets a best-guess platform.
+    found = { ...(guessSource(params) ?? { ...EMPTY, utm_source: "direct" }), ref };
   }
 
   try {
     // Tagged links always win. Otherwise keep what the session first arrived with.
     if (!found) {
       const saved = sessionStorage.getItem(KEY);
-      if (saved) return JSON.parse(saved) as Utm;
+      if (saved) return { ...EMPTY, ...(JSON.parse(saved) as Partial<Utm>) };
       found = guessSource(params);
     }
     if (found) sessionStorage.setItem(KEY, JSON.stringify(found));
@@ -95,5 +110,5 @@ export function captureUtm(): Utm {
     found = found ?? guessSource(params);
   }
 
-  return found ?? { utm_source: "direct", utm_medium: "", utm_campaign: "" };
+  return found ?? { ...EMPTY, utm_source: "direct" };
 }

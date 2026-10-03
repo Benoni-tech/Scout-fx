@@ -4,7 +4,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Download, Loader2, RefreshCw, Search, Users, ScanLine } from "lucide-react";
 import { Container, StatCard } from "@/components/ui";
 import { useAdmin } from "@/components/admin/AdminGate";
-import { upcomingEvents } from "@/lib/events";
+import { eventSharers, upcomingEvents } from "@/lib/events";
+import ShareLinks from "@/components/admin/ShareLinks";
 import { SOURCE_LABELS } from "@/lib/utm";
 
 type Row = {
@@ -16,6 +17,8 @@ type Row = {
   utm_source?: string;
   utm_medium?: string;
   utm_campaign?: string;
+  utm_content?: string;
+  ref?: string;
   attended: boolean;
   checkedInAt: string | null;
   checkedInBy: string | null;
@@ -36,6 +39,8 @@ function fmt(iso: string | null) {
 const UNTRACKED = "not tracked";
 const srcOf = (r: Row) => r.utm_source || UNTRACKED;
 const label = (s: string) => SOURCE_LABELS[s] ?? s;
+// Registrations that didn't come through anyone's share link.
+const NO_SHARER = "";
 
 function csvCell(v: unknown) {
   let s = String(v ?? "");
@@ -53,6 +58,12 @@ export default function AdminEventsPage() {
   const [filter, setFilter] = useState<"all" | "in" | "out">("all");
   const [busyId, setBusyId] = useState("");
   const [source, setSource] = useState("");
+  const [sharer, setSharer] = useState<string | null>(null);
+  const event = upcomingEvents.find((e) => e.id === eventId);
+  const sharerName = useMemo(() => {
+    const names = new Map((event ? eventSharers(event) : []).map((s) => [s.ref, s.name]));
+    return (ref: string) => (ref === NO_SHARER ? "No share link" : names.get(ref) ?? ref);
+  }, [event]);
 
   const load = useCallback(async () => {
     setRows(null);
@@ -78,12 +89,34 @@ export default function AdminEventsPage() {
       if (filter === "in" && !r.attended) return false;
       if (filter === "out" && r.attended) return false;
       if (source && srcOf(r) !== source) return false;
+      if (sharer !== null && (r.ref ?? NO_SHARER) !== sharer) return false;
       if (!q) return true;
       return [r.name, r.email, r.whatsapp, r.id].some((f) =>
         f?.toLowerCase().includes(q)
       );
     });
-  }, [rows, query, filter, source]);
+  }, [rows, query, filter, source, sharer]);
+
+  // Per person who shared: registrations, how many turned up, and on which platforms.
+  const bySharer = useMemo(() => {
+    const table = new Map<string, { total: number; attended: number; platforms: Map<string, number> }>();
+    // Everyone with a link is listed, even before their first registration.
+    for (const s of event ? eventSharers(event) : []) table.set(s.ref, { total: 0, attended: 0, platforms: new Map() });
+    for (const r of rows ?? []) {
+      const key = r.ref ?? NO_SHARER;
+      const t = table.get(key) ?? { total: 0, attended: 0, platforms: new Map() };
+      t.total++;
+      if (r.attended) t.attended++;
+      t.platforms.set(srcOf(r), (t.platforms.get(srcOf(r)) ?? 0) + 1);
+      table.set(key, t);
+    }
+    if (!table.get(NO_SHARER)?.total) table.delete(NO_SHARER);
+    return [...table].sort((a, b) => b[1].total - a[1].total);
+  }, [rows, event]);
+  const sharerPlatforms = useMemo(
+    () => [...new Set(bySharer.flatMap(([, t]) => [...t.platforms.keys()]))],
+    [bySharer]
+  );
 
   // Registrations per source, biggest first.
   const sources = useMemo(() => {
@@ -107,9 +140,9 @@ export default function AdminEventsPage() {
   }
 
   function exportCsv() {
-    const header = ["Ticket", "Name", "Email", "WhatsApp", "Registered", "Checked in", "Checked in at", "Checked in by", "Source", "Medium", "Campaign", "Form"];
+    const header = ["Ticket", "Name", "Email", "WhatsApp", "Registered", "Checked in", "Checked in at", "Checked in by", "Source", "Medium", "Campaign", "Content", "Shared by", "Form"];
     const lines = (rows ?? []).map((r) =>
-      [r.id, r.name, r.email, r.whatsapp, r.createdAt, r.attended ? "yes" : "no", r.checkedInAt, r.checkedInBy, srcOf(r), r.utm_medium, r.utm_campaign, r.source]
+      [r.id, r.name, r.email, r.whatsapp, r.createdAt, r.attended ? "yes" : "no", r.checkedInAt, r.checkedInBy, srcOf(r), r.utm_medium, r.utm_campaign, r.utm_content, r.ref ? sharerName(r.ref) : "", r.source]
         .map(csvCell)
         .join(",")
     );
@@ -192,6 +225,53 @@ export default function AdminEventsPage() {
           </div>
         )}
 
+        {bySharer.length > 0 && (
+          <div className="mt-6">
+            <p className="text-xs font-bold uppercase tracking-widest text-zinc-500">Shared by</p>
+            <div className="mt-2 overflow-x-auto rounded-2xl border border-white/10">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-white/[0.03] text-xs uppercase tracking-wide text-zinc-400">
+                  <tr>
+                    <th className="px-4 py-2.5 font-semibold">Person</th>
+                    <th className="px-4 py-2.5 font-semibold">Registered</th>
+                    <th className="px-4 py-2.5 font-semibold">Turned up</th>
+                    {sharerPlatforms.map((pf) => (
+                      <th key={pf} className="px-4 py-2.5 font-semibold">{label(pf)}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/10">
+                  {bySharer.map(([ref, t]) => {
+                    const active = sharer === ref;
+                    return (
+                      <tr
+                        key={ref || "none"}
+                        onClick={() => setSharer(active ? null : ref)}
+                        title={active ? "Show everyone" : `Show only registrations via ${sharerName(ref)}`}
+                        className={`cursor-pointer transition-colors ${active ? "bg-brand-500/10" : "hover:bg-white/[0.03]"}`}
+                      >
+                        <td className={`px-4 py-2.5 font-semibold ${ref === NO_SHARER ? "text-zinc-500" : "text-white"}`}>
+                          {sharerName(ref)}
+                        </td>
+                        <td className="px-4 py-2.5 text-lg font-bold text-white">{t.total}</td>
+                        <td className="px-4 py-2.5 text-zinc-300">
+                          {t.attended}
+                          {t.total > 0 && <span className="ml-1 text-xs text-zinc-500">{Math.round((t.attended / t.total) * 100)}%</span>}
+                        </td>
+                        {sharerPlatforms.map((pf) => (
+                          <td key={pf} className="px-4 py-2.5 text-zinc-300">{t.platforms.get(pf) || <span className="text-zinc-600">-</span>}</td>
+                        ))}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {event && <ShareLinks event={event} />}
+
         <div className="mt-6 flex flex-wrap items-center gap-3">
           <div className="relative w-full sm:w-72">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
@@ -267,9 +347,10 @@ export default function AdminEventsPage() {
                     </span>
                     {(r.utm_medium || r.utm_campaign) && (
                       <div className="text-xs text-zinc-500">
-                        {[r.utm_medium, r.utm_campaign].filter(Boolean).join(" · ")}
+                        {[r.utm_medium, r.utm_content, r.utm_campaign].filter(Boolean).join(" · ")}
                       </div>
                     )}
+                    {r.ref && <div className="text-xs text-brand-500">via {sharerName(r.ref)}</div>}
                   </td>
                   <td className="px-4 py-3 text-zinc-400">{fmt(r.createdAt)}</td>
                   <td className="px-4 py-3">
