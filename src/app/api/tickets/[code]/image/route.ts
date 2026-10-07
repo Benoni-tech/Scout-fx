@@ -14,7 +14,7 @@ export async function GET(
 
   const doc = await getAdminDb().collection("rsvps").doc(code).get();
   const event = doc.exists ? getEventById(doc.data()!.eventId) : undefined;
-  if (!doc.exists || !event) return new NextResponse("Not found", { status: 404 });
+  if (!doc.exists || !event || doc.data()!.cancelled) return new NextResponse("Not found", { status: 404 });
 
   const png = await ticketImagePng({ id: code, name: doc.data()!.name }, event);
   const download = req.nextUrl.searchParams.has("download");

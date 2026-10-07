@@ -7,6 +7,7 @@ import { useAdmin } from "@/components/admin/AdminGate";
 import { eventSharers, upcomingEvents } from "@/lib/events";
 import ShareLinks from "@/components/admin/ShareLinks";
 import { SOURCE_LABELS } from "@/lib/utm";
+import { nameKey, normalizeGhanaPhone } from "@/lib/validation";
 
 type Row = {
   id: string;
@@ -22,6 +23,8 @@ type Row = {
   attended: boolean;
   checkedInAt: string | null;
   checkedInBy: string | null;
+  cancelled?: boolean;
+  cancelledBy?: string | null;
   createdAt: string;
 };
 
@@ -55,7 +58,7 @@ export default function AdminEventsPage() {
   const [rows, setRows] = useState<Row[] | null>(null);
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState<"all" | "in" | "out">("all");
+  const [filter, setFilter] = useState<"all" | "in" | "out" | "cancelled">("all");
   const [busyId, setBusyId] = useState("");
   const [source, setSource] = useState("");
   const [sharer, setSharer] = useState<string | null>(null);
@@ -86,6 +89,8 @@ export default function AdminEventsPage() {
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
     return (rows ?? []).filter((r) => {
+      // Cancelled tickets only show under their own tab.
+      if ((filter === "cancelled") !== !!r.cancelled) return false;
       if (filter === "in" && !r.attended) return false;
       if (filter === "out" && r.attended) return false;
       if (source && srcOf(r) !== source) return false;
@@ -97,12 +102,30 @@ export default function AdminEventsPage() {
     });
   }, [rows, query, filter, source, sharer]);
 
+  // Counts and breakdowns leave out cancelled tickets.
+  const active = useMemo(() => (rows ?? []).filter((r) => !r.cancelled), [rows]);
+  const cancelledCount = (rows?.length ?? 0) - active.length;
+
+  // Same name registered more than once: flagged for a look, not blocked (names repeat).
+  const repeatedNames = useMemo(() => {
+    const seen = new Map<string, number>();
+    for (const r of active) seen.set(nameKey(r.name), (seen.get(nameKey(r.name)) ?? 0) + 1);
+    return new Set([...seen].filter(([, n]) => n > 1).map(([k]) => k));
+  }, [active]);
+
+  function flagsOf(r: Row) {
+    const flags: string[] = [];
+    if (!normalizeGhanaPhone(r.whatsapp)) flags.push("Non-Ghana number");
+    if (!r.cancelled && repeatedNames.has(nameKey(r.name))) flags.push("Possible duplicate");
+    return flags;
+  }
+
   // Per person who shared: registrations, how many turned up, and on which platforms.
   const bySharer = useMemo(() => {
     const table = new Map<string, { total: number; attended: number; platforms: Map<string, number> }>();
     // Everyone with a link is listed, even before their first registration.
     for (const s of event ? eventSharers(event) : []) table.set(s.ref, { total: 0, attended: 0, platforms: new Map() });
-    for (const r of rows ?? []) {
+    for (const r of active) {
       const key = r.ref ?? NO_SHARER;
       const t = table.get(key) ?? { total: 0, attended: 0, platforms: new Map() };
       t.total++;
@@ -112,7 +135,7 @@ export default function AdminEventsPage() {
     }
     if (!table.get(NO_SHARER)?.total) table.delete(NO_SHARER);
     return [...table].sort((a, b) => b[1].total - a[1].total);
-  }, [rows, event]);
+  }, [active, event]);
   const sharerPlatforms = useMemo(
     () => [...new Set(bySharer.flatMap(([, t]) => [...t.platforms.keys()]))],
     [bySharer]
@@ -121,11 +144,26 @@ export default function AdminEventsPage() {
   // Registrations per source, biggest first.
   const sources = useMemo(() => {
     const counts = new Map<string, number>();
-    for (const r of rows ?? []) counts.set(srcOf(r), (counts.get(srcOf(r)) ?? 0) + 1);
+    for (const r of active) counts.set(srcOf(r), (counts.get(srcOf(r)) ?? 0) + 1);
     return [...counts].sort((a, b) => b[1] - a[1]);
-  }, [rows]);
+  }, [active]);
 
-  const checkedIn = rows?.filter((r) => r.attended).length ?? 0;
+  const checkedIn = active.filter((r) => r.attended).length;
+
+  async function setCancelled(row: Row, cancel: boolean) {
+    const msg = cancel
+      ? `Cancel ${row.name}'s ticket? Their QR will show "Cancelled" at the gate. You can restore it later.`
+      : `Restore ${row.name}'s ticket? It will be valid at the gate again.`;
+    if (!confirm(msg)) return;
+    setBusyId(row.id);
+    const res = await authFetch("/api/admin/rsvps/cancel", {
+      method: "POST",
+      body: JSON.stringify({ code: row.id, restore: !cancel }),
+    });
+    setBusyId("");
+    if (res.ok) load();
+    else alert((await res.json().catch(() => ({})))?.error || "Couldn't update the ticket.");
+  }
 
   async function toggle(row: Row) {
     if (row.attended && !confirm(`Undo check-in for ${row.name}?`)) return;
@@ -140,9 +178,9 @@ export default function AdminEventsPage() {
   }
 
   function exportCsv() {
-    const header = ["Ticket", "Name", "Email", "WhatsApp", "Registered", "Checked in", "Checked in at", "Checked in by", "Source", "Medium", "Campaign", "Content", "Shared by", "Form"];
+    const header = ["Ticket", "Name", "Email", "WhatsApp", "Registered", "Checked in", "Checked in at", "Checked in by", "Source", "Medium", "Campaign", "Content", "Shared by", "Form", "Cancelled", "Flags"];
     const lines = (rows ?? []).map((r) =>
-      [r.id, r.name, r.email, r.whatsapp, r.createdAt, r.attended ? "yes" : "no", r.checkedInAt, r.checkedInBy, srcOf(r), r.utm_medium, r.utm_campaign, r.utm_content, r.ref ? sharerName(r.ref) : "", r.source]
+      [r.id, r.name, r.email, r.whatsapp, r.createdAt, r.attended ? "yes" : "no", r.checkedInAt, r.checkedInBy, srcOf(r), r.utm_medium, r.utm_campaign, r.utm_content, r.ref ? sharerName(r.ref) : "", r.source, r.cancelled ? "yes" : "", flagsOf(r).join("; ")]
         .map(csvCell)
         .join(",")
     );
@@ -195,7 +233,7 @@ export default function AdminEventsPage() {
         </div>
 
         <div className="mt-6 grid grid-cols-2 gap-4 sm:max-w-md">
-          <StatCard icon={<Users className="h-4 w-4 text-black" />} iconBg="bg-brand-600" label="Registered" value={rows ? String(rows.length) : "…"} />
+          <StatCard icon={<Users className="h-4 w-4 text-black" />} iconBg="bg-brand-600" label={cancelledCount ? `Registered (${cancelledCount} cancelled)` : "Registered"} value={rows ? String(active.length) : "…"} />
           <StatCard icon={<ScanLine className="h-4 w-4 text-black" />} iconBg="bg-brand-600" label="Checked in" value={rows ? String(checkedIn) : "…"} />
         </div>
 
@@ -283,7 +321,7 @@ export default function AdminEventsPage() {
             />
           </div>
           <div className="flex gap-1">
-            {([["all", "All"], ["in", "Checked in"], ["out", "Not yet"]] as const).map(([k, label]) => (
+            {([["all", "All"], ["in", "Checked in"], ["out", "Not yet"], ["cancelled", "Cancelled"]] as const).map(([k, label]) => (
               <button
                 key={k}
                 onClick={() => setFilter(k)}
@@ -327,8 +365,15 @@ export default function AdminEventsPage() {
                 </tr>
               )}
               {visible.map((r) => (
-                <tr key={r.id}>
-                  <td className="px-4 py-3 font-semibold text-white">{r.name}</td>
+                <tr key={r.id} className={r.cancelled ? "opacity-60" : ""}>
+                  <td className="px-4 py-3 font-semibold text-white">
+                    {r.name}
+                    {flagsOf(r).map((f) => (
+                      <span key={f} className="ml-2 inline-block rounded-full border border-danger/40 bg-danger/10 px-2 py-0.5 align-middle text-[10px] font-semibold text-danger">
+                        {f}
+                      </span>
+                    ))}
+                  </td>
                   <td className="px-4 py-3 text-zinc-300">
                     <div>{r.email}</div>
                     <a
@@ -354,6 +399,19 @@ export default function AdminEventsPage() {
                   </td>
                   <td className="px-4 py-3 text-zinc-400">{fmt(r.createdAt)}</td>
                   <td className="px-4 py-3">
+                    {r.cancelled ? (
+                      <div className="flex items-center gap-2">
+                        <span className="rounded-full bg-danger px-3 py-1 text-xs font-semibold text-white">Cancelled</span>
+                        <button
+                          onClick={() => setCancelled(r, false)}
+                          disabled={busyId === r.id}
+                          className="text-xs font-semibold text-zinc-400 hover:text-white disabled:opacity-50"
+                        >
+                          Restore
+                        </button>
+                      </div>
+                    ) : (
+                    <div className="flex items-center gap-2">
                     <button
                       onClick={() => toggle(r)}
                       disabled={busyId === r.id}
@@ -367,6 +425,17 @@ export default function AdminEventsPage() {
                       {busyId === r.id && <Loader2 className="h-3 w-3 animate-spin" />}
                       {r.attended ? `In · ${fmt(r.checkedInAt)}` : "Check in"}
                     </button>
+                    {!r.attended && (
+                      <button
+                        onClick={() => setCancelled(r, true)}
+                        disabled={busyId === r.id}
+                        className="text-xs font-semibold text-zinc-500 hover:text-danger disabled:opacity-50"
+                      >
+                        Cancel
+                      </button>
+                    )}
+                    </div>
+                    )}
                   </td>
                 </tr>
               ))}

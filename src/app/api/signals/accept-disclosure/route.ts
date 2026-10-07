@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { readFormBody } from "@/lib/requestGuard";
 import { getAdminDb } from "@/lib/firebaseAdmin";
 import { rateLimit } from "@/lib/rateLimit";
 
@@ -7,7 +8,9 @@ const DISCLOSURE_VERSION = "2026-08-v1";
 
 export async function POST(req: NextRequest) {
   try {
-    const { email } = await req.json();
+    const parsed = await readFormBody(req);
+    if (parsed.error) return parsed.error;
+    const { email } = parsed.body;
 
     if (!email || typeof email !== "string" || email.length > 200 || !EMAIL_RE.test(email)) {
       return NextResponse.json(

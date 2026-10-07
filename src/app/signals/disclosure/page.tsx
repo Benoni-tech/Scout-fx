@@ -30,7 +30,7 @@ export default function SignalsDisclosurePage() {
       // MVP client-side gate flag. Swap for a real session/Firebase Auth
       // check once auth is wired up.
       localStorage.setItem("signals_disclosure_accepted", "true");
-      localStorage.setItem("signals_user_email", email.trim().toLowerCase());
+      localStorage.removeItem("signals_user_email"); // older versions stored the email here
       router.push("/signals/dashboard");
     } catch (err) {
       setStatus("error");

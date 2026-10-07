@@ -21,6 +21,10 @@ export type Rsvp = {
   attended: boolean;
   checkedInAt: string | null;
   checkedInBy: string | null;
+  /** Cancelled by an admin: the QR shows "Cancelled" at the gate and can't be admitted. */
+  cancelled?: boolean;
+  cancelledAt?: string | null;
+  cancelledBy?: string | null;
   createdAt: string;
 };
 

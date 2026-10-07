@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import TermsModal from "@/components/TermsModal";
 import Honeypot, { honeypotValue } from "@/components/Honeypot";
+import { FieldError, GHANA_NOTICE, useContactChecks } from "@/components/FormChecks";
 import { EDUCATION_LEVELS, SEED_PROGRAM, TERMS_VERSION, YES_NO_UNSURE, seedTerms } from "@/lib/seedProgram";
 
 const EXPERIENCE = [
@@ -109,11 +110,17 @@ export default function SeedApplicationForm() {
   const [result, setResult] = useState<{ ref?: string; alreadyApplied?: boolean }>({});
 
   const set = (k: keyof typeof form) => (v: string) => setForm((f) => ({ ...f, [k]: v }));
+  const checks = useContactChecks(form);
   const closeTerms = useCallback(() => setTermsOpen(false), []);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     const company = honeypotValue(e);
     e.preventDefault();
+    if (!checks.checkAll()) {
+      setStatus("error");
+      setErrorMsg("Check the highlighted fields above.");
+      return;
+    }
     if (!agreed) {
       setStatus("error");
       setErrorMsg("Please read and accept the Terms & Conditions.");
@@ -171,18 +178,22 @@ export default function SeedApplicationForm() {
           </legend>
           <Field label="Full name">
             <IconInput icon={User}>
-              <input required autoComplete="name" placeholder="Your name" value={form.name} onChange={(e) => set("name")(e.target.value)} className={inputCls} />
+              <input required autoComplete="name" placeholder="First and last name" value={form.name} onChange={(e) => set("name")(e.target.value)} onBlur={() => checks.touch("name")} className={inputCls} />
             </IconInput>
+            <FieldError message={checks.error("name")} />
           </Field>
           <Field label="Email">
             <IconInput icon={Mail}>
-              <input required type="email" autoComplete="email" placeholder="you@email.com" value={form.email} onChange={(e) => set("email")(e.target.value)} className={inputCls} />
+              <input required type="email" autoComplete="email" placeholder="you@email.com" value={form.email} onChange={(e) => set("email")(e.target.value)} onBlur={() => checks.touch("email")} className={inputCls} />
             </IconInput>
+            <FieldError message={checks.error("email")} suggestion={checks.suggestion} onUse={set("email")} />
           </Field>
           <Field label="WhatsApp number">
             <IconInput icon={Phone}>
-              <input required type="tel" autoComplete="tel" placeholder="+233 ..." value={form.whatsapp} onChange={(e) => set("whatsapp")(e.target.value)} className={inputCls} />
+              <input required type="tel" autoComplete="tel" placeholder="024 123 4567" value={form.whatsapp} onChange={(e) => set("whatsapp")(e.target.value)} onBlur={() => checks.touch("whatsapp")} className={inputCls} />
             </IconInput>
+            <FieldError message={checks.error("whatsapp")} />
+            <p className="mt-1.5 text-xs text-zinc-500">{GHANA_NOTICE}</p>
           </Field>
           <Field label="Date of birth">
             <IconInput icon={CalendarDays}>

@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
+import { readFormBody } from "@/lib/requestGuard";
 import { getAdminDb } from "@/lib/firebaseAdmin";
 import { generateTicketCode } from "@/lib/tickets";
 import { sendApplicationEmail } from "@/lib/emails";
 import { EDUCATION_LEVELS, TERMS_VERSION } from "@/lib/seedProgram";
 import { rateLimit, isHoneypotFilled } from "@/lib/rateLimit";
+import { emailError, nameError, normalizeGhanaPhone, phoneError, placeError, tidyEmail, tidyName } from "@/lib/validation";
+import { claimKeys, takenKeys } from "@/lib/uniqueKeys";
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const EXPERIENCE = ["none", "beginner", "some"];
 const HFM = ["yes", "no", "unsure"];
 
@@ -27,26 +29,29 @@ const bad = (error: string) => NextResponse.json({ error }, { status: 400 });
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
+    const parsed = await readFormBody(req);
+    if (parsed.error) return parsed.error;
+    const body = parsed.body;
     if (isHoneypotFilled(body)) return NextResponse.json({ ok: true });
-    const name = str(body.name, 120);
-    const email = str(body.email, 200).toLowerCase();
-    const whatsapp = str(body.whatsapp, 40);
+    const name = tidyName(body.name);
+    const email = tidyEmail(body.email);
+    const rawPhone = str(body.whatsapp, 40);
     const dob = str(body.dob, 10);
-    const location = str(body.location, 120);
+    const location = tidyName(body.location);
     const experience = str(body.experience, 20);
     const education = str(body.education, 20);
     const hasHfmAccount = str(body.hasHfmAccount, 10);
     const hasBinanceAccount = str(body.hasBinanceAccount, 10);
     const hasMt5Account = str(body.hasMt5Account, 10);
 
-    if (name.length < 2) return bad("Enter your full name.");
-    if (!EMAIL_RE.test(email)) return bad("Enter a valid email address.");
-    if (!whatsapp) return bad("Enter a WhatsApp number.");
+    const invalid = nameError(name) || emailError(email) || phoneError(rawPhone);
+    if (invalid) return bad(invalid);
+    const whatsapp = normalizeGhanaPhone(rawPhone)!;
     const age = ageFrom(dob);
     if (age < 0 || age > 120) return bad("Enter a valid date of birth.");
     if (age < 18) return bad("You must be 18 or older to join the program.");
-    if (!location) return bad("Enter your city and country.");
+    const badPlace = placeError(location);
+    if (badPlace) return bad(badPlace);
     if (!EXPERIENCE.includes(experience)) return bad("Choose your trading experience.");
     if (!EDUCATION_LEVELS.some((l) => l.value === education)) return bad("Choose your highest education level.");
     if (!HFM.includes(hasHfmAccount)) return bad("Tell us whether you have an HFM account.");
@@ -84,17 +89,23 @@ export async function POST(req: NextRequest) {
       createdAt: new Date().toISOString(),
     };
 
-    // One application per email: the email is the document id, and create()
-    // fails atomically if it already exists.
-    const doc = getAdminDb().collection("applications").doc(email);
-    try {
-      await doc.create(application);
-    } catch (err) {
-      if ((err as { code?: number }).code === 6) {
-        // Don't reveal anything about the existing registration to whoever is asking.
-        return NextResponse.json({ ok: true, alreadyApplied: true });
-      }
-      throw err;
+    // One registration per email (the document id) and per WhatsApp number,
+    // written together with their locks so duplicates can't race in.
+    const db = getAdminDb();
+    const doc = db.collection("applications").doc(email);
+    const keys = { email, phone: whatsapp };
+    const taken = await db.runTransaction(async (tx) => {
+      const taken = await takenKeys(tx, db, "seed", keys);
+      if (!taken.includes("email") && (await tx.get(doc)).exists) taken.push("email");
+      if (taken.length) return taken;
+      tx.create(doc, application);
+      claimKeys(tx, db, "seed", keys, doc.path);
+      return taken;
+    });
+    // Don't reveal anything about the existing registration to whoever is asking.
+    if (taken.includes("email")) return NextResponse.json({ ok: true, alreadyApplied: true });
+    if (taken.includes("phone")) {
+      return NextResponse.json({ error: "We couldn't complete this registration. If you've registered before, check your email for your confirmation, or message us on WhatsApp for help." }, { status: 409 });
     }
 
     try {

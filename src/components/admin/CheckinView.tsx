@@ -12,6 +12,8 @@ type Ticket = {
   attended: boolean;
   checkedInAt: string | null;
   checkedInBy: string | null;
+  cancelled?: boolean;
+  cancelledBy?: string | null;
 };
 
 function time(iso: string | null) {
@@ -51,7 +53,7 @@ export default function CheckinView({ code }: { code: string }) {
       body: JSON.stringify({ code }),
     });
     if (res.ok) return setState("admitted");
-    if (res.status === 409) return lookup(); // someone else just admitted it
+    if (res.status === 409 || res.status === 410) return lookup(); // admitted or cancelled meanwhile
     const data = await res.json().catch(() => ({}));
     setError(data?.error || "Check-in failed.");
     setState("error");
@@ -84,6 +86,15 @@ export default function CheckinView({ code }: { code: string }) {
       <Panel tone="good" icon={<CheckCircle2 className="h-10 w-10" />} title="Admitted">
         <p className="text-2xl font-extrabold">{t.name}</p>
         <p className="mt-1">{eventTitle}</p>
+      </Panel>
+    );
+  }
+
+  if (t.cancelled) {
+    return (
+      <Panel tone="bad" icon={<XCircle className="h-10 w-10" />} title="Cancelled ticket">
+        <p className="text-2xl font-extrabold">{t.name}</p>
+        <p className="mt-1">This registration was cancelled{t.cancelledBy ? ` by ${t.cancelledBy}` : ""}. Don&apos;t admit.</p>
       </Panel>
     );
   }

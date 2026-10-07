@@ -24,7 +24,7 @@ export async function PATCH(req: NextRequest) {
   const admin = await requireAdmin(req);
   if (admin instanceof NextResponse) return admin;
 
-  const { id, status, seedAmount, note } = await req.json();
+  const { id, status, seedAmount, note } = await req.json().catch(() => ({}));
   if (typeof id !== "string" || !id) {
     return NextResponse.json({ error: "Missing id." }, { status: 400 });
   }

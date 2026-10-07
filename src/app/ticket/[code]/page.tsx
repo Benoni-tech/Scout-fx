@@ -85,6 +85,17 @@ export default async function TicketPage({
             </div>
 
             {/* QR stub */}
+            {rsvp.cancelled ? (
+              <div className="flex flex-col items-center px-7 pb-8 text-center">
+                <p className="rounded-full bg-danger px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-white">
+                  Ticket cancelled
+                </p>
+                <p className="mt-4 text-sm leading-relaxed text-zinc-400">
+                  This ticket is no longer valid. If you think this is a mistake, message us on WhatsApp
+                  {event ? ` at ${event.contactPhone}` : ""}.
+                </p>
+              </div>
+            ) : (
             <div className="flex flex-col items-center px-7 pb-8 text-center">
               <div className="rounded-3xl bg-brand-500 p-3 shadow-glow">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -101,16 +112,19 @@ export default async function TicketPage({
                 <p className="mt-3 text-xs text-zinc-400">Show this at the gate · valid for one entry</p>
               )}
             </div>
+            )}
           </div>
         </div>
 
         <div className="mt-6 flex animate-fade-up flex-col gap-3 sm:flex-row" style={{ animationDelay: "120ms" }}>
+          {!rsvp.cancelled && (
           <a
             href={`/api/tickets/${code}/image?download=1`}
             className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-black transition-all hover:bg-brand-700 hover:shadow-glow"
           >
             <Download className="h-4 w-4" /> Save ticket
           </a>
+          )}
           {event && (
             <SecondaryButton href={`/events/${event.id}`} className="flex-1">
               <ArrowLeft className="h-4 w-4" /> Event details

@@ -3,6 +3,7 @@
 import { useState, FormEvent } from "react";
 import { Loader2, CheckCircle2 } from "lucide-react";
 import Honeypot, { honeypotValue } from "@/components/Honeypot";
+import { FieldError, GHANA_NOTICE, useContactChecks } from "@/components/FormChecks";
 
 export default function LeadForm({ source }: { source: string }) {
   const [form, setForm] = useState({ name: "", email: "", whatsapp: "" });
@@ -10,10 +11,12 @@ export default function LeadForm({ source }: { source: string }) {
     "idle" | "loading" | "success" | "error"
   >("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const checks = useContactChecks(form);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     const company = honeypotValue(e);
     e.preventDefault();
+    if (!checks.checkAll()) return;
     setStatus("loading");
     setErrorMsg("");
 
@@ -45,19 +48,23 @@ export default function LeadForm({ source }: { source: string }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} noValidate className="space-y-4">
       <Honeypot />
       <div>
         <label className="mb-1.5 block text-sm font-medium text-zinc-300">
-          Name
+          Full name <span className="text-danger">*</span>
         </label>
         <input
           type="text"
+          required
+          autoComplete="name"
           value={form.name}
           onChange={(e) => setForm({ ...form, name: e.target.value })}
-          placeholder="Your name"
+          onBlur={() => checks.touch("name")}
+          placeholder="First and last name"
           className="w-full rounded-xl border border-white/10 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-brand-400"
         />
+        <FieldError message={checks.error("name")} />
       </div>
       <div>
         <label className="mb-1.5 block text-sm font-medium text-zinc-300">
@@ -68,9 +75,12 @@ export default function LeadForm({ source }: { source: string }) {
           required
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
+          onBlur={() => checks.touch("email")}
+          autoComplete="email"
           placeholder="you@email.com"
           className="w-full rounded-xl border border-white/10 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-brand-400"
         />
+        <FieldError message={checks.error("email")} suggestion={checks.suggestion} onUse={(v) => setForm({ ...form, email: v })} />
       </div>
       <div>
         <label className="mb-1.5 block text-sm font-medium text-zinc-300">
@@ -81,9 +91,12 @@ export default function LeadForm({ source }: { source: string }) {
           required
           value={form.whatsapp}
           onChange={(e) => setForm({ ...form, whatsapp: e.target.value })}
-          placeholder="+233 ..."
+          onBlur={() => checks.touch("whatsapp")}
+          autoComplete="tel"
+          placeholder="024 123 4567"
           className="w-full rounded-xl border border-white/10 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-brand-400"
         />
+        <FieldError message={checks.error("whatsapp")} />
       </div>
 
       <button
@@ -99,7 +112,7 @@ export default function LeadForm({ source }: { source: string }) {
         <p className="text-center text-sm text-danger">{errorMsg}</p>
       )}
       <p className="text-center text-xs text-zinc-500">
-        No spam. Unsubscribe anytime.
+        {GHANA_NOTICE} No spam. Unsubscribe anytime.
       </p>
     </form>
   );

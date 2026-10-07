@@ -5,6 +5,7 @@ import { Loader2, CheckCircle2, User, Mail, Phone, Ticket, ArrowRight } from "lu
 import { trackPixel } from "@/lib/metaPixel";
 import { captureUtm, Utm } from "@/lib/utm";
 import Honeypot, { honeypotValue } from "@/components/Honeypot";
+import { FieldError, GHANA_NOTICE, useContactChecks } from "@/components/FormChecks";
 
 export default function RsvpForm({ eventId, eventName }: { eventId: string; eventName?: string }) {
   const [form, setForm] = useState({ name: "", email: "", whatsapp: "" });
@@ -18,6 +19,7 @@ export default function RsvpForm({ eventId, eventName }: { eventId: string; even
     emailSent?: boolean;
   }>({});
   const utm = useRef<Utm | null>(null);
+  const checks = useContactChecks(form);
 
   useEffect(() => {
     utm.current = captureUtm();
@@ -26,6 +28,7 @@ export default function RsvpForm({ eventId, eventName }: { eventId: string; even
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     const company = honeypotValue(e);
     e.preventDefault();
+    if (!checks.checkAll()) return;
     setStatus("loading");
     setErrorMsg("");
 
@@ -54,20 +57,40 @@ export default function RsvpForm({ eventId, eventName }: { eventId: string; even
     }
   }
 
+  if (status === "success" && result.alreadyRegistered) {
+    return (
+      <div className="flex animate-fade-up items-start gap-4 rounded-2xl border border-white/15 bg-white/[0.04] p-6 text-white">
+        <Ticket className="mt-0.5 h-6 w-6 shrink-0 text-brand-500" />
+        <div>
+          <p className="text-sm font-semibold">Check your email</p>
+          <p className="mt-1 text-sm text-zinc-300">
+            If {form.email} is registered for this event, your ticket has been sent there. Check your
+            inbox and spam folder. Still nothing? Message us on WhatsApp.
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              setForm({ name: "", email: "", whatsapp: "" });
+              setResult({});
+              setStatus("idle");
+            }}
+            className="mt-4 inline-flex rounded-full border border-white/15 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/5"
+          >
+            Register someone else
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   if (status === "success") {
     return (
       <div className="flex animate-fade-up items-start gap-4 rounded-2xl bg-brand-600 p-6 text-black shadow-glow">
         <CheckCircle2 className="mt-0.5 h-6 w-6 shrink-0" />
         <div>
-          <p className="text-sm font-semibold">
-            {result.alreadyRegistered
-              ? "You're already registered."
-              : "You're registered."}
-          </p>
+          <p className="text-sm font-semibold">You&apos;re registered.</p>
           <p className="text-sm">
-            {result.alreadyRegistered
-              ? `We've re-sent your ticket to ${form.email}.`
-              : result.emailSent === false
+            {result.emailSent === false
                 ? "We couldn't email your ticket, so save it from the link below."
                 : `Your ticket with a QR code is on its way to ${form.email}. Show it at the gate.`}
           </p>
@@ -87,11 +110,11 @@ export default function RsvpForm({ eventId, eventName }: { eventId: string; even
   const fields = [
     { key: "name", label: "Full name", type: "text", placeholder: "Your name", icon: User, autoComplete: "name" },
     { key: "email", label: "Email", type: "email", placeholder: "you@email.com", icon: Mail, autoComplete: "email" },
-    { key: "whatsapp", label: "WhatsApp number", type: "tel", placeholder: "+233 ...", icon: Phone, autoComplete: "tel" },
+    { key: "whatsapp", label: "WhatsApp number", type: "tel", placeholder: "024 123 4567", icon: Phone, autoComplete: "tel" },
   ] as const;
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} noValidate>
       <Honeypot />
       <div className="grid gap-4 lg:grid-cols-3">
         {fields.map((f) => (
@@ -108,12 +131,20 @@ export default function RsvpForm({ eventId, eventName }: { eventId: string; even
                 placeholder={f.placeholder}
                 value={form[f.key]}
                 onChange={(e) => setForm({ ...form, [f.key]: e.target.value })}
+                onBlur={() => checks.touch(f.key)}
+                aria-invalid={!!checks.error(f.key)}
                 className="w-full rounded-2xl border border-white/10 py-4 pl-11 pr-4 text-base text-white outline-none transition-all placeholder:text-zinc-600 focus:border-brand-500 focus:bg-white/[0.05] focus:ring-4 focus:ring-brand-500/10"
               />
             </span>
+            <FieldError
+              message={checks.error(f.key)}
+              suggestion={f.key === "email" ? checks.suggestion : undefined}
+              onUse={(v) => setForm({ ...form, email: v })}
+            />
           </label>
         ))}
       </div>
+      <p className="mt-3 text-xs text-zinc-500">{GHANA_NOTICE}</p>
       <button
         type="submit"
         disabled={status === "loading"}

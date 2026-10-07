@@ -44,6 +44,7 @@ export async function POST(req: NextRequest) {
     if (!doc.exists) return { status: 404 as const };
     const data = doc.data()!;
 
+    if (data.cancelled && !body.undo) return { status: 410 as const };
     if (body.undo) {
       tx.update(ref, { attended: false, checkedInAt: null, checkedInBy: null });
       return { status: 200 as const, alreadyCheckedIn: false };
@@ -65,6 +66,9 @@ export async function POST(req: NextRequest) {
 
   if (result.status === 404) {
     return NextResponse.json({ error: "Ticket not found." }, { status: 404 });
+  }
+  if (result.status === 410) {
+    return NextResponse.json({ error: "This ticket has been cancelled. Don't admit." }, { status: 410 });
   }
   if (result.status === 409) {
     return NextResponse.json(

@@ -15,6 +15,7 @@ import {
 import { Container, StatCard } from "@/components/ui";
 import { useAdmin } from "@/components/admin/AdminGate";
 import { EDUCATION_LEVELS, SEED_PROGRAM, SEED_STATUSES, type SeedStatus } from "@/lib/seedProgram";
+import { nameKey, normalizeGhanaPhone } from "@/lib/validation";
 
 type Row = {
   id: string;
@@ -115,6 +116,21 @@ export default function AdminSeedPage() {
       return [r.name, r.email, r.whatsapp, r.ref, r.location].some((f) => f?.toLowerCase().includes(q));
     });
   }, [rows, query, filter]);
+
+  // Same name or number on more than one registration: flagged for a look, not blocked.
+  const flagsOf = useMemo(() => {
+    const tally = (key: (r: Row) => string) => {
+      const m = new Map<string, number>();
+      for (const r of rows ?? []) m.set(key(r), (m.get(key(r)) ?? 0) + 1);
+      return (r: Row) => (m.get(key(r)) ?? 0) > 1;
+    };
+    const sameName = tally((r) => nameKey(r.name));
+    const samePhone = tally((r) => normalizeGhanaPhone(r.whatsapp) ?? r.whatsapp);
+    return (r: Row) => [
+      ...(normalizeGhanaPhone(r.whatsapp) ? [] : ["Non-Ghana number"]),
+      ...(sameName(r) || samePhone(r) ? ["Possible duplicate"] : []),
+    ];
+  }, [rows]);
 
   const count = (s: string) => rows?.filter((r) => norm(r) === s).length ?? 0;
   const awardedTotal = rows?.reduce((t, r) => t + (norm(r) === "seed_awarded" ? r.seedAmount ?? 0 : 0), 0) ?? 0;
@@ -253,7 +269,14 @@ export default function AdminSeedPage() {
                   <Fragment key={r.id}>
                     <tr className={isOpen ? "bg-white/[0.02]" : undefined}>
                       <td className="px-4 py-3">
-                        <p className="font-semibold text-white">{r.name}</p>
+                        <p className="font-semibold text-white">
+                          {r.name}
+                          {flagsOf(r).map((f) => (
+                            <span key={f} className="ml-2 inline-block rounded-full border border-danger/40 bg-danger/10 px-2 py-0.5 align-middle text-[10px] font-semibold text-danger">
+                              {f}
+                            </span>
+                          ))}
+                        </p>
                         <p className="font-mono text-[11px] tracking-wider text-zinc-500">{r.ref}</p>
                       </td>
                       <td className="px-4 py-3 text-zinc-300">
