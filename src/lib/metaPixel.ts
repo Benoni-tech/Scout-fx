@@ -2,7 +2,7 @@
 // The rest of the site is intentionally not tracked.
 
 export const META_PIXEL_ID =
-  process.env.NEXT_PUBLIC_META_PIXEL_ID || "2050971318950059";
+  process.env.NEXT_PUBLIC_META_PIXEL_ID || "1625374265334329";
 
 type Fbq = ((...args: unknown[]) => void) & {
   callMethod?: (...args: unknown[]) => void;
