@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Download, Loader2, RefreshCw, Search, Users, ScanLine } from "lucide-react";
+import { Download, Loader2, MailWarning, RefreshCw, Search, Users, ScanLine } from "lucide-react";
 import { Container, StatCard } from "@/components/ui";
 import { useAdmin } from "@/components/admin/AdminGate";
 import { eventSharers, upcomingEvents } from "@/lib/events";
@@ -25,6 +25,8 @@ type Row = {
   checkedInBy: string | null;
   cancelled?: boolean;
   cancelledBy?: string | null;
+  ticketEmail?: "sent" | "failed" | "bounced";
+  ticketEmailError?: string | null;
   createdAt: string;
 };
 
@@ -117,8 +119,41 @@ export default function AdminEventsPage() {
     const flags: string[] = [];
     if (!normalizeGhanaPhone(r.whatsapp)) flags.push("Non-Ghana number");
     if (!r.cancelled && repeatedNames.has(nameKey(r.name))) flags.push("Possible duplicate");
+    if (!r.cancelled && r.ticketEmail === "failed") flags.push("Ticket email failed");
+    if (!r.cancelled && r.ticketEmail === "bounced") flags.push("Email bounced");
     return flags;
   }
+
+  // Tickets whose email didn't go out (e.g. the daily email limit was reached).
+  const emailFailed = active.filter((r) => r.ticketEmail === "failed").length;
+
+  async function resendTickets(row?: Row) {
+    const msg = row
+      ? `Email ${row.name}'s ticket to ${row.email} again?`
+      : `Email the ${emailFailed} ticket(s) that failed to send?`;
+    if (!confirm(msg)) return;
+    setBusyId(row?.id ?? "resend-all");
+    const res = await authFetch("/api/admin/rsvps/resend-tickets", {
+      method: "POST",
+      body: JSON.stringify({ eventId, code: row?.id }),
+    });
+    const data = await res.json().catch(() => ({}));
+    setBusyId("");
+    if (!res.ok) alert(data?.error || "Couldn't send.");
+    else
+      alert(
+        `Sent: ${data.sent}. Still not sent: ${data.remaining}.` +
+          (data.stoppedAtLimit ? "\n\nStopped: the email limit has been reached. Try again later (or after upgrading Resend)." : "")
+      );
+    load();
+  }
+
+  /** wa.me needs the number in international form without "+". */
+  const waNumber = (r: Row) => (normalizeGhanaPhone(r.whatsapp) ?? r.whatsapp).replace(/\D/g, "");
+  const ticketMessage = (r: Row) =>
+    encodeURIComponent(
+      `Hi ${r.name.split(" ")[0]}, here's your ticket for ${event?.title ?? "the event"}: ${window.location.origin}/ticket/${r.id}\nShow the QR code at the gate. See you there!`
+    );
 
   // Per person who shared: registrations, how many turned up, and on which platforms.
   const bySharer = useMemo(() => {
@@ -178,9 +213,9 @@ export default function AdminEventsPage() {
   }
 
   function exportCsv() {
-    const header = ["Ticket", "Name", "Email", "WhatsApp", "Registered", "Checked in", "Checked in at", "Checked in by", "Source", "Medium", "Campaign", "Content", "Shared by", "Form", "Cancelled", "Flags"];
+    const header = ["Ticket", "Name", "Email", "WhatsApp", "Registered", "Checked in", "Checked in at", "Checked in by", "Source", "Medium", "Campaign", "Content", "Shared by", "Form", "Cancelled", "Ticket email", "Flags"];
     const lines = (rows ?? []).map((r) =>
-      [r.id, r.name, r.email, r.whatsapp, r.createdAt, r.attended ? "yes" : "no", r.checkedInAt, r.checkedInBy, srcOf(r), r.utm_medium, r.utm_campaign, r.utm_content, r.ref ? sharerName(r.ref) : "", r.source, r.cancelled ? "yes" : "", flagsOf(r).join("; ")]
+      [r.id, r.name, r.email, r.whatsapp, r.createdAt, r.attended ? "yes" : "no", r.checkedInAt, r.checkedInBy, srcOf(r), r.utm_medium, r.utm_campaign, r.utm_content, r.ref ? sharerName(r.ref) : "", r.source, r.cancelled ? "yes" : "", r.ticketEmail ?? "", flagsOf(r).join("; ")]
         .map(csvCell)
         .join(",")
     );
@@ -222,6 +257,16 @@ export default function AdminEventsPage() {
             >
               <RefreshCw className="h-4 w-4" /> Refresh
             </button>
+            {emailFailed > 0 && (
+              <button
+                onClick={() => resendTickets()}
+                disabled={busyId === "resend-all"}
+                className="flex items-center gap-1.5 rounded-full border border-danger/50 bg-danger/10 px-4 py-2 text-sm font-semibold text-danger disabled:opacity-50"
+              >
+                {busyId === "resend-all" ? <Loader2 className="h-4 w-4 animate-spin" /> : <MailWarning className="h-4 w-4" />}
+                Send missing tickets ({emailFailed})
+              </button>
+            )}
             <button
               onClick={exportCsv}
               disabled={!rows?.length}
@@ -377,13 +422,34 @@ export default function AdminEventsPage() {
                   <td className="px-4 py-3 text-zinc-300">
                     <div>{r.email}</div>
                     <a
-                      href={`https://wa.me/${r.whatsapp.replace(/[^\d]/g, "")}`}
+                      href={`https://wa.me/${waNumber(r)}`}
                       target="_blank"
                       rel="noreferrer"
                       className="text-zinc-400 hover:underline"
                     >
                       {r.whatsapp}
                     </a>
+                    {!r.cancelled && (
+                      <div className="mt-1 flex gap-3 text-xs">
+                        <a
+                          href={`https://wa.me/${waNumber(r)}?text=${ticketMessage(r)}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="font-semibold text-brand-500 hover:underline"
+                        >
+                          Send ticket on WhatsApp
+                        </a>
+                        {r.ticketEmail === "failed" && (
+                          <button
+                            onClick={() => resendTickets(r)}
+                            disabled={!!busyId}
+                            className="font-semibold text-zinc-400 hover:text-white disabled:opacity-50"
+                          >
+                            Retry email
+                          </button>
+                        )}
+                      </div>
+                    )}
                   </td>
                   <td className="px-4 py-3 font-mono text-xs text-zinc-300">{r.id}</td>
                   <td className="px-4 py-3">

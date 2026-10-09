@@ -33,7 +33,19 @@ export type EventItem = {
   contactPhone: string;
   /** utm_campaign used in this event's share links, e.g. "conference2026". */
   campaign?: string;
+  /**
+   * WhatsApp Community invite for registrants (reminders and updates). Shown after
+   * registering and in the ticket email. If it leaks, reset it in WhatsApp and paste
+   * the new one here.
+   */
+  whatsappCommunityUrl?: string;
 };
+
+/** The event's WhatsApp invite, only if it's a genuine WhatsApp link (otherwise nothing is shown). */
+export function whatsappInvite(event: Pick<EventItem, "whatsappCommunityUrl">) {
+  const url = event.whatsappCommunityUrl ?? "";
+  return /^https:\/\/(chat\.whatsapp\.com\/[A-Za-z0-9]+|(www\.)?whatsapp\.com\/channel\/[A-Za-z0-9]+)$/.test(url) ? url : "";
+}
 
 /** Short id used in a sharer's ?ref= link, e.g. "dr-newman" (from the photo file name). */
 export function speakerRef(s: Speaker) {
@@ -53,6 +65,7 @@ export const upcomingEvents: EventItem[] = [
   {
     id: "forex-trading-conference-2026",
     campaign: "conference2026",
+    whatsappCommunityUrl: "https://chat.whatsapp.com/GDOwmuvQq4KE0kgOyIe6x9",
     title: "Forex Trading Conference 2026",
     date: "Saturday, October 31, 2026 · 11:00 AM GMT",
     dateISO: "2026-10-31T11:00:00Z",

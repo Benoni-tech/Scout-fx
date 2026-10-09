@@ -1,5 +1,5 @@
-import { getResend, FROM_EMAIL, REPLY_TO_EMAIL } from "@/lib/resend";
-import type { EventItem } from "@/lib/events";
+import { sendEmail, FROM_EMAIL, REPLY_TO_EMAIL } from "@/lib/resend";
+import { whatsappInvite, type EventItem } from "@/lib/events";
 import { SITE_URL, ticketUrl, type Rsvp } from "@/lib/tickets";
 import { ticketImagePng } from "@/lib/ticketImage";
 import { SEED_PROGRAM } from "@/lib/seedProgram";
@@ -78,6 +78,25 @@ function detailRow(label: string, value: string) {
 }
 
 /** HTML for the ticket email; the ticket image is referenced as cid:ticket. */
+/** "Join the WhatsApp community" panel for event emails; empty if the event has no invite. */
+function whatsappBlock(event: EventItem) {
+  const url = whatsappInvite(event);
+  if (!url) return "";
+  return `
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:28px 0 0; font-family:${FONT};">
+      <tr><td style="padding:20px; border:1px solid #27272A; border-radius:16px; text-align:center;">
+        <p style="margin:0; font-size:14px; line-height:1.6; color:#A1A1AA;">
+          Join our WhatsApp community for reminders, directions and updates before the day.
+        </p>
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:14px auto 0;">
+          <tr><td bgcolor="#25D366" style="border-radius:999px;">
+            <a href="${url}" style="display:inline-block; padding:12px 24px; font-family:${FONT}; font-size:14px; font-weight:700; color:#000000; text-decoration:none; border-radius:999px;">Join the WhatsApp community</a>
+          </td></tr>
+        </table>
+      </td></tr>
+    </table>`;
+}
+
 export function ticketEmailHtml(rsvp: Pick<Rsvp, "id" | "name">, event: EventItem) {
   const name = escapeHtml(rsvp.name);
   const firstName = escapeHtml(rsvp.name.split(" ")[0] || rsvp.name);
@@ -102,6 +121,7 @@ export function ticketEmailHtml(rsvp: Pick<Rsvp, "id" | "name">, event: EventIte
     </table>
 
     <div style="margin:32px 0 0;">${button(ticketUrl(rsvp.id), "View ticket online &rarr;")}</div>
+${whatsappBlock(event)}
 
     <p style="margin:28px 0 0; font-size:12px; line-height:1.7; color:#71717A; text-align:center;">
       This ticket admits one person and can be used once.<br />
@@ -117,7 +137,7 @@ export function ticketEmailHtml(rsvp: Pick<Rsvp, "id" | "name">, event: EventIte
 export async function sendTicketEmail(rsvp: Rsvp, event: EventItem) {
   const png = await ticketImagePng(rsvp, event);
 
-  await getResend().emails.send({
+  await sendEmail({
     from: FROM_EMAIL,
     to: rsvp.email,
     replyTo: REPLY_TO_EMAIL,
@@ -158,7 +178,7 @@ export async function sendWelcomeEmail(to: string, name?: string) {
     </table>
     <div style="margin:32px 0 0;">${button(`${SITE_URL}/education`, "Start learning &rarr;")}</div>`;
 
-  await getResend().emails.send({
+  await sendEmail({
     from: FROM_EMAIL,
     to,
     replyTo: REPLY_TO_EMAIL,
@@ -199,7 +219,7 @@ export function applicationEmailHtml(app: SeedRegistration) {
 
 /** Sent as soon as someone registers for the Seed Program (see /api/applications). */
 export async function sendApplicationEmail(app: SeedRegistration) {
-  await getResend().emails.send({
+  await sendEmail({
     from: FROM_EMAIL,
     to: app.email,
     replyTo: REPLY_TO_EMAIL,

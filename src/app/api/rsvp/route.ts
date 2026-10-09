@@ -4,6 +4,7 @@ import { getAdminDb } from "@/lib/firebaseAdmin";
 import { getEventById } from "@/lib/events";
 import { generateTicketCode, Rsvp } from "@/lib/tickets";
 import { sendTicketEmail } from "@/lib/emails";
+import { EmailError } from "@/lib/resend";
 import { rateLimit, isHoneypotFilled } from "@/lib/rateLimit";
 import { cleanSource, cleanUtm } from "@/lib/utm";
 import { emailError, nameError, normalizeGhanaPhone, phoneError, tidyEmail, tidyName } from "@/lib/validation";
@@ -59,7 +60,8 @@ export async function POST(req: NextRequest) {
       if (!prev.cancelled && !prev.attended && Date.now() - last > RESEND_COOLDOWN_MS) {
         try {
           await sendTicketEmail({ ...(prev as Omit<Rsvp, "id">), id: doc.id }, event);
-          await doc.ref.update({ lastTicketSentAt: new Date().toISOString() });
+          const now = new Date().toISOString();
+          await doc.ref.update({ lastTicketSentAt: now, ticketEmail: "sent", ticketEmailAt: now, ticketEmailError: null });
         } catch (emailErr) {
           console.error("Resend ticket re-send failed:", emailErr);
         }
@@ -105,13 +107,19 @@ export async function POST(req: NextRequest) {
     // Same email registered a moment ago in another tab.
     if (taken.includes("email")) return NextResponse.json({ ok: true, alreadyRegistered: true });
 
+    // Record whether the ticket email went out, so admins can see and re-send the ones that didn't.
     let emailSent = true;
+    let sendFailure: string | null = null;
     try {
       await sendTicketEmail(rsvp, event);
     } catch (emailErr) {
       emailSent = false;
+      sendFailure = emailErr instanceof EmailError ? emailErr.code : "unknown";
       console.error("Resend ticket email failed:", emailErr);
     }
+    await ref
+      .update({ ticketEmail: emailSent ? "sent" : "failed", ticketEmailAt: new Date().toISOString(), ticketEmailError: sendFailure })
+      .catch((e) => console.error("Couldn't record ticket email status:", e));
 
     return NextResponse.json({ ok: true, ticketCode: id, emailSent });
   } catch (err) {

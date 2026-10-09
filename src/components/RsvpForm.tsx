@@ -1,13 +1,41 @@
 "use client";
 
 import { useEffect, useRef, useState, FormEvent } from "react";
-import { Loader2, CheckCircle2, User, Mail, Phone, Ticket, ArrowRight } from "lucide-react";
+import { Loader2, CheckCircle2, User, Mail, Phone, Ticket, ArrowRight, MessageCircle } from "lucide-react";
 import { trackPixel } from "@/lib/metaPixel";
 import { captureUtm, Utm } from "@/lib/utm";
 import Honeypot, { honeypotValue } from "@/components/Honeypot";
 import { FieldError, GHANA_NOTICE, useContactChecks } from "@/components/FormChecks";
 
-export default function RsvpForm({ eventId, eventName }: { eventId: string; eventName?: string }) {
+/** Join button for the event's WhatsApp Community, shown once someone has registered. */
+function WhatsAppJoin({ url, dark }: { url?: string; dark?: boolean }) {
+  if (!url) return null;
+  return (
+    <div className={`mt-5 ${dark ? "border-t border-black/15 pt-5" : "rounded-2xl border border-white/10 bg-white/[0.03] p-4"}`}>
+      <p className={`text-sm ${dark ? "text-black/80" : "text-zinc-300"}`}>
+        Join our WhatsApp community for reminders, directions and updates before the day.
+      </p>
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-3 flex w-full items-center justify-center gap-2 rounded-full bg-[#25D366] px-4 py-3 text-sm font-bold text-black hover:brightness-110 sm:inline-flex sm:w-auto"
+      >
+        <MessageCircle className="h-4 w-4 shrink-0" /> Join on WhatsApp
+      </a>
+    </div>
+  );
+}
+
+export default function RsvpForm({
+  eventId,
+  eventName,
+  whatsappUrl,
+}: {
+  eventId: string;
+  eventName?: string;
+  whatsappUrl?: string;
+}) {
   const [form, setForm] = useState({ name: "", email: "", whatsapp: "" });
   const [status, setStatus] = useState<
     "idle" | "loading" | "success" | "error"
@@ -67,6 +95,7 @@ export default function RsvpForm({ eventId, eventName }: { eventId: string; even
             If {form.email} is registered for this event, your ticket has been sent there. Check your
             inbox and spam folder. Still nothing? Message us on WhatsApp.
           </p>
+          <WhatsAppJoin url={whatsappUrl} />
           <button
             type="button"
             onClick={() => {
@@ -85,24 +114,38 @@ export default function RsvpForm({ eventId, eventName }: { eventId: string; even
 
   if (status === "success") {
     return (
-      <div className="flex animate-fade-up items-start gap-4 rounded-2xl bg-brand-600 p-6 text-black shadow-glow">
+      <div className="animate-fade-up rounded-2xl bg-brand-600 p-6 text-black shadow-glow">
+        <div className="flex items-start gap-4">
         <CheckCircle2 className="mt-0.5 h-6 w-6 shrink-0" />
         <div>
           <p className="text-sm font-semibold">You&apos;re registered.</p>
           <p className="text-sm">
             {result.emailSent === false
-                ? "We couldn't email your ticket, so save it from the link below."
-                : `Your ticket with a QR code is on its way to ${form.email}. Show it at the gate.`}
+              ? "We couldn't email your ticket right now, so save it here. You'll need the QR code at the gate."
+              : `Your ticket with a QR code is on its way to ${form.email}. Show it at the gate.`}
           </p>
           {result.ticketCode && (
-            <a
-              href={`/ticket/${result.ticketCode}`}
-              className="mt-4 inline-flex rounded-full bg-black px-5 py-2.5 text-sm font-semibold text-brand-500"
-            >
-              View my ticket
-            </a>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <a
+                href={`/ticket/${result.ticketCode}`}
+                className="inline-flex rounded-full bg-black px-5 py-2.5 text-sm font-semibold text-brand-500"
+              >
+                View my ticket
+              </a>
+              {result.emailSent === false && (
+                <a
+                  href={`/api/tickets/${result.ticketCode}/image?download=1`}
+                  className="inline-flex rounded-full border border-black/30 px-5 py-2.5 text-sm font-semibold text-black"
+                >
+                  Save ticket image
+                </a>
+              )}
+            </div>
           )}
         </div>
+        </div>
+        {/* full card width so the button fits on a phone */}
+        <WhatsAppJoin url={whatsappUrl} dark />
       </div>
     );
   }

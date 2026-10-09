@@ -41,6 +41,11 @@ export function nameError(raw: string) {
   if (!/^[\p{L}][\p{L}'’.\- ]*$/u.test(name)) return "Your name can only contain letters, spaces, hyphens and apostrophes.";
   const words = name.split(" ").filter((w) => /\p{L}{2,}/u.test(w));
   if (words.length < 2) return "Enter your first and last name.";
+  // Keyboard junk like "ddd dddd": the same letter 3+ times in a row, or a 3+ letter
+  // word with no vowel. Real names ("Nana Ama Nkrumah", "Ng") still pass.
+  if (/(\p{L})\1\1/iu.test(name) || words.some((w) => w.length >= 3 && !/[aeiouyàáâãäåèéêëìíîïòóôõöùúûüýɛɔ]/i.test(w))) {
+    return "Enter your real first and last name.";
+  }
   return "";
 }
 

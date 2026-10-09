@@ -25,8 +25,15 @@ export type Rsvp = {
   cancelled?: boolean;
   cancelledAt?: string | null;
   cancelledBy?: string | null;
+  /** Whether the ticket email went out. Missing on registrations from before this was tracked. */
+  ticketEmail?: TicketEmailStatus;
+  ticketEmailAt?: string;
+  ticketEmailError?: string | null;
   createdAt: string;
 };
+
+/** "bounced": Resend accepted it but the address doesn't exist (set from Resend's records). */
+export type TicketEmailStatus = "sent" | "failed" | "bounced";
 
 // Unambiguous characters only (no 0/O, 1/I/L) so a code can be read out at the gate.
 const ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
