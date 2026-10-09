@@ -33,7 +33,7 @@ import {
   BookOpen,
   QrCode,
 } from "lucide-react";
-import { upcomingEvents, getEventById, whatsappInvite } from "@/lib/events";
+import { upcomingEvents, getEventById } from "@/lib/events";
 import { testimonials } from "@/lib/testimonials";
 
 const LESSON_ICONS = [Globe, Clock, LineChart, ShieldCheck, Newspaper, Radio];
@@ -323,7 +323,7 @@ export default async function EventDetailPage({
                 </div>
 
                 <div className="mx-auto mt-12 max-w-5xl rounded-3xl border border-white/10 bg-black/60 p-6 shadow-card backdrop-blur sm:p-10">
-                  <RsvpForm eventId={event.id} eventName={event.title} whatsappUrl={whatsappInvite(event)} />
+                  <RsvpForm eventId={event.id} eventName={event.title} />
                 </div>
 
                 <div className="mx-auto mt-8 flex max-w-5xl flex-col items-center justify-between gap-4 text-sm text-zinc-400 sm:flex-row">
