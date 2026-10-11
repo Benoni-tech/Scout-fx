@@ -18,6 +18,8 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { upcomingEvents } from "@/lib/events";
+import { useRegistrationStates } from "@/components/admin/RegistrationSwitch";
 import {
   CalendarDays,
   Home,
@@ -27,6 +29,7 @@ import {
   ScanLine,
   Sprout,
   Users,
+  Archive,
 } from "lucide-react";
 import { auth } from "@/lib/firebase";
 import { Container } from "@/components/ui";
@@ -117,7 +120,9 @@ export default function AdminGate({ children }: { children: ReactNode }) {
   );
 }
 
-const NAV = [
+type NavItem = { href: string; label: string; icon: typeof Home };
+
+const NAV: NavItem[] = [
   { href: "/admin", label: "Home", icon: Home },
   { href: "/admin/events", label: "Events", icon: CalendarDays },
   { href: "/admin/seed", label: "Seed registrations", icon: Sprout },
@@ -128,7 +133,30 @@ const NAV = [
 function AdminShell({ email, children }: { email: string; children: ReactNode }) {
   const pathname = usePathname();
   const active = (href: string) =>
-    href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
+    href === "/admin" ? pathname === "/admin" : pathname.startsWith(href.split("?")[0]);
+
+  // Programs and events with closed registration move from the main menu to Archive,
+  // where they stay fully manageable (statuses, seed awards, check-ins, exports).
+  const states = useRegistrationStates();
+  const seedClosed = states?.seed?.open === false;
+  const closedEvents = upcomingEvents.filter((e) => states?.[`event:${e.id}`]?.open === false);
+  const nav = NAV.filter((n) => !(seedClosed && n.href === "/admin/seed"));
+  const archive: NavItem[] = [
+    ...(seedClosed ? [{ href: "/admin/seed", label: "Seed Program", icon: Sprout }] : []),
+    ...closedEvents.map((e) => ({ href: `/admin/events?event=${e.id}`, label: e.title, icon: CalendarDays })),
+  ];
+  const navLink = (item: NavItem) => (
+    <Link
+      key={item.href}
+      href={item.href}
+      className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${
+        active(item.href) ? "bg-brand-500/10 text-brand-500" : "text-zinc-400 hover:bg-white/5 hover:text-white"
+      }`}
+    >
+      <item.icon className="h-4 w-4 shrink-0" />
+      <span className="truncate">{item.label}</span>
+    </Link>
+  );
 
   return (
     <div className="mx-auto max-w-7xl px-4 pb-12 pt-4">
@@ -144,22 +172,16 @@ function AdminShell({ email, children }: { email: string; children: ReactNode })
               </span>
             </Link>
 
-            <nav className="space-y-1">
-              {NAV.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${
-                    active(item.href)
-                      ? "bg-brand-500/10 text-brand-500"
-                      : "text-zinc-400 hover:bg-white/5 hover:text-white"
-                  }`}
-                >
-                  <item.icon className="h-4 w-4" />
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
+            <nav className="space-y-1">{nav.map(navLink)}</nav>
+
+            {archive.length > 0 && (
+              <div className="mt-6">
+                <p className="flex items-center gap-2 px-3 text-[11px] font-bold uppercase tracking-widest text-zinc-600">
+                  <Archive className="h-3.5 w-3.5" /> Archive
+                </p>
+                <nav className="mt-2 space-y-1">{archive.map(navLink)}</nav>
+              </div>
+            )}
 
             <div className="mt-auto space-y-3 border-t border-white/10 pt-4">
               <p className="truncate px-1 text-xs text-zinc-500" title={email}>
@@ -179,7 +201,7 @@ function AdminShell({ email, children }: { email: string; children: ReactNode })
         <div className="min-w-0 flex-1">
           {/* mobile tabs */}
           <div className="flex items-center gap-2 overflow-x-auto border-b border-white/10 px-3 py-3 md:hidden">
-            {NAV.map((item) => (
+            {[...nav, ...archive].map((item) => (
               <Link
                 key={item.href}
                 href={item.href}

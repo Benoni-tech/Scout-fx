@@ -43,8 +43,7 @@ export default function AboutPage() {
           analysis, risk management and trading psychology to a Ghanaian
           audience across Forex, Gold and crypto markets. What started as a
           series of free seminars has grown into a community of thousands of
-          traders and a rule-based signals track record published in the
-          open.
+          traders, with more than 4,000 students helped so far.
         </p>
 
         <div className="mt-12 grid gap-5 sm:grid-cols-3">
@@ -62,7 +61,7 @@ export default function AboutPage() {
         <div className="mt-16 flex flex-col items-start gap-4 rounded-3xl border border-white/10 bg-brand-500/10 p-6 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-sm font-semibold text-white">
-              Want the full media kit: stats, platforms and testimonials?
+              Want the full media kit: stats and platforms?
             </p>
             <p className="mt-1 text-sm text-zinc-400">
               Everything a partner or press contact needs in one place.

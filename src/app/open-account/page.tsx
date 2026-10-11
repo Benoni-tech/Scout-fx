@@ -13,7 +13,7 @@ const reasons = [
   },
   {
     title: "The broker I actually trade through",
-    desc: "Every seminar, education post and signal is built around HFM's platform.",
+    desc: "Every seminar and education post is built around HFM's platform.",
   },
 ];
 

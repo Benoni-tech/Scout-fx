@@ -1,5 +1,6 @@
 import { Container, Eyebrow, PrimaryButton, SecondaryButton } from "@/components/ui";
-import { Mail, MessageCircle, Twitter, Linkedin } from "lucide-react";
+import { Mail, MessageCircle, Facebook, Instagram, Linkedin } from "lucide-react";
+import { SOCIAL_LINKS, WHATSAPP_CONTACT } from "@/lib/social";
 import { buildMetadata } from "@/lib/seo";
 
 const channels = [
@@ -11,21 +12,27 @@ const channels = [
   },
   {
     icon: MessageCircle,
-    title: "WhatsApp community",
-    detail: "Join the group for quick questions",
-    href: "#",
+    title: "WhatsApp",
+    detail: "+233 54 462 4401",
+    href: WHATSAPP_CONTACT,
   },
   {
-    icon: Twitter,
-    title: "Twitter / X",
-    detail: "@scoutcartel",
-    href: "#",
+    icon: Facebook,
+    title: "Facebook",
+    detail: "scoutsfx26",
+    href: SOCIAL_LINKS.facebook,
+  },
+  {
+    icon: Instagram,
+    title: "Instagram",
+    detail: "@scoutsfx26",
+    href: SOCIAL_LINKS.instagram,
   },
   {
     icon: Linkedin,
     title: "LinkedIn",
     detail: "Scout FX",
-    href: "#",
+    href: SOCIAL_LINKS.linkedin,
   },
 ];
 
@@ -54,6 +61,7 @@ export default function ContactPage() {
             <a
               key={c.title}
               href={c.href}
+              {...(c.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
               className="flex items-start gap-4 card p-5 card-hover"
             >
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-500/10">

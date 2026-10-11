@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { CalendarPlus, Download, Loader2, RefreshCw, Search, Users } from "lucide-react";
 import { Container, StatCard } from "@/components/ui";
 import { useAdmin } from "@/components/admin/AdminGate";
+import { SOURCE_LABELS } from "@/lib/utm";
 
 type Lead = {
   id: string;
@@ -11,6 +12,9 @@ type Lead = {
   email: string;
   whatsapp: string;
   source: string;
+  utm_source?: string;
+  utm_medium?: string;
+  utm_campaign?: string;
   createdAt: string;
 };
 
@@ -58,16 +62,16 @@ export default function AdminCommunityPage() {
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
     return (rows ?? []).filter((r) =>
-      !q ? true : [r.name, r.email, r.whatsapp, r.source].some((f) => f?.toLowerCase().includes(q))
+      !q ? true : [r.name, r.email, r.whatsapp, r.source, r.utm_source].some((f) => f?.toLowerCase().includes(q))
     );
   }, [rows, query]);
 
   const last7 = rows?.filter((r) => Date.now() - Date.parse(r.createdAt) < 7 * 864e5).length ?? 0;
 
   function exportCsv() {
-    const header = ["Name", "Email", "WhatsApp", "Joined", "Source"];
+    const header = ["Name", "Email", "WhatsApp", "Joined", "Source", "Medium", "Campaign", "Form"];
     const lines = (rows ?? []).map((r) =>
-      [r.name, r.email, r.whatsapp, r.createdAt, r.source].map(csvCell).join(",")
+      [r.name, r.email, r.whatsapp, r.createdAt, r.utm_source ?? "", r.utm_medium ?? "", r.utm_campaign ?? "", r.source].map(csvCell).join(",")
     );
     const blob = new Blob([[header.join(","), ...lines].join("\n")], { type: "text/csv" });
     const a = document.createElement("a");
@@ -172,7 +176,18 @@ export default function AdminCommunityPage() {
                     </a>
                   </td>
                   <td className="px-4 py-3 text-zinc-400">{fmt(r.createdAt)}</td>
-                  <td className="px-4 py-3 text-xs text-zinc-500">{r.source}</td>
+                  <td className="px-4 py-3">
+                    {r.utm_source ? (
+                      <>
+                        <div className="text-sm text-white">{SOURCE_LABELS[r.utm_source] ?? r.utm_source}</div>
+                        {(r.utm_medium || r.utm_campaign) && (
+                          <div className="text-xs text-zinc-500">{[r.utm_medium, r.utm_campaign].filter(Boolean).join(" · ")}</div>
+                        )}
+                      </>
+                    ) : (
+                      <span className="text-xs text-zinc-500">not tracked</span>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>

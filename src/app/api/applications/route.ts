@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readFormBody } from "@/lib/requestGuard";
+import { registrationOpenNow } from "@/lib/registration";
 import { getAdminDb } from "@/lib/firebaseAdmin";
 import { generateTicketCode } from "@/lib/tickets";
 import { sendApplicationEmail } from "@/lib/emails";
@@ -33,6 +34,9 @@ export async function POST(req: NextRequest) {
     if (parsed.error) return parsed.error;
     const body = parsed.body;
     if (isHoneypotFilled(body)) return NextResponse.json({ ok: true });
+    if (!(await registrationOpenNow("seed"))) {
+      return NextResponse.json({ error: "Registration for the Seed Program is closed." }, { status: 403 });
+    }
     const name = tidyName(body.name);
     const email = tidyEmail(body.email);
     const rawPhone = str(body.whatsapp, 40);

@@ -1,20 +1,20 @@
 import { testimonials } from "@/lib/testimonials";
-import { Container, Eyebrow, StatCard, SecondaryButton } from "@/components/ui";
-import { Users, TrendingUp, CalendarCheck, Download, Quote } from "lucide-react";
+import { Container, Eyebrow, StatCard } from "@/components/ui";
+import { Users, TrendingUp, Megaphone, Quote } from "lucide-react";
+import { SOCIAL_LINKS, WHATSAPP_CONTACT } from "@/lib/social";
 import { buildMetadata } from "@/lib/seo";
 
 const stats = [
-  { label: "Community members", value: "4,200+" },
-  { label: "Avg. monthly registrations", value: "250" },
-  { label: "Active traders / mo", value: "100" },
-  { label: "Signal win rate", value: "58%" },
+  { label: "Students helped", value: "4,000+" },
+  { label: "Followers online", value: "2,000+" },
+  { label: "Win rate", value: "58%" },
 ];
 
 const platforms = [
-  { name: "Instagram", followers: "12.4K" },
-  { name: "TikTok", followers: "9.1K" },
-  { name: "YouTube", followers: "3.8K" },
-  { name: "WhatsApp community", followers: "1.6K" },
+  { name: "Facebook", handle: "scoutsfx26", href: SOCIAL_LINKS.facebook },
+  { name: "Instagram", handle: "@scoutsfx26", href: SOCIAL_LINKS.instagram },
+  { name: "LinkedIn", handle: "Scout FX", href: SOCIAL_LINKS.linkedin },
+  { name: "WhatsApp", handle: "+233 54 462 4401", href: WHATSAPP_CONTACT },
 ];
 
 
@@ -38,9 +38,6 @@ export default function MediaKitPage() {
               Trader · Educator · Community Leader
             </p>
           </div>
-          <SecondaryButton href="/media-kit">
-            <Download className="mr-2 h-4 w-4" /> Download one-pager
-          </SecondaryButton>
         </div>
 
         <p className="mt-6 max-w-2xl text-base leading-relaxed text-zinc-400">
@@ -60,11 +57,10 @@ export default function MediaKitPage() {
           <h2 className="text-sm font-bold uppercase tracking-wide text-zinc-400">
             Audience &amp; performance
           </h2>
-          <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-3">
             <StatCard icon={<Users className="h-4 w-4 text-brand-500" />} iconBg="bg-brand-500/10" label={stats[0].label} value={stats[0].value} />
-            <StatCard icon={<TrendingUp className="h-4 w-4 text-black" />} iconBg="bg-brand-600" label={stats[1].label} value={stats[1].value} />
-            <StatCard icon={<Users className="h-4 w-4 text-brand-500" />} iconBg="bg-brand-500/10" label={stats[2].label} value={stats[2].value} />
-            <StatCard icon={<CalendarCheck className="h-4 w-4 text-black" />} iconBg="bg-brand-600" label={stats[3].label} value={stats[3].value} />
+            <StatCard icon={<Megaphone className="h-4 w-4 text-black" />} iconBg="bg-brand-600" label={stats[1].label} value={stats[1].value} />
+            <StatCard icon={<TrendingUp className="h-4 w-4 text-brand-500" />} iconBg="bg-brand-500/10" label={stats[2].label} value={stats[2].value} />
           </div>
         </div>
 
@@ -75,47 +71,38 @@ export default function MediaKitPage() {
           </h2>
           <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-4">
             {platforms.map((p) => (
-              <div key={p.name} className="card p-4 text-center">
-                <p className="text-lg font-extrabold text-white">{p.followers}</p>
-                <p className="text-xs text-zinc-400">{p.name}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* screenshots grid placeholder */}
-        <div className="mt-12">
-          <h2 className="text-sm font-bold uppercase tracking-wide text-zinc-400">
-            Content &amp; events
-          </h2>
-          <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-4">
-            {[1, 2, 3, 4].map((i) => (
-              <div
-                key={i}
-                className="flex aspect-square items-center justify-center rounded-2xl border border-dashed border-white/10 bg-white/[0.02] text-xs text-zinc-500"
+              <a
+                key={p.name}
+                href={p.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="card card-hover p-4 text-center"
               >
-                Add photo/screenshot
-              </div>
+                <p className="text-lg font-extrabold text-white">{p.name}</p>
+                <p className="text-xs text-zinc-400">{p.handle}</p>
+              </a>
             ))}
           </div>
         </div>
 
-        {/* testimonials */}
-        <div className="mt-12">
-          <h2 className="text-sm font-bold uppercase tracking-wide text-zinc-400">
-            Testimonials
-          </h2>
-          <div className="mt-5 grid gap-5 sm:grid-cols-3">
-            {testimonials.map((t) => (
-              <div key={t.name} className="card p-5">
-                <Quote className="h-4 w-4 text-brand-500" />
-                <p className="mt-2 text-sm leading-relaxed text-zinc-300">&ldquo;{t.quote}&rdquo;</p>
-                <p className="mt-3 text-xs font-bold text-white">{t.name}</p>
-                <p className="text-xs text-zinc-400">{t.role}</p>
-              </div>
-            ))}
+        {/* testimonials (hidden while there are none) */}
+        {testimonials.length > 0 && (
+          <div className="mt-12">
+            <h2 className="text-sm font-bold uppercase tracking-wide text-zinc-400">
+              Testimonials
+            </h2>
+            <div className="mt-5 grid gap-5 sm:grid-cols-3">
+              {testimonials.map((t) => (
+                <div key={t.name} className="card p-5">
+                  <Quote className="h-4 w-4 text-brand-500" />
+                  <p className="mt-2 text-sm leading-relaxed text-zinc-300">&ldquo;{t.quote}&rdquo;</p>
+                  <p className="mt-3 text-xs font-bold text-white">{t.name}</p>
+                  <p className="text-xs text-zinc-400">{t.role}</p>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* contact */}
         <div className="mt-16 rounded-3xl bg-brand-600 p-8 text-center">

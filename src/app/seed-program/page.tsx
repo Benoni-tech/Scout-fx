@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import {
   AlertTriangle,
@@ -27,14 +28,19 @@ import Faq from "@/components/Faq";
 import SeedApplicationForm from "@/components/SeedApplicationForm";
 import { SEED_PROGRAM, seedFaqs } from "@/lib/seedProgram";
 import { buildMetadata } from "@/lib/seo";
+import { registrationOpen } from "@/lib/registration";
 
-export const metadata = buildMetadata({
-  title: { absolute: `${SEED_PROGRAM.name} | Free trading training` },
-  shareTitle: `${SEED_PROGRAM.name}: free trading training`,
-  path: "/seed-program",
-  image: "/seed-program/opengraph-image",
-  description: `Register for free trading training from Scout FX. Participants may also qualify for up to $${SEED_PROGRAM.seedAmount} seed capital, awarded at Scout FX's discretion.`,
-});
+export async function generateMetadata(): Promise<Metadata> {
+  const meta = buildMetadata({
+    title: { absolute: `${SEED_PROGRAM.name} | Free trading training` },
+    shareTitle: `${SEED_PROGRAM.name}: free trading training`,
+    path: "/seed-program",
+    image: "/seed-program/opengraph-image",
+    description: `Register for free trading training from Scout FX. Participants may also qualify for up to $${SEED_PROGRAM.seedAmount} seed capital, awarded at Scout FX's discretion.`,
+  });
+  // Closed programs stay reachable for people with old links, but drop out of search.
+  return (await registrationOpen("seed")) ? meta : { ...meta, robots: { index: false, follow: true } };
+}
 
 const $ = `$${SEED_PROGRAM.seedAmount}`;
 
@@ -67,7 +73,8 @@ const beforeYouApply = [
   "Trading is risky: you can lose the seed capital",
 ];
 
-export default function SeedProgramPage() {
+export default async function SeedProgramPage() {
+  const open = await registrationOpen("seed");
   return (
     <>
       {/* HERO */}
@@ -80,7 +87,9 @@ export default function SeedProgramPage() {
           <div className="text-center lg:text-left">
             <div className="animate-fade-up">
               <Eyebrow>
-                <span className="rounded-full bg-brand-500 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-black">New</span>
+                <span className="rounded-full bg-brand-500 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-black">
+                  {open ? "New" : "Closed"}
+                </span>
                 {SEED_PROGRAM.name}
               </Eyebrow>
             </div>
@@ -105,7 +114,7 @@ export default function SeedProgramPage() {
               style={{ animationDelay: "240ms" }}
             >
               <PrimaryButton href="#apply">
-                Register free <ArrowRight className="h-4 w-4" />
+                {open ? "Register free" : "Registration closed"} <ArrowRight className="h-4 w-4" />
               </PrimaryButton>
               <SecondaryButton href="#how-it-works">How it works</SecondaryButton>
             </div>
@@ -309,23 +318,47 @@ export default function SeedProgramPage() {
               <div className="pointer-events-none absolute left-1/2 top-0 h-56 w-[640px] -translate-x-1/2 -translate-y-1/2 animate-pulse-glow rounded-full bg-brand-500/25 blur-3xl" />
 
               <div className="relative px-3 py-12 sm:px-12 sm:py-14 lg:px-16 lg:py-20">
-                <div className="mx-auto max-w-2xl text-center">
-                  <Eyebrow>
-                    <Sprout className="h-3.5 w-3.5 text-brand-500" />
-                    Registration open
-                  </Eyebrow>
-                  <h2 className="text-gradient mt-6 text-3xl font-bold leading-tight tracking-tight sm:text-5xl">
-                    Register for the Seed Program
-                  </h2>
-                  <p className="mx-auto mt-4 max-w-lg text-base leading-relaxed text-zinc-400">
-                    Registration is free, takes about three minutes and
-                    guarantees your place in the training.
-                  </p>
-                </div>
+                {open ? (
+                  <>
+                    <div className="mx-auto max-w-2xl text-center">
+                      <Eyebrow>
+                        <Sprout className="h-3.5 w-3.5 text-brand-500" />
+                        Registration open
+                      </Eyebrow>
+                      <h2 className="text-gradient mt-6 text-3xl font-bold leading-tight tracking-tight sm:text-5xl">
+                        Register for the Seed Program
+                      </h2>
+                      <p className="mx-auto mt-4 max-w-lg text-base leading-relaxed text-zinc-400">
+                        Registration is free, takes about three minutes and
+                        guarantees your place in the training.
+                      </p>
+                    </div>
 
-                <div className="mx-auto mt-10 max-w-4xl rounded-3xl border border-white/10 bg-black/60 p-4 shadow-card backdrop-blur sm:mt-12 sm:p-10">
-                  <SeedApplicationForm />
-                </div>
+                    <div className="mx-auto mt-10 max-w-4xl rounded-3xl border border-white/10 bg-black/60 p-4 shadow-card backdrop-blur sm:mt-12 sm:p-10">
+                      <SeedApplicationForm />
+                    </div>
+                  </>
+                ) : (
+                  <div className="mx-auto max-w-2xl text-center">
+                    <Eyebrow>
+                      <Sprout className="h-3.5 w-3.5 text-brand-500" />
+                      Registration closed
+                    </Eyebrow>
+                    <h2 className="text-gradient mt-6 text-3xl font-bold leading-tight tracking-tight sm:text-5xl">
+                      Registration has closed
+                    </h2>
+                    <p className="mx-auto mt-4 max-w-lg text-base leading-relaxed text-zinc-400">
+                      Thank you to everyone who registered. Registered
+                      participants will be contacted by email or WhatsApp
+                      about the training and seed awards.
+                    </p>
+                    <div className="mt-8 flex justify-center">
+                      <PrimaryButton href="/join">
+                        Join the community <ArrowRight className="h-4 w-4" />
+                      </PrimaryButton>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </Reveal>

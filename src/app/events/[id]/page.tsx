@@ -16,6 +16,7 @@ import Faq from "@/components/Faq";
 import Reveal from "@/components/Reveal";
 import EventPixel from "@/components/EventPixel";
 import { buildMetadata, eventCity, eventTime, shortEventDate } from "@/lib/seo";
+import { registrationOpen } from "@/lib/registration";
 import {
   ArrowLeft,
   ArrowRight,
@@ -70,6 +71,7 @@ export default async function EventDetailPage({
   const event = getEventById(id);
 
   if (!event) notFound();
+  const open = await registrationOpen(`event:${event.id}`);
 
   const whatsappLink = `https://wa.me/${event.contactPhone.replace(/[^0-9]/g, "")}`;
 
@@ -311,20 +313,23 @@ export default async function EventDetailPage({
                 <div className="mx-auto max-w-2xl text-center">
                   <Eyebrow>
                     <Ticket className="h-3.5 w-3.5 text-brand-500" />
-                    Reserve your spot
+                    {open ? "Reserve your spot" : "Registration closed"}
                   </Eyebrow>
                   <h2 className="text-gradient mt-6 text-3xl font-bold leading-tight tracking-tight sm:text-5xl">
-                    Register for {event.title}
+                    {open ? `Register for ${event.title}` : "Registration has closed"}
                   </h2>
                   <p className="mx-auto mt-4 max-w-lg text-base leading-relaxed text-zinc-400">
-                    Seats fill up fast for free, in-person sessions. Register
-                    now and your ticket lands straight in your inbox.
+                    {open
+                      ? "Seats fill up fast for free, in-person sessions. Register now and your ticket lands straight in your inbox."
+                      : "Registration for this event is closed. If you registered, your ticket is in your email. Questions? Message us on WhatsApp."}
                   </p>
                 </div>
 
-                <div className="mx-auto mt-12 max-w-5xl rounded-3xl border border-white/10 bg-black/60 p-6 shadow-card backdrop-blur sm:p-10">
-                  <RsvpForm eventId={event.id} eventName={event.title} />
-                </div>
+                {open && (
+                  <div className="mx-auto mt-12 max-w-5xl rounded-3xl border border-white/10 bg-black/60 p-6 shadow-card backdrop-blur sm:p-10">
+                    <RsvpForm eventId={event.id} eventName={event.title} />
+                  </div>
+                )}
 
                 <div className="mx-auto mt-8 flex max-w-5xl flex-col items-center justify-between gap-4 text-sm text-zinc-400 sm:flex-row">
                   <span className="inline-flex items-center gap-2">

@@ -6,15 +6,16 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 
-const links = [
+// Signals stays out until the track record is real. The Seed Program shows only
+// while its registration is open (switched in the admin dashboard).
+const baseLinks = [
   { href: "/", label: "Home" },
   { href: "/education", label: "Education" },
   { href: "/events", label: "Events" },
-  { href: "/signals", label: "Signals" },
-  { href: "/seed-program", label: "Seed Program" },
 ];
 
-export default function Navbar() {
+export default function Navbar({ seedOpen = false }: { seedOpen?: boolean }) {
+  const links = seedOpen ? [...baseLinks, { href: "/seed-program", label: "Seed Program" }] : baseLinks;
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
@@ -25,6 +26,9 @@ export default function Navbar() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // The Join page is an ad landing page: logo only, so joining is the one action.
+  const focus = pathname === "/join";
 
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
@@ -45,6 +49,8 @@ export default function Navbar() {
           </span>
         </Link>
 
+        {!focus && (
+        <>
         <nav className="hidden items-center gap-1 md:flex">
           {links.map((l) => (
             <Link
@@ -84,9 +90,11 @@ export default function Navbar() {
         >
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
+        </>
+        )}
       </div>
 
-      {open && (
+      {open && !focus && (
         <div className="mx-auto mt-2 max-w-6xl animate-fade-up rounded-3xl border border-white/10 bg-black/90 p-4 shadow-pill backdrop-blur-xl md:hidden">
           <nav className="flex flex-col gap-1">
             {links.map((l) => (

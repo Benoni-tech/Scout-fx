@@ -2,17 +2,18 @@ import { Container, Eyebrow } from "@/components/ui";
 import LeadForm from "@/components/LeadForm";
 import { CheckCircle2 } from "lucide-react";
 import { buildMetadata } from "@/lib/seo";
+import PagePixel from "@/components/PagePixel";
+import { COMMUNITY_WHATSAPP_URL } from "@/lib/whatsapp";
 
 const perks = [
-  "Weekly education drops: technical analysis, risk, psychology",
+  "Free lessons on technical analysis, risk and trading psychology",
   "First to know about seminars and workshops",
-  "Access to the signals track record as it's published",
   "No spam, no pressure to trade, ever",
 ];
 
 export const metadata = buildMetadata({
   title: "Join the community free",
-  description: "Join the Scout FX community for free: weekly trading education, first word on seminars and workshops, and no pressure to trade.",
+  description: "Join the free Scout FX WhatsApp community: trading education, first word on seminars and workshops, and no pressure to trade.",
   path: "/join",
   image: "/join/opengraph-image",
 });
@@ -20,6 +21,7 @@ export const metadata = buildMetadata({
 export default function JoinPage() {
   return (
     <section className="bg-grid py-16">
+      <PagePixel contentName="Scout FX community" contentType="community" />
       <Container className="grid gap-12 lg:grid-cols-2 lg:items-center">
         <div>
           <Eyebrow>Free to join</Eyebrow>
@@ -27,8 +29,8 @@ export default function JoinPage() {
             Join the community
           </h1>
           <p className="mt-4 max-w-md text-base leading-relaxed text-zinc-400">
-            One place for education, event invites and updates, no
-            algorithm deciding what you see.
+            Our free WhatsApp group for education, event invites and
+            updates, with no algorithm deciding what you see.
           </p>
           <ul className="mt-8 space-y-3">
             {perks.map((p) => (
@@ -41,7 +43,7 @@ export default function JoinPage() {
         </div>
 
         <div className="card rounded-3xl p-8 shadow-card">
-          <LeadForm source="join-page" />
+          <LeadForm source="join-page" whatsappUrl={COMMUNITY_WHATSAPP_URL} />
         </div>
       </Container>
     </section>

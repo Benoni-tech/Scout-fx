@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { Container, StatCard } from "@/components/ui";
 import { useAdmin } from "@/components/admin/AdminGate";
+import RegistrationSwitch from "@/components/admin/RegistrationSwitch";
 import { EDUCATION_LEVELS, SEED_PROGRAM, SEED_STATUSES, type SeedStatus } from "@/lib/seedProgram";
 import { nameKey, normalizeGhanaPhone } from "@/lib/validation";
 
@@ -183,6 +184,9 @@ export default function AdminSeedPage() {
             <p className="mt-1 text-sm text-zinc-400">
               Everyone registered gets training. Move people through the stages and decide on seed capital at the end.
             </p>
+            <div className="mt-3">
+              <RegistrationSwitch regKey="seed" name={SEED_PROGRAM.name} />
+            </div>
           </div>
           <div className="flex gap-2">
             <button

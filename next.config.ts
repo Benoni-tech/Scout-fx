@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { SIGNALS_LIVE } from "./src/lib/features";
 
 const nextConfig: NextConfig = {
   // fonts read at runtime by the ticket image renderer (src/lib/ticketImage.tsx)
@@ -11,6 +12,15 @@ const nextConfig: NextConfig = {
   },
   // Only local images are used, so the image optimizer isn't open to other sites.
   poweredByHeader: false,
+  // Until signals launch, their sub-pages (which hold sample data) aren't served at all.
+  async redirects() {
+    if (SIGNALS_LIVE) return [];
+    return ["history", "dashboard", "disclosure"].map((p) => ({
+      source: `/signals/${p}`,
+      destination: "/signals",
+      permanent: false,
+    }));
+  },
   async headers() {
     return [
       {

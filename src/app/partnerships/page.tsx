@@ -1,12 +1,11 @@
 import { Container, Eyebrow, StatCard, SecondaryButton } from "@/components/ui";
-import { Users, TrendingUp, CalendarCheck, Handshake, Mic, Megaphone } from "lucide-react";
+import { Users, TrendingUp, Handshake, Mic, Megaphone } from "lucide-react";
 import { buildMetadata } from "@/lib/seo";
 
 const stats = [
-  { label: "Community members", value: "4,200+" },
-  { label: "Avg. monthly registrations", value: "250" },
-  { label: "Active traders / mo", value: "100" },
-  { label: "Signal win rate", value: "58%" },
+  { label: "Students helped", value: "4,000+" },
+  { label: "Followers online", value: "2,000+" },
+  { label: "Win rate", value: "58%" },
 ];
 
 const opportunities = [
@@ -47,11 +46,10 @@ export default function PartnershipsPage() {
           audience.
         </p>
 
-        <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
           <StatCard icon={<Users className="h-4 w-4 text-brand-500" />} iconBg="bg-brand-500/10" label={stats[0].label} value={stats[0].value} />
-          <StatCard icon={<TrendingUp className="h-4 w-4 text-black" />} iconBg="bg-brand-600" label={stats[1].label} value={stats[1].value} />
-          <StatCard icon={<Users className="h-4 w-4 text-brand-500" />} iconBg="bg-brand-500/10" label={stats[2].label} value={stats[2].value} />
-          <StatCard icon={<CalendarCheck className="h-4 w-4 text-black" />} iconBg="bg-brand-600" label={stats[3].label} value={stats[3].value} />
+          <StatCard icon={<Megaphone className="h-4 w-4 text-black" />} iconBg="bg-brand-600" label={stats[1].label} value={stats[1].value} />
+          <StatCard icon={<TrendingUp className="h-4 w-4 text-brand-500" />} iconBg="bg-brand-500/10" label={stats[2].label} value={stats[2].value} />
         </div>
 
         <div className="mt-14">

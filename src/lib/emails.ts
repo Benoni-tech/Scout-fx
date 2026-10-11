@@ -129,44 +129,6 @@ export async function sendTicketEmail(rsvp: Rsvp, event: EventItem) {
   });
 }
 
-export async function sendWelcomeEmail(to: string, name?: string) {
-  const first = name ? escapeHtml(name.split(" ")[0]) : "";
-
-  const body = `
-    <p style="margin:0; font-size:12px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:${Y};">Welcome to Scout FX</p>
-    <h1 style="margin:10px 0 0; font-size:28px; line-height:1.15; font-weight:800; letter-spacing:-0.5px; color:#FFFFFF;">You're in${first ? `, ${first}` : ""}.</h1>
-    <p style="margin:14px 0 0; font-size:15px; line-height:1.65; color:#A1A1AA;">
-      You'll hear about upcoming seminars, new education content and community updates. No spam, ever.
-    </p>
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:28px 0 0; font-family:${FONT};">
-      ${[
-        ["01", "Learn", "Start with the education library: risk, charts, psychology.", `${SITE_URL}/education`],
-        ["02", "Show up", "Join a free seminar and meet the community.", `${SITE_URL}/events`],
-        ["03", "Check the record", "Every signal is logged, wins and losses.", `${SITE_URL}/signals`],
-      ]
-        .map(
-          ([n, t, d, href]) => `
-        <tr><td style="padding:14px 0; border-top:1px solid #27272A;">
-          <a href="${href}" style="text-decoration:none;">
-            <span style="font-size:22px; font-weight:300; color:${Y};">${n}</span>
-            <span style="font-size:15px; font-weight:700; color:#FFFFFF; padding-left:10px;">${t}</span><br />
-            <span style="font-size:13px; line-height:1.6; color:#A1A1AA; padding-left:38px;">${d}</span>
-          </a>
-        </td></tr>`
-        )
-        .join("")}
-    </table>
-    <div style="margin:32px 0 0;">${button(`${SITE_URL}/education`, "Start learning &rarr;")}</div>`;
-
-  await sendEmail({
-    from: FROM_EMAIL,
-    to,
-    replyTo: REPLY_TO_EMAIL,
-    subject: "Welcome to the Scout FX community",
-    html: emailLayout({ preheader: "You're in. Here's where to start.", body }),
-  });
-}
-
 type SeedRegistration = { ref: string; name: string; email: string };
 
 /** HTML for the Seed Program registration confirmation. */

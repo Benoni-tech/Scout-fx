@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Twitter, Linkedin, MessageCircle } from "lucide-react";
+import { Facebook, Instagram, Linkedin, MessageCircle } from "lucide-react";
+import { SOCIAL_LINKS, WHATSAPP_CONTACT } from "@/lib/social";
 
 const columns = [
   {
@@ -9,14 +10,12 @@ const columns = [
       { href: "/", label: "Home" },
       { href: "/education", label: "Education" },
       { href: "/events", label: "Events" },
-      { href: "/signals", label: "Signals" },
     ],
   },
   {
     title: "Community",
     links: [
       { href: "/join", label: "Join free" },
-      { href: "/seed-program", label: "Seed Program" },
       { href: "/media-kit", label: "Media kit" },
       { href: "/events", label: "Upcoming seminars" },
       { href: "/open-account", label: "Open HFM account" },
@@ -26,7 +25,6 @@ const columns = [
     title: "Resources",
     links: [
       { href: "/education", label: "Education library" },
-      { href: "/signals/history", label: "Signal track record" },
       { href: "/legal/risk-disclosure", label: "Risk disclosure" },
       { href: "/legal/terms", label: "Terms of service" },
       { href: "/legal/privacy", label: "Privacy policy" },
@@ -43,7 +41,13 @@ const columns = [
   },
 ];
 
-export default function Footer() {
+export default function Footer({ seedOpen = false }: { seedOpen?: boolean }) {
+  // The Seed Program link appears only while its registration is open.
+  const cols = columns.map((c) =>
+    c.title === "Community" && seedOpen
+      ? { ...c, links: [c.links[0], { href: "/seed-program", label: "Seed Program" }, ...c.links.slice(1)] }
+      : c
+  );
   return (
     <footer className="mt-24 border-t border-white/10 bg-black text-white">
       <div className="mx-auto max-w-6xl px-4 py-14">
@@ -77,27 +81,42 @@ export default function Footer() {
               </span>
             </Link>
             <p className="mt-3 max-w-[220px] text-sm text-zinc-400">
-              Trading education, community and rule-based signals for
+              Trading education, free seminars and community for
               Ghanaian traders.
             </p>
             <div className="mt-4 flex items-center gap-3">
               <a
-                aria-label="Twitter / X"
-                href="#"
+                aria-label="Scout FX on Facebook"
+                href={SOCIAL_LINKS.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-500 text-black transition-colors hover:bg-brand-700"
               >
-                <Twitter className="h-4 w-4" />
+                <Facebook className="h-4 w-4" />
               </a>
               <a
-                aria-label="LinkedIn"
-                href="#"
+                aria-label="Scout FX on Instagram"
+                href={SOCIAL_LINKS.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-500 text-black transition-colors hover:bg-brand-700"
+              >
+                <Instagram className="h-4 w-4" />
+              </a>
+              <a
+                aria-label="Scout FX on LinkedIn"
+                href={SOCIAL_LINKS.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-500 text-black transition-colors hover:bg-brand-700"
               >
                 <Linkedin className="h-4 w-4" />
               </a>
               <a
-                aria-label="WhatsApp community"
-                href="#"
+                aria-label="Scout FX on WhatsApp"
+                href={WHATSAPP_CONTACT}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-500 text-black transition-colors hover:bg-brand-700"
               >
                 <MessageCircle className="h-4 w-4" />
@@ -105,7 +124,7 @@ export default function Footer() {
             </div>
           </div>
 
-          {columns.map((col) => (
+          {cols.map((col) => (
             <div key={col.title}>
               <h4 className="text-sm font-semibold text-white">
                 {col.title}

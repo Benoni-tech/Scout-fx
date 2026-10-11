@@ -1,5 +1,5 @@
-// Meta (Facebook) Pixel, used ONLY on event pages to measure the event ads.
-// The rest of the site is intentionally not tracked.
+// Meta (Facebook) Pixel, used ONLY on event pages and the Join page to measure
+// the ads that point there. The rest of the site is intentionally not tracked.
 
 export const META_PIXEL_ID =
   process.env.NEXT_PUBLIC_META_PIXEL_ID || "1625374265334329";
@@ -71,4 +71,14 @@ export function trackPixel(
   if (!enabled() || !initialized || !window.fbq) return;
   if (eventID) window.fbq("track", event, params ?? {}, { eventID });
   else window.fbq("track", event, params ?? {});
+}
+
+/**
+ * Our own event name (e.g. "CommunityComplete") on the same pixel. Meta lists it
+ * under Custom Events; it can be used as a conversion once it has fired.
+ */
+export function trackPixelCustom(event: string, params?: Record<string, unknown>, eventID?: string) {
+  if (!enabled() || !initialized || !window.fbq) return;
+  if (eventID) window.fbq("trackCustom", event, params ?? {}, { eventID });
+  else window.fbq("trackCustom", event, params ?? {});
 }

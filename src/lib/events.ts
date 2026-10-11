@@ -1,3 +1,5 @@
+import { safeWhatsAppInvite } from "@/lib/whatsapp";
+
 export type Speaker = {
   name: string;
   role: string;
@@ -43,8 +45,7 @@ export type EventItem = {
 
 /** The event's WhatsApp invite, only if it's a genuine WhatsApp link (otherwise nothing is shown). */
 export function whatsappInvite(event: Pick<EventItem, "whatsappCommunityUrl">) {
-  const url = event.whatsappCommunityUrl ?? "";
-  return /^https:\/\/(chat\.whatsapp\.com\/[A-Za-z0-9]+|(www\.)?whatsapp\.com\/channel\/[A-Za-z0-9]+)$/.test(url) ? url : "";
+  return safeWhatsAppInvite(event.whatsappCommunityUrl);
 }
 
 /** Short id used in a sharer's ?ref= link, e.g. "dr-newman" (from the photo file name). */

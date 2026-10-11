@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { Container, Eyebrow } from "@/components/ui";
 import { CalendarDays, MapPin, Users } from "lucide-react";
-import { upcomingEvents, pastEvents } from "@/lib/events";
+import { pastEvents } from "@/lib/events";
+import { openEvents } from "@/lib/registration";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata = buildMetadata({
@@ -10,7 +11,9 @@ export const metadata = buildMetadata({
   path: "/events",
 });
 
-export default function EventsPage() {
+export default async function EventsPage() {
+  // Events with closed registration drop off the list (they live in the admin archive).
+  const upcomingEvents = await openEvents();
   return (
     <section className="py-16">
       <Container>

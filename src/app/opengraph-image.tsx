@@ -1,6 +1,6 @@
 import { renderOgImage, OG_SIZE, OG_CONTENT_TYPE } from "@/lib/ogImage";
 
-export const alt = "Scout FX: trading education, community and signals";
+export const alt = "Scout FX: trading education and community";
 export const size = OG_SIZE;
 export const contentType = OG_CONTENT_TYPE;
 

@@ -32,8 +32,7 @@ export default async function EducationPage({
         </h1>
         <p className="mt-5 max-w-lg text-base leading-relaxed text-zinc-400">
           These articles explain how markets and indicators work. They are
-          not trade recommendations. See the signals section for the
-          logged, rule-based calls.
+          education, not trade recommendations.
         </p>
 
         <div className="mt-8 flex flex-wrap gap-2">

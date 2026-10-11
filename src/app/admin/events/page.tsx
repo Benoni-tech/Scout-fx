@@ -6,6 +6,7 @@ import { Container, StatCard } from "@/components/ui";
 import { useAdmin } from "@/components/admin/AdminGate";
 import { eventSharers, upcomingEvents } from "@/lib/events";
 import ShareLinks from "@/components/admin/ShareLinks";
+import RegistrationSwitch from "@/components/admin/RegistrationSwitch";
 import { SOURCE_LABELS } from "@/lib/utm";
 import { nameKey, normalizeGhanaPhone } from "@/lib/validation";
 
@@ -57,6 +58,11 @@ function csvCell(v: unknown) {
 export default function AdminEventsPage() {
   const { authFetch } = useAdmin();
   const [eventId, setEventId] = useState(upcomingEvents[0]?.id ?? "");
+  // Archive links open a specific event: /admin/events?event=<id>
+  useEffect(() => {
+    const wanted = new URLSearchParams(window.location.search).get("event");
+    if (wanted && upcomingEvents.some((e) => e.id === wanted)) setEventId(wanted);
+  }, []);
   const [rows, setRows] = useState<Row[] | null>(null);
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
@@ -248,6 +254,11 @@ export default function AdminEventsPage() {
               </select>
             ) : (
               <p className="mt-2 text-sm text-zinc-400">{upcomingEvents[0]?.title}</p>
+            )}
+            {event && (
+              <div className="mt-3">
+                <RegistrationSwitch key={event.id} regKey={`event:${event.id}`} name={event.title} />
+              </div>
             )}
           </div>
           <div className="flex gap-2">

@@ -33,11 +33,11 @@ export default function PrivacyPage() {
             know which channels work. We do not sell your information.
           </p>
           <p>
-            <strong className="text-white">Meta Pixel on event pages.</strong>{" "}
-            Our event pages use the Meta Pixel, a tool from Meta Platforms
-            (Facebook and Instagram), to measure how well our ads work. When
-            you visit an event page, the pixel may record that visit and,
-            if you register, that a registration happened. Meta may use
+            <strong className="text-white">Meta Pixel on event and join pages.</strong>{" "}
+            Our event pages and our community Join page use the Meta Pixel, a
+            tool from Meta Platforms (Facebook and Instagram), to measure how
+            well our ads work. When you visit one of these pages, the pixel may
+            record that visit and, if you register or join, that this happened. Meta may use
             cookies (such as <code className="text-zinc-400">_fbp</code>) and
             information about your browser and device to do this, and to
             show relevant ads. We do not send your name, email or phone

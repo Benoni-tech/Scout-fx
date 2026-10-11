@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readFormBody } from "@/lib/requestGuard";
+import { registrationOpenNow } from "@/lib/registration";
 import { getAdminDb } from "@/lib/firebaseAdmin";
 import { getEventById } from "@/lib/events";
 import { generateTicketCode, Rsvp } from "@/lib/tickets";
@@ -28,6 +29,7 @@ export async function POST(req: NextRequest) {
 
     const event = typeof eventId === "string" ? getEventById(eventId) : undefined;
     if (!event) return bad("Unknown event.");
+    if (!(await registrationOpenNow(`event:${event.id}`))) return bad("Registration for this event is closed.", 403);
     const invalid = nameError(name) || emailError(email) || phoneError(rawPhone);
     if (invalid) return bad(invalid);
     const whatsapp = normalizeGhanaPhone(rawPhone)!;

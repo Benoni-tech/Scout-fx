@@ -2,6 +2,8 @@ import Link from "next/link";
 import { Container, Eyebrow, StatCard, PrimaryButton, SecondaryButton } from "@/components/ui";
 import { Activity, Target, TrendingUp, AlertTriangle, ListChecks, Bell, ShieldCheck } from "lucide-react";
 import { buildMetadata } from "@/lib/seo";
+import { SIGNALS_LIVE } from "@/lib/features";
+import SignalsComingSoon from "@/components/SignalsComingSoon";
 
 const stats = [
   { label: "Logged signals", value: "312" },
@@ -15,13 +17,16 @@ const steps = [
   { icon: Bell, title: "You get notified", desc: "In-app, Telegram or email, your choice, set after you accept the risk disclosure." },
 ];
 
-export const metadata = buildMetadata({
-  title: "Signals with a public track record",
-  description: "Rule-based trading signals, logged the moment they fire and never edited. The full history, including losses, is public.",
-  path: "/signals",
-});
+export const metadata = SIGNALS_LIVE
+  ? buildMetadata({
+      title: "Signals with a public track record",
+      description: "Rule-based trading signals, logged the moment they fire and never edited. The full history, including losses, is public.",
+      path: "/signals",
+    })
+  : { title: "Signals coming soon", robots: { index: false, follow: true } };
 
 export default function SignalsLandingPage() {
+  if (!SIGNALS_LIVE) return <SignalsComingSoon />;
   return (
     <section className="py-16">
       <Container>

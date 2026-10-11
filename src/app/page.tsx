@@ -4,7 +4,6 @@ import {
   ArrowUpRight,
   GraduationCap,
   Users,
-  LineChart,
   CalendarDays,
   Bitcoin,
   DollarSign,
@@ -16,7 +15,6 @@ import {
   ShieldCheck,
   BookOpenCheck,
   Radio,
-  Star,
 } from "lucide-react";
 import {
   Container,
@@ -25,19 +23,17 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from "@/components/ui";
-import DashboardPreview from "@/components/DashboardPreview";
 import ArticleCover from "@/components/ArticleCover";
 import Reveal from "@/components/Reveal";
-import { upcomingEvents } from "@/lib/events";
 import { articles } from "@/lib/articles";
 import { testimonials } from "@/lib/testimonials";
 import { buildMetadata } from "@/lib/seo";
+import { openEvents, registrationOpen } from "@/lib/registration";
 
 const kpis = [
-  { value: "250", label: "Registrations / mo" },
-  { value: "100", label: "Active traders" },
-  { value: "200", label: "Trading lots" },
-  { value: "$25K", label: "Net deposits" },
+  { value: "4,000+", label: "Students helped" },
+  { value: "2,000+", label: "Followers online" },
+  { value: "58%", label: "Win rate" },
 ];
 
 const markets = [
@@ -89,17 +85,17 @@ const pillars = [
   },
   {
     n: "02.",
-    icon: LineChart,
-    title: "Signals",
-    desc: "Rule-based signals with a public, logged track record: entry, stop and target, every time, no cherry-picking.",
-    href: "/signals",
+    icon: CalendarDays,
+    title: "Live seminars",
+    desc: "Free conferences and online sessions where you watch real analysis, ask questions and meet other traders.",
+    href: "/events",
   },
   {
     n: "03.",
     icon: Users,
     title: "Community",
-    desc: "Live seminars, workshops and an active trader community where questions get answered, not ignored.",
-    href: "/events",
+    desc: "A free trader community where questions get answered, not ignored.",
+    href: "/join",
   },
 ];
 
@@ -119,8 +115,8 @@ const steps = [
   {
     icon: Rocket,
     title: "Start trading",
-    desc: "Apply what you learn with a plan, a risk limit and signals you can verify.",
-    href: "/signals",
+    desc: "Apply what you learn with a plan and a risk limit, starting on a demo account.",
+    href: "/education",
   },
 ];
 
@@ -128,7 +124,7 @@ const features = [
   {
     icon: ShieldCheck,
     title: "Risk first",
-    desc: "Every lesson and signal starts with where you're wrong and how much you can lose.",
+    desc: "Every lesson starts with where you're wrong and how much you can lose.",
   },
   {
     icon: BookOpenCheck,
@@ -142,22 +138,20 @@ const features = [
   },
 ];
 
-const trackRecord = [
-  { label: "Logged signals", value: "312" },
-  { label: "Win rate", value: "58%" },
-  { label: "Avg. R:R", value: "1:1.8" },
-];
 
 
 export const metadata = buildMetadata({
-  title: { absolute: "Scout FX | Trading Education, Community & Signals" },
-  description: "Structured trading education, free seminars, an active trader community and rule-based signals, built for traders in Ghana and beyond.",
+  title: { absolute: "Scout FX | Trading Education & Community" },
+  description: "Structured trading education, free seminars and an active trader community, built for traders in Ghana and beyond.",
   path: "/",
   shareTitle: "Scout FX: trade smarter with real education",
 });
 
-export default function Home() {
+export default async function Home() {
   const latest = articles.slice(0, 3);
+  // Top badge: the Seed Program while it's open, otherwise the next open event.
+  const seedOpen = await registrationOpen("seed");
+  const nextEvent = (await openEvents())[0];
 
   return (
     <>
@@ -168,15 +162,19 @@ export default function Home() {
         <div className="pointer-events-none absolute left-1/2 top-24 h-[520px] w-[520px] -translate-x-1/2 animate-pulse-glow rounded-full bg-brand-500/10 blur-[120px]" />
 
         <Container className="relative flex flex-col items-center text-center">
-          <div className="animate-fade-up">
-            <Link href="/seed-program">
-              <Eyebrow>
-                <span className="rounded-full bg-brand-500 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-black">New</span>
-                Seed Program: free training + a shot at $50 seed capital
-                <ArrowRight className="h-3 w-3" />
-              </Eyebrow>
-            </Link>
-          </div>
+          {(seedOpen || nextEvent) && (
+            <div className="animate-fade-up">
+              <Link href={seedOpen ? "/seed-program" : `/events/${nextEvent.id}`}>
+                <Eyebrow>
+                  <span className="rounded-full bg-brand-500 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-black">New</span>
+                  {seedOpen
+                    ? "Seed Program: free training + a shot at $50 seed capital"
+                    : `${nextEvent.free ? "Free: " : ""}${nextEvent.title} · ${nextEvent.date.split(" · ")[0]}`}
+                  <ArrowRight className="h-3 w-3" />
+                </Eyebrow>
+              </Link>
+            </div>
+          )}
 
           <h1
             className="mt-7 max-w-4xl animate-fade-up text-5xl font-bold leading-[1.02] tracking-tight sm:text-6xl md:text-7xl"
@@ -184,16 +182,14 @@ export default function Home() {
           >
             <span className="text-gradient">Trade smarter with </span>
             <span className="text-brand-500">real education</span>
-            <span className="text-gradient"> and real signals</span>
           </h1>
 
           <p
             className="mt-6 max-w-xl animate-fade-up text-base leading-relaxed text-zinc-400 sm:text-lg"
             style={{ animationDelay: "160ms" }}
           >
-            Structured trading education, an active community and rule-based
-            signals with a public track record, built for traders in Ghana
-            and beyond.
+            Structured trading education, free seminars and an active
+            community, built for traders in Ghana and beyond.
           </p>
 
           <div
@@ -203,11 +199,11 @@ export default function Home() {
             <PrimaryButton href="/join">
               Get started <ArrowRight className="h-4 w-4" />
             </PrimaryButton>
-            <SecondaryButton href="/signals">See the track record</SecondaryButton>
+            <SecondaryButton href="/events">Upcoming events</SecondaryButton>
           </div>
 
           <div
-            className="mt-12 grid w-full max-w-3xl animate-fade-up grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 sm:grid-cols-4"
+            className="mt-12 grid w-full max-w-3xl animate-fade-up grid-cols-3 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10"
             style={{ animationDelay: "320ms" }}
           >
             {kpis.map((k) => (
@@ -217,18 +213,6 @@ export default function Home() {
               </div>
             ))}
           </div>
-          <p className="mt-3 text-xs text-zinc-600">Logged monthly KPIs</p>
-        </Container>
-
-        <Container className="relative mt-16">
-          <Reveal>
-            <div className="relative">
-              <div className="pointer-events-none absolute -inset-x-10 -top-10 bottom-0 rounded-[3rem] bg-brand-500/10 blur-3xl" />
-              <div className="relative animate-float">
-                <DashboardPreview />
-              </div>
-            </div>
-          </Reveal>
         </Container>
       </section>
 
@@ -321,8 +305,8 @@ export default function Home() {
               <span className="text-zinc-500"> partner in the markets.</span>
             </h2>
             <p className="max-w-sm text-sm leading-relaxed text-zinc-400">
-              Not three separate products, one path. Learn, get involved,
-              then follow signals with a track record you can actually check.
+              Not three separate products, one path. Learn the fundamentals,
+              see them applied live, and keep learning with other traders.
             </p>
           </div>
 
@@ -354,99 +338,6 @@ export default function Home() {
               );
             })}
           </div>
-        </Container>
-      </section>
-
-      {/* TRACK RECORD */}
-      <section className="relative overflow-hidden py-24">
-        <div className="pointer-events-none absolute -left-40 top-1/3 h-96 w-96 rounded-full bg-brand-500/10 blur-[100px]" />
-        <Container className="grid items-center gap-14 lg:grid-cols-2">
-          <Reveal>
-            <div className="relative mx-auto aspect-[4/3] w-full max-w-lg">
-              <svg viewBox="0 0 400 300" className="absolute inset-0 h-full w-full overflow-visible">
-                <defs>
-                  <linearGradient id="tr-fill" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#FBFE00" stopOpacity="0.25" />
-                    <stop offset="100%" stopColor="#FBFE00" stopOpacity="0" />
-                  </linearGradient>
-                </defs>
-                {[60, 120, 180, 240].map((y) => (
-                  <line key={y} x1="0" x2="400" y1={y} y2={y} stroke="#fff" strokeOpacity="0.06" />
-                ))}
-                <path
-                  d="M0,230 C40,220 60,170 100,180 S160,120 200,140 S260,70 300,90 S360,40 400,30 L400,300 L0,300 Z"
-                  fill="url(#tr-fill)"
-                />
-                <path
-                  d="M0,230 C40,220 60,170 100,180 S160,120 200,140 S260,70 300,90 S360,40 400,30"
-                  fill="none"
-                  stroke="#FBFE00"
-                  strokeWidth="2.5"
-                  strokeDasharray="1000"
-                  className="animate-draw"
-                />
-                {[
-                  [100, 180],
-                  [200, 140],
-                  [300, 90],
-                ].map(([x, y]) => (
-                  <g key={x}>
-                    <circle cx={x} cy={y} r="10" fill="#FBFE00" fillOpacity="0.15" />
-                    <circle cx={x} cy={y} r="4.5" fill="#FBFE00" />
-                  </g>
-                ))}
-              </svg>
-
-              <div className="card absolute left-0 top-2 animate-float px-4 py-3 backdrop-blur">
-                <p className="border-l-2 border-brand-500 pl-2 text-lg font-bold text-brand-500">
-                  {trackRecord[1].value}
-                </p>
-                <p className="mt-1 text-[11px] text-zinc-400">{trackRecord[1].label} across all signals</p>
-              </div>
-              <div
-                className="card absolute bottom-6 right-0 animate-float px-4 py-3 backdrop-blur"
-                style={{ animationDelay: "1.5s" }}
-              >
-                <p className="border-l-2 border-brand-500 pl-2 text-lg font-bold text-brand-500">
-                  {trackRecord[2].value}
-                </p>
-                <p className="mt-1 text-[11px] text-zinc-400">{trackRecord[2].label}, logged publicly</p>
-              </div>
-              <div
-                className="card absolute bottom-0 left-6 animate-float px-4 py-3 backdrop-blur"
-                style={{ animationDelay: "3s" }}
-              >
-                <p className="text-[11px] text-zinc-500">{trackRecord[0].label}</p>
-                <p className="text-xl font-bold text-white">{trackRecord[0].value}</p>
-              </div>
-            </div>
-          </Reveal>
-
-          <Reveal delay={120}>
-            <h2 className="text-3xl font-bold leading-tight tracking-tight sm:text-5xl">
-              <span className="text-zinc-500">A track record </span>
-              <span className="text-brand-500">you can check</span>
-              <span className="text-white"> anytime.</span>
-            </h2>
-            <div className="mt-5 flex gap-1 text-brand-500">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Star key={i} className="h-4 w-4 fill-current" />
-              ))}
-            </div>
-            <p className="mt-5 max-w-md text-sm leading-relaxed text-zinc-400">
-              Every signal is logged with its <span className="font-semibold text-white">entry, stop and target</span> before
-              the outcome is known. Wins and losses stay on the record, so
-              you can judge the method on facts, not screenshots.
-            </p>
-            <div className="mt-8 flex flex-wrap items-center gap-4">
-              <PrimaryButton href="/signals/history">
-                View signal history <ArrowRight className="h-4 w-4" />
-              </PrimaryButton>
-              <Link href="/contact" className="text-sm font-medium text-zinc-400 hover:text-white">
-                Ask a question?
-              </Link>
-            </div>
-          </Reveal>
         </Container>
       </section>
 
@@ -563,7 +454,7 @@ export default function Home() {
       </section>
 
       {/* UPCOMING EVENT */}
-      {upcomingEvents.length > 0 && (
+      {nextEvent && (
         <section className="py-12">
           <Container>
             <Reveal>
@@ -575,15 +466,15 @@ export default function Home() {
                   </div>
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-wide text-brand-500">
-                      {upcomingEvents[0].free ? "Free upcoming event" : "Upcoming event"}
+                      {nextEvent.free ? "Free upcoming event" : "Upcoming event"}
                     </p>
-                    <h3 className="text-lg font-bold text-white">{upcomingEvents[0].title}</h3>
+                    <h3 className="text-lg font-bold text-white">{nextEvent.title}</h3>
                     <p className="text-sm text-zinc-400">
-                      {upcomingEvents[0].date} · {upcomingEvents[0].location}
+                      {nextEvent.date} · {nextEvent.location}
                     </p>
                   </div>
                 </div>
-                <PrimaryButton href={`/events/${upcomingEvents[0].id}`} className="relative w-full sm:w-auto">
+                <PrimaryButton href={`/events/${nextEvent.id}`} className="relative w-full sm:w-auto">
                   Reserve a spot
                 </PrimaryButton>
               </div>
@@ -592,35 +483,37 @@ export default function Home() {
         </section>
       )}
 
-      {/* TESTIMONIALS */}
-      <section className="py-24">
-        <Container>
-          <SectionHeading
-            title="Beyond expectations"
-            subtitle="What traders in the community say about learning with Scout FX."
-          />
-          <div className="mt-12 grid gap-5 md:grid-cols-3">
-            {testimonials.map((t, i) => (
-              <Reveal key={t.name} delay={i * 100}>
-                <figure className="card h-full p-7">
-                  <blockquote className="text-sm leading-relaxed text-zinc-300">
-                    &ldquo;{t.quote}&rdquo;
-                  </blockquote>
-                  <figcaption className="mt-6 flex items-center gap-3">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-500 text-sm font-bold text-black">
-                      {t.name[0]}
-                    </span>
-                    <span>
-                      <span className="block text-sm font-semibold text-white">{t.name}</span>
-                      <span className="block text-xs text-zinc-500">{t.role}</span>
-                    </span>
-                  </figcaption>
-                </figure>
-              </Reveal>
-            ))}
-          </div>
-        </Container>
-      </section>
+      {/* TESTIMONIALS (hidden while there are none) */}
+      {testimonials.length > 0 && (
+        <section className="py-24">
+          <Container>
+            <SectionHeading
+              title="Beyond expectations"
+              subtitle="What traders in the community say about learning with Scout FX."
+            />
+            <div className="mt-12 grid gap-5 md:grid-cols-3">
+              {testimonials.map((t, i) => (
+                <Reveal key={t.name} delay={i * 100}>
+                  <figure className="card h-full p-7">
+                    <blockquote className="text-sm leading-relaxed text-zinc-300">
+                      &ldquo;{t.quote}&rdquo;
+                    </blockquote>
+                    <figcaption className="mt-6 flex items-center gap-3">
+                      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-500 text-sm font-bold text-black">
+                        {t.name[0]}
+                      </span>
+                      <span>
+                        <span className="block text-sm font-semibold text-white">{t.name}</span>
+                        <span className="block text-xs text-zinc-500">{t.role}</span>
+                      </span>
+                    </figcaption>
+                  </figure>
+                </Reveal>
+              ))}
+            </div>
+          </Container>
+        </section>
+      )}
 
       {/* FINAL CTA: horizon arc */}
       <section className="relative overflow-hidden pb-8 pt-24">
