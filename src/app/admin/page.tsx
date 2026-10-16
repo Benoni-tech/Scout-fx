@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Users, CalendarCheck, ScanLine, Sprout, ArrowRight } from "lucide-react";
-import { Container, StatCard } from "@/components/ui";
+import { StatCard } from "@/components/ui";
 import { useAdmin } from "@/components/admin/AdminGate";
 
 type Stats = {
@@ -38,7 +38,7 @@ export default function AdminOverviewPage() {
 
   return (
     <section className="py-8">
-      <Container className="max-w-none px-6">
+      <div className="px-4 sm:px-6">
         <p className="text-sm text-zinc-400">Welcome back{email ? `, ${email.split("@")[0]}` : ""}</p>
         <h1 className="mt-1 text-3xl font-bold tracking-tight text-white">Overview</h1>
         {error && <p className="mt-4 text-sm text-danger">{error}</p>}
@@ -66,7 +66,7 @@ export default function AdminOverviewPage() {
             </a>
           ))}
         </div>
-      </Container>
+      </div>
     </section>
   );
 }

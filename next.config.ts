@@ -10,16 +10,34 @@ const nextConfig: NextConfig = {
     "/opengraph-image*": ["./src/lib/fonts/**"],
     "/**/opengraph-image*": ["./src/lib/fonts/**"],
   },
-  // Only local images are used, so the image optimizer isn't open to other sites.
+  // The image optimizer only handles our own files and blog images in our Firebase
+  // Storage bucket, so it can't be used as an open proxy for other sites.
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "firebasestorage.googleapis.com",
+        pathname: `/v0/b/${process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET}/o/**`,
+      },
+    ],
+  },
   poweredByHeader: false,
   // Until signals launch, their sub-pages (which hold sample data) aren't served at all.
   async redirects() {
-    if (SIGNALS_LIVE) return [];
-    return ["history", "dashboard", "disclosure"].map((p) => ({
-      source: `/signals/${p}`,
-      destination: "/signals",
-      permanent: false,
-    }));
+    // The old Education section is now the blog.
+    const blog = [
+      { source: "/education", destination: "/blog", permanent: true },
+      { source: "/education/:slug*", destination: "/blog", permanent: true },
+    ];
+    if (SIGNALS_LIVE) return blog;
+    return [
+      ...blog,
+      ...["history", "dashboard", "disclosure"].map((p) => ({
+        source: `/signals/${p}`,
+        destination: "/signals",
+        permanent: false,
+      })),
+    ];
   },
   async headers() {
     return [

@@ -10,7 +10,7 @@ import { Menu, X } from "lucide-react";
 // while its registration is open (switched in the admin dashboard).
 const baseLinks = [
   { href: "/", label: "Home" },
-  { href: "/education", label: "Education" },
+  { href: "/blog", label: "Blog" },
   { href: "/events", label: "Events" },
 ];
 
@@ -29,6 +29,9 @@ export default function Navbar({ seedOpen = false }: { seedOpen?: boolean }) {
 
   // The Join page is an ad landing page: logo only, so joining is the one action.
   const focus = pathname === "/join";
+
+  // Admin has its own header.
+  if (pathname.startsWith("/admin")) return null;
 
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);

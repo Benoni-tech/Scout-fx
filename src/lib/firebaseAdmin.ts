@@ -1,6 +1,7 @@
 import { initializeApp, getApps, cert, App } from "firebase-admin/app";
 import { getFirestore, Firestore } from "firebase-admin/firestore";
 import { getAuth, Auth } from "firebase-admin/auth";
+import { getStorage } from "firebase-admin/storage";
 
 // Initialised on first use rather than at import, so `next build` works
 // without credentials present.
@@ -14,6 +15,7 @@ function getAdminApp(): App {
       // Vercel/most hosts store the key with literal \n; convert back to real newlines
       privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
     }),
+    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
   });
 }
 
@@ -23,4 +25,9 @@ export function getAdminDb(): Firestore {
 
 export function getAdminAuth(): Auth {
   return getAuth(getAdminApp());
+}
+
+/** Firebase Storage bucket (blog images). */
+export function getAdminBucket() {
+  return getStorage(getAdminApp()).bucket();
 }

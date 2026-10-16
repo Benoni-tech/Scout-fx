@@ -12,7 +12,7 @@ import {
   Users,
   Wallet,
 } from "lucide-react";
-import { Container, StatCard } from "@/components/ui";
+import { StatCard } from "@/components/ui";
 import { useAdmin } from "@/components/admin/AdminGate";
 import RegistrationSwitch from "@/components/admin/RegistrationSwitch";
 import { EDUCATION_LEVELS, SEED_PROGRAM, SEED_STATUSES, type SeedStatus } from "@/lib/seedProgram";
@@ -176,7 +176,7 @@ export default function AdminSeedPage() {
 
   return (
     <section className="py-8">
-      <Container className="max-w-none px-6">
+      <div className="px-4 sm:px-6">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="text-xs font-bold uppercase tracking-widest text-brand-500">{SEED_PROGRAM.name}</p>
@@ -381,7 +381,7 @@ export default function AdminSeedPage() {
             </tbody>
           </table>
         </div>
-      </Container>
+      </div>
     </section>
   );
 }

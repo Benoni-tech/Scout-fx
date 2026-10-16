@@ -7,5 +7,10 @@ export const metadata: Metadata = {
 };
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  return <AdminGate>{children}</AdminGate>;
+  // -mt-24 cancels the space the public navbar normally takes (it's hidden on admin pages).
+  return (
+    <div className="-mt-24">
+      <AdminGate>{children}</AdminGate>
+    </div>
+  );
 }

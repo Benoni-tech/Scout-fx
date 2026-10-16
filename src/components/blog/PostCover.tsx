@@ -1,6 +1,5 @@
 import type { ReactElement } from "react";
 import Image from "next/image";
-import type { Article } from "@/lib/articles";
 
 const Y = "#FBFE00";
 
@@ -88,30 +87,42 @@ function Bars({ rnd }: { rnd: () => number }) {
   );
 }
 
+// One artwork style per blog category.
 const motifs: Record<string, (p: { rnd: () => number }) => ReactElement> = {
-  "Technical Analysis": Candles,
-  "Risk Management": Rings,
-  "Trading Psychology": Waves,
-  "Market Basics": Bars,
+  "start-here": Bars,
+  "mindset-and-risk": Waves,
+  "charts-and-markets": Candles,
 };
 
-export default function ArticleCover({
-  article,
+/**
+ * A post's cover: the uploaded image, or generated artwork (stable per post,
+ * styled by category) when there isn't one.
+ */
+export default function PostCover({
+  seed,
+  category,
+  image,
   className = "",
+  sizes = "(min-width: 1024px) 33vw, 100vw",
+  priority = false,
 }: {
-  article: Article;
+  seed: string;
+  category: string;
+  image?: { url: string; alt: string } | null;
   className?: string;
+  sizes?: string;
+  priority?: boolean;
 }) {
-  if (article.image) {
+  if (image) {
     return (
       <div className={`relative overflow-hidden bg-zinc-900 ${className}`}>
-        <Image src={article.image} alt="" fill className="object-cover" sizes="(min-width: 1024px) 33vw, 100vw" />
+        <Image src={image.url} alt={image.alt} fill className="object-cover" sizes={sizes} priority={priority} />
       </div>
     );
   }
 
-  const rnd = seeded(article.slug);
-  const Motif = motifs[article.category] ?? Candles;
+  const rnd = seeded(seed);
+  const Motif = motifs[category] ?? Candles;
   const glowX = 20 + rnd() * 60;
 
   return (

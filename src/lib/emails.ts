@@ -151,7 +151,7 @@ export function applicationEmailHtml(app: SeedRegistration) {
     <p style="margin:24px 0 0; font-size:14px; line-height:1.65; color:#A1A1AA;">
       While you wait, get a head start in the education library.
     </p>
-    <div style="margin:24px 0 0;">${button(`${SITE_URL}/education`, "Start learning &rarr;")}</div>
+    <div style="margin:24px 0 0;">${button(`${SITE_URL}/blog`, "Start learning &rarr;")}</div>
     <p style="margin:28px 0 0; font-size:12px; line-height:1.7; color:#71717A; text-align:center;">
       Registration guarantees training only. Seed capital is awarded at Scout FX's sole discretion and is not guaranteed. Trading carries risk.
     </p>`;

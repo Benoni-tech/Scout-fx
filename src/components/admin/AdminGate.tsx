@@ -30,6 +30,12 @@ import {
   Sprout,
   Users,
   Archive,
+  Newspaper,
+  ExternalLink,
+  Menu,
+  PanelLeftClose,
+  PanelLeftOpen,
+  X,
 } from "lucide-react";
 import { auth } from "@/lib/firebase";
 import { Container } from "@/components/ui";
@@ -62,7 +68,8 @@ export default function AdminGate({ children }: { children: ReactNode }) {
         headers: {
           ...(init.headers || {}),
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          ...(init.body ? { "Content-Type": "application/json" } : {}),
+          // File uploads (FormData) set their own multipart Content-Type.
+          ...(init.body && !(init.body instanceof FormData) ? { "Content-Type": "application/json" } : {}),
         },
       });
     },
@@ -127,6 +134,7 @@ const NAV: NavItem[] = [
   { href: "/admin/events", label: "Events", icon: CalendarDays },
   { href: "/admin/seed", label: "Seed registrations", icon: Sprout },
   { href: "/admin/community", label: "Community", icon: Users },
+  { href: "/admin/blog", label: "Blog", icon: Newspaper },
   { href: "/admin/checkin", label: "Check-in", icon: ScanLine },
 ];
 
@@ -145,85 +153,137 @@ function AdminShell({ email, children }: { email: string; children: ReactNode })
     ...(seedClosed ? [{ href: "/admin/seed", label: "Seed Program", icon: Sprout }] : []),
     ...closedEvents.map((e) => ({ href: `/admin/events?event=${e.id}`, label: e.title, icon: CalendarDays })),
   ];
-  const navLink = (item: NavItem) => (
+  // Collapsed = icons only. Remembered on this device (storage can be blocked; that's fine).
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  useEffect(() => {
+    try {
+      setCollapsed(localStorage.getItem("admin-sidebar") === "collapsed");
+    } catch {}
+  }, []);
+  useEffect(() => setMobileOpen(false), [pathname]);
+  function toggle() {
+    setCollapsed((c) => {
+      try {
+        localStorage.setItem("admin-sidebar", c ? "open" : "collapsed");
+      } catch {}
+      return !c;
+    });
+  }
+
+  const navLink = (item: NavItem, small: boolean) => (
     <Link
       key={item.href}
       href={item.href}
-      className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${
+      title={small ? item.label : undefined}
+      className={`flex items-center gap-3 rounded-xl py-2.5 text-sm font-medium transition-colors ${small ? "justify-center px-0" : "px-3"} ${
         active(item.href) ? "bg-brand-500/10 text-brand-500" : "text-zinc-400 hover:bg-white/5 hover:text-white"
       }`}
     >
       <item.icon className="h-4 w-4 shrink-0" />
-      <span className="truncate">{item.label}</span>
+      {!small && <span className="truncate">{item.label}</span>}
     </Link>
   );
 
-  return (
-    <div className="mx-auto max-w-7xl px-4 pb-12 pt-4">
-      <div className="flex min-h-[75vh] overflow-hidden rounded-3xl border border-white/10 bg-zinc-950/80 shadow-card backdrop-blur">
-        {/* sidebar */}
-        <aside className="hidden w-60 shrink-0 border-r border-white/10 md:block">
-          <div className="sticky top-24 flex h-[75vh] flex-col p-5">
-            <Link href="/admin" className="mb-8 flex items-center gap-2 px-1">
-              <Image src="/logo.png" alt="" width={16} height={18} className="h-4 w-auto" />
+  const sidebar = (small: boolean) => (
+    <div className="flex h-full flex-col p-3">
+      <div className={`mb-6 flex items-center ${small ? "flex-col gap-3" : "justify-between gap-2 px-2"} pt-2`}>
+        <Link href="/admin" className="flex items-center gap-2" title="Admin home">
+          <Image src="/logo.png" alt="" width={16} height={18} className="h-4 w-auto" />
+          {!small && (
+            <>
               <span className="text-sm font-extrabold uppercase tracking-tight text-white">Scout FX</span>
               <span className="rounded-full bg-brand-500/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-brand-500">
                 Admin
               </span>
-            </Link>
-
-            <nav className="space-y-1">{nav.map(navLink)}</nav>
-
-            {archive.length > 0 && (
-              <div className="mt-6">
-                <p className="flex items-center gap-2 px-3 text-[11px] font-bold uppercase tracking-widest text-zinc-600">
-                  <Archive className="h-3.5 w-3.5" /> Archive
-                </p>
-                <nav className="mt-2 space-y-1">{archive.map(navLink)}</nav>
-              </div>
-            )}
-
-            <div className="mt-auto space-y-3 border-t border-white/10 pt-4">
-              <p className="truncate px-1 text-xs text-zinc-500" title={email}>
-                {email}
-              </p>
-              <button
-                onClick={() => signOut(auth)}
-                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-zinc-400 transition-colors hover:bg-white/5 hover:text-white"
-              >
-                <LogOut className="h-4 w-4" />
-                Sign out
-              </button>
-            </div>
-          </div>
-        </aside>
-
-        <div className="min-w-0 flex-1">
-          {/* mobile tabs */}
-          <div className="flex items-center gap-2 overflow-x-auto border-b border-white/10 px-3 py-3 md:hidden">
-            {[...nav, ...archive].map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`flex shrink-0 items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium ${
-                  active(item.href) ? "bg-brand-500 text-black" : "text-zinc-400"
-                }`}
-              >
-                <item.icon className="h-4 w-4" />
-                {item.label}
-              </Link>
-            ))}
-            <button
-              onClick={() => signOut(auth)}
-              aria-label="Sign out"
-              className="ml-auto shrink-0 rounded-full p-2 text-zinc-400"
-            >
-              <LogOut className="h-4 w-4" />
-            </button>
-          </div>
-          {children}
-        </div>
+            </>
+          )}
+        </Link>
+        <button
+          onClick={toggle}
+          title={small ? "Expand sidebar" : "Collapse sidebar"}
+          aria-label={small ? "Expand sidebar" : "Collapse sidebar"}
+          className="hidden rounded-lg p-1.5 text-zinc-500 hover:bg-white/5 hover:text-white md:block"
+        >
+          {small ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
+        </button>
       </div>
+
+      <nav className="space-y-1">{nav.map((n) => navLink(n, small))}</nav>
+
+      {archive.length > 0 && (
+        <div className="mt-6">
+          {small ? (
+            <div className="mx-auto mb-2 h-px w-6 bg-white/10" title="Archive" />
+          ) : (
+            <p className="flex items-center gap-2 px-3 text-[11px] font-bold uppercase tracking-widest text-zinc-600">
+              <Archive className="h-3.5 w-3.5" /> Archive
+            </p>
+          )}
+          <nav className="mt-2 space-y-1">{archive.map((n) => navLink(n, small))}</nav>
+        </div>
+      )}
+
+      <div className="mt-auto space-y-1 border-t border-white/10 pt-3">
+        {!small && (
+          <p className="truncate px-3 pb-1 text-xs text-zinc-500" title={email}>
+            {email}
+          </p>
+        )}
+        <a
+          href="/"
+          target="_blank"
+          rel="noreferrer"
+          title="View website"
+          className={`flex items-center gap-3 rounded-xl py-2.5 text-sm font-medium text-zinc-400 hover:bg-white/5 hover:text-white ${small ? "justify-center" : "px-3"}`}
+        >
+          <ExternalLink className="h-4 w-4 shrink-0" />
+          {!small && "View website"}
+        </a>
+        <button
+          onClick={() => signOut(auth)}
+          title="Sign out"
+          className={`flex w-full items-center gap-3 rounded-xl py-2.5 text-sm font-medium text-zinc-400 hover:bg-white/5 hover:text-white ${small ? "justify-center" : "px-3"}`}
+        >
+          <LogOut className="h-4 w-4 shrink-0" />
+          {!small && "Sign out"}
+        </button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="flex min-h-screen">
+      {/* desktop sidebar (the public navbar and footer are hidden on admin pages) */}
+      <aside
+        className={`sticky top-0 hidden h-screen shrink-0 border-r border-white/10 bg-zinc-950/80 transition-[width] duration-200 md:block ${
+          collapsed ? "w-[68px]" : "w-60"
+        }`}
+      >
+        {sidebar(collapsed)}
+      </aside>
+
+      {/* phones: a menu button opens the same sidebar as a drawer */}
+      <button
+        onClick={() => setMobileOpen(true)}
+        aria-label="Open menu"
+        className="fixed bottom-4 right-4 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-brand-500 text-black shadow-glow md:hidden"
+      >
+        <Menu className="h-5 w-5" />
+      </button>
+      {mobileOpen && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          <div className="absolute inset-0 bg-black/70" onClick={() => setMobileOpen(false)} />
+          <aside className="absolute inset-y-0 left-0 w-64 border-r border-white/10 bg-zinc-950">
+            <button onClick={() => setMobileOpen(false)} aria-label="Close menu" className="absolute right-3 top-3 rounded-lg p-1.5 text-zinc-400 hover:text-white">
+              <X className="h-4 w-4" />
+            </button>
+            {sidebar(false)}
+          </aside>
+        </div>
+      )}
+
+      <main className="min-w-0 flex-1">{children}</main>
     </div>
   );
 }

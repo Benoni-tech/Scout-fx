@@ -15,7 +15,7 @@ export default function SignalsComingSoon() {
           and join a live session.
         </p>
         <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-          <PrimaryButton href="/education">Start learning</PrimaryButton>
+          <PrimaryButton href="/blog">Start learning</PrimaryButton>
           <SecondaryButton href="/events">Upcoming events</SecondaryButton>
         </div>
       </Container>

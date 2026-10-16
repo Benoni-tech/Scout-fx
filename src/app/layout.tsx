@@ -3,6 +3,7 @@ import { Manrope } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import HideOnAdmin from "@/components/HideOnAdmin";
 import UtmCapture from "@/components/UtmCapture";
 import { SITE_URL } from "@/lib/tickets";
 import { SITE_NAME } from "@/lib/seo";
@@ -37,7 +38,9 @@ export default async function RootLayout({
         <div className="spotlight pointer-events-none absolute inset-x-0 top-0 h-[520px]" aria-hidden />
         <Navbar seedOpen={seedOpen} />
         <main className="relative pt-24">{children}</main>
-        <Footer seedOpen={seedOpen} />
+        <HideOnAdmin>
+          <Footer seedOpen={seedOpen} />
+        </HideOnAdmin>
         <UtmCapture />
       </body>
     </html>

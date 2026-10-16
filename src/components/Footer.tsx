@@ -8,7 +8,7 @@ const columns = [
     title: "Explore",
     links: [
       { href: "/", label: "Home" },
-      { href: "/education", label: "Education" },
+      { href: "/blog", label: "Blog" },
       { href: "/events", label: "Events" },
     ],
   },
@@ -24,7 +24,7 @@ const columns = [
   {
     title: "Resources",
     links: [
-      { href: "/education", label: "Education library" },
+      { href: "/blog", label: "Trading lessons" },
       { href: "/legal/risk-disclosure", label: "Risk disclosure" },
       { href: "/legal/terms", label: "Terms of service" },
       { href: "/legal/privacy", label: "Privacy policy" },

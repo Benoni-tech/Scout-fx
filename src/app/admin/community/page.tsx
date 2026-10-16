@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { CalendarPlus, Download, Loader2, RefreshCw, Search, Users } from "lucide-react";
-import { Container, StatCard } from "@/components/ui";
+import { StatCard } from "@/components/ui";
 import { useAdmin } from "@/components/admin/AdminGate";
 import { SOURCE_LABELS } from "@/lib/utm";
 
@@ -83,7 +83,7 @@ export default function AdminCommunityPage() {
 
   return (
     <section className="py-8">
-      <Container className="max-w-none px-6">
+      <div className="px-4 sm:px-6">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="text-xs font-bold uppercase tracking-widest text-brand-500">Community</p>
@@ -193,7 +193,7 @@ export default function AdminCommunityPage() {
             </tbody>
           </table>
         </div>
-      </Container>
+      </div>
     </section>
   );
 }

@@ -23,9 +23,10 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from "@/components/ui";
-import ArticleCover from "@/components/ArticleCover";
+import PostCover from "@/components/blog/PostCover";
 import Reveal from "@/components/Reveal";
-import { articles } from "@/lib/articles";
+import { getLivePosts } from "@/lib/posts";
+import { categoryName } from "@/lib/blog";
 import { testimonials } from "@/lib/testimonials";
 import { buildMetadata } from "@/lib/seo";
 import { openEvents, registrationOpen } from "@/lib/registration";
@@ -81,7 +82,7 @@ const pillars = [
     icon: GraduationCap,
     title: "Education",
     desc: "Technical analysis, risk management and trading psychology, written for people who want to understand the market, not chase calls.",
-    href: "/education",
+    href: "/blog",
   },
   {
     n: "02.",
@@ -116,7 +117,7 @@ const steps = [
     icon: Rocket,
     title: "Start trading",
     desc: "Apply what you learn with a plan and a risk limit, starting on a demo account.",
-    href: "/education",
+    href: "/blog",
   },
 ];
 
@@ -148,7 +149,7 @@ export const metadata = buildMetadata({
 });
 
 export default async function Home() {
-  const latest = articles.slice(0, 3);
+  const latest = (await getLivePosts()).slice(0, 3);
   // Top badge: the Seed Program while it's open, otherwise the next open event.
   const seedOpen = await registrationOpen("seed");
   const nextEvent = (await openEvents())[0];
@@ -277,7 +278,7 @@ export default async function Home() {
 
             <Reveal delay={400}>
               <Link
-                href="/education"
+                href="/blog"
                 className="group flex h-full min-h-[200px] flex-col justify-between rounded-2xl bg-brand-600 p-7 text-black transition-all hover:shadow-glow"
               >
                 <p className="text-xs font-bold uppercase tracking-widest">Start here</p>
@@ -420,13 +421,14 @@ export default async function Home() {
         </Container>
       </section>
 
-      {/* EDUCATION PREVIEW */}
+      {/* BLOG PREVIEW (hidden until the first post is published) */}
+      {latest.length > 0 && (
       <section className="py-24">
         <Container>
           <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
-            <SectionHeading center={false} eyebrow="Education" title="Latest from the library" />
+            <SectionHeading center={false} eyebrow="Blog" title="Latest from the blog" />
             <Link
-              href="/education"
+              href="/blog"
               className="inline-flex items-center gap-1 text-sm font-semibold text-white hover:text-brand-500"
             >
               See all articles
@@ -438,12 +440,12 @@ export default async function Home() {
             {latest.map((a, i) => (
               <Reveal key={a.slug} delay={i * 100}>
                 <Link
-                  href={`/education/${a.slug}`}
+                  href={`/blog/${a.slug}`}
                   className="card card-hover group flex h-full flex-col overflow-hidden"
                 >
-                  <ArticleCover article={a} className="aspect-[16/10]" />
+                  <PostCover seed={a.slug} category={a.category} image={a.cover} className="aspect-[16/10]" />
                   <div className="p-5">
-                    <span className="text-xs font-semibold text-brand-500">{a.category}</span>
+                    <span className="text-xs font-semibold text-brand-500">{categoryName(a.category)}</span>
                     <h3 className="mt-2 text-base font-bold leading-snug text-white">{a.title}</h3>
                   </div>
                 </Link>
@@ -452,6 +454,7 @@ export default async function Home() {
           </div>
         </Container>
       </section>
+      )}
 
       {/* UPCOMING EVENT */}
       {nextEvent && (

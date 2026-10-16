@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Download, Loader2, MailWarning, RefreshCw, Search, Users, ScanLine } from "lucide-react";
-import { Container, StatCard } from "@/components/ui";
+import { StatCard } from "@/components/ui";
 import { useAdmin } from "@/components/admin/AdminGate";
 import { eventSharers, upcomingEvents } from "@/lib/events";
 import ShareLinks from "@/components/admin/ShareLinks";
@@ -235,7 +235,7 @@ export default function AdminEventsPage() {
 
   return (
     <section className="py-8">
-      <Container className="max-w-none px-6">
+      <div className="px-4 sm:px-6">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="text-xs font-bold uppercase tracking-widest text-brand-500">Events</p>
@@ -519,7 +519,7 @@ export default function AdminEventsPage() {
             </tbody>
           </table>
         </div>
-      </Container>
+      </div>
     </section>
   );
 }
