@@ -1,13 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/adminGuard";
 import { createPost, listAllPosts } from "@/lib/posts";
+import { allPostStats } from "@/lib/postStats";
 import { isCategory, slugify } from "@/lib/blog";
 
-// GET -> every post (without bodies) for the admin list
+// GET -> every post (without bodies) with its view counts, for the admin list
 export async function GET(req: NextRequest) {
   const admin = await requireAdmin(req);
   if (admin instanceof NextResponse) return admin;
-  const posts = (await listAllPosts()).map(({ content: _c, faqs: _f, ...summary }) => summary);
+  const [all, stats] = await Promise.all([listAllPosts(), allPostStats()]);
+  const zero = { views: 0, last7: 0, last30: 0, lastViewedAt: null };
+  const posts = all.map(({ content: _c, faqs: _f, ...summary }) => ({ ...summary, stats: stats[summary.id] ?? zero }));
   return NextResponse.json({ posts });
 }
 

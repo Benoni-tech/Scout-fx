@@ -10,6 +10,8 @@ import RichEditor, { type EditorStats } from "@/components/admin/blog/RichEditor
 import PostContent from "@/components/blog/PostContent";
 import PostCover from "@/components/blog/PostCover";
 import Highlights from "@/components/blog/Highlights";
+import MediaPicker from "@/components/admin/media/MediaPicker";
+import type { PickedImage } from "@/components/admin/media/MediaBrowser";
 import {
   BLOG_CATEGORIES, SEO_LIMITS, categoryName, isLive, postStatusLabel, slugify,
   type ContentNode, type Faq, type Post, type PostCover as Cover, type PostSeo,
@@ -130,6 +132,7 @@ function hasHeading(doc: ContentNode): boolean {
 export default function PostEditor({ id }: { id: string }) {
   const { authFetch } = useAdmin();
   const [post, setPost] = useState<Post | null>(null);
+  const [views, setViews] = useState<{ views: number; last7: number; last30: number } | null>(null);
   const [draft, setDraft] = useState<Draft | null>(null);
   const [saved, setSaved] = useState("");
   const [stats, setStats] = useState<EditorStats>({ words: 0 });
@@ -138,8 +141,6 @@ export default function PostEditor({ id }: { id: string }) {
   const [loadError, setLoadError] = useState("");
   const [slugTouched, setSlugTouched] = useState(true);
   const [preview, setPreview] = useState(false);
-  const [uploadingCover, setUploadingCover] = useState(false);
-  const coverRef = useRef<HTMLInputElement>(null);
   const barRef = useRef<HTMLDivElement>(null);
   const [barHeight, setBarHeight] = useState(61);
 
@@ -150,6 +151,7 @@ export default function PostEditor({ id }: { id: string }) {
       const data = await res.json().catch(() => ({}));
       if (!res.ok) return setLoadError(data?.error || "Couldn't load this article.");
       const d = draftFrom(data.post);
+      setViews(data.stats ?? null);
       setPost(data.post);
       setDraft(d);
       setSaved(JSON.stringify(d));
@@ -225,30 +227,22 @@ export default function PostEditor({ id }: { id: string }) {
     return () => window.removeEventListener("beforeunload", warn);
   }, [dirty]);
 
-  // ---------- uploads
-  const uploadImage = useCallback(
-    async (file: File) => {
-      const body = new FormData();
-      body.append("file", file);
-      const res = await authFetch("/api/admin/uploads", { method: "POST", body });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        alert(data?.error || "Upload failed.");
-        return null;
-      }
-      return data as { url: string; path: string };
-    },
-    [authFetch]
+  // ---------- media library picker (featured image and images in the article)
+  const [picker, setPicker] = useState<null | "cover" | "body">(null);
+  const pickResolve = useRef<((img: PickedImage | null) => void) | null>(null);
+  const pickBodyImage = useCallback(
+    () =>
+      new Promise<PickedImage | null>((resolve) => {
+        pickResolve.current = resolve;
+        setPicker("body");
+      }),
+    []
   );
-
-  async function pickCover(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    e.target.value = "";
-    if (!file) return;
-    setUploadingCover(true);
-    const up = await uploadImage(file);
-    setUploadingCover(false);
-    if (up) set("cover", { url: up.url, path: up.path, alt: draft?.cover?.alt ?? "" });
+  function closePicker(img: PickedImage | null) {
+    if (picker === "body") pickResolve.current?.(img);
+    else if (picker === "cover" && img) set("cover", { url: img.url, path: img.path, alt: img.alt, caption: img.caption, credit: img.credit });
+    pickResolve.current = null;
+    setPicker(null);
   }
 
   // ---------- SEO checklist
@@ -375,7 +369,7 @@ export default function PostEditor({ id }: { id: string }) {
           </div>
 
           <div className="mt-4">
-            <RichEditor initial={post.content} onChange={(doc, s) => { set("content", doc); setStats(s); }} uploadImage={async (f) => (await uploadImage(f))?.url ?? null} />
+            <RichEditor initial={post.content} onChange={(doc, s) => { set("content", doc); setStats(s); }} pickImage={pickBodyImage} />
           </div>
           <p className="mt-2 text-xs text-zinc-500">{stats.words} words · about {Math.max(1, Math.round(stats.words / 220))} min read</p>
           <div className="mt-6">
@@ -413,6 +407,16 @@ export default function PostEditor({ id }: { id: string }) {
         {/* settings */}
         <div className="space-y-4">
           <Panel title="Publish">
+            {views && post.status === "published" && (
+              <div className="grid grid-cols-3 gap-2 rounded-xl border border-white/10 bg-black/40 p-3 text-center">
+                {[["Views", views.views], ["7 days", views.last7], ["30 days", views.last30]].map(([l, v]) => (
+                  <div key={l as string}>
+                    <p className="text-lg font-bold text-white">{(v as number).toLocaleString("en-GB")}</p>
+                    <p className="text-[11px] text-zinc-500">{l}</p>
+                  </div>
+                ))}
+              </div>
+            )}
             <Field label="Publish date and time">
               <input type="datetime-local" value={draft.publishAt} onChange={(e) => set("publishAt", e.target.value)} className={input} />
             </Field>
@@ -461,12 +465,12 @@ export default function PostEditor({ id }: { id: string }) {
           </Panel>
 
           <Panel title="Cover image">
-            <PostCover seed={draft.slug} category={draft.category} image={draft.cover} className="aspect-[16/9] rounded-xl border border-white/10" sizes="360px" />
+            <PostCover seed={draft.slug} category={draft.category} image={draft.cover} className="aspect-[1200/630] rounded-xl border border-white/10" sizes="360px" />
             {!draft.cover && <p className="text-xs text-zinc-500">No image: the branded cover above is used.</p>}
             <div className="flex gap-2">
-              <button type="button" onClick={() => coverRef.current?.click()} disabled={uploadingCover} className="flex items-center gap-1.5 rounded-full border border-white/15 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/5 disabled:opacity-50">
-                {uploadingCover ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ImagePlus className="h-3.5 w-3.5" />}
-                {draft.cover ? "Replace" : "Upload image"}
+              <button type="button" onClick={() => setPicker("cover")} className="flex items-center gap-1.5 rounded-full border border-white/15 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/5">
+                <ImagePlus className="h-3.5 w-3.5" />
+                {draft.cover ? "Change image" : "Choose or upload"}
               </button>
               {draft.cover && (
                 <button type="button" onClick={() => set("cover", null)} className="rounded-full px-3 py-1.5 text-xs font-semibold text-zinc-400 hover:text-danger">
@@ -475,12 +479,19 @@ export default function PostEditor({ id }: { id: string }) {
               )}
             </div>
             {draft.cover && (
-              <Field label="Alt text (describe the image)">
-                <input value={draft.cover.alt} onChange={(e) => set("cover", { ...draft.cover!, alt: e.target.value })} className={input} />
-              </Field>
+              <>
+                <Field label="Alt text (describe the image)">
+                  <input value={draft.cover.alt} onChange={(e) => set("cover", { ...draft.cover!, alt: e.target.value })} className={input} />
+                </Field>
+                <Field label="Caption (under the featured image)">
+                  <input value={draft.cover.caption ?? ""} maxLength={300} onChange={(e) => set("cover", { ...draft.cover!, caption: e.target.value })} className={input} />
+                </Field>
+                <Field label="Photo credit">
+                  <input value={draft.cover.credit ?? ""} maxLength={120} placeholder="e.g. Scout FX" onChange={(e) => set("cover", { ...draft.cover!, credit: e.target.value })} className={input} />
+                </Field>
+              </>
             )}
-            <input ref={coverRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={pickCover} />
-            <p className="text-[11px] text-zinc-600">JPG, PNG or WebP, up to 3 MB. Landscape 1200×675 works best.</p>
+            <p className="text-[11px] text-zinc-600">From the media library. Landscape 1200×630 works best.</p>
           </Panel>
 
 
@@ -516,6 +527,14 @@ export default function PostEditor({ id }: { id: string }) {
         </div>
       </div>
 
+      <MediaPicker
+        open={picker !== null}
+        title={picker === "cover" ? "Featured image" : "Insert image"}
+        pickLabel={picker === "cover" ? "Use as featured image" : "Insert into article"}
+        onClose={() => closePicker(null)}
+        onPick={(img) => closePicker(img)}
+      />
+
       {/* preview */}
       {preview && (
         <div className="fixed inset-0 z-[100] overflow-y-auto bg-black/95 backdrop-blur">
@@ -528,11 +547,15 @@ export default function PostEditor({ id }: { id: string }) {
           <article className="mx-auto max-w-2xl px-6 py-12">
             <h1 className="text-3xl font-bold leading-tight text-white sm:text-5xl">{draft.title}</h1>
             <p className="mt-4 text-sm text-zinc-400">By <span className="font-semibold text-white">Coach Emma</span></p>
-            <PostCover seed={draft.slug} category={draft.category} image={draft.cover} className="mt-6 aspect-[16/9] rounded-3xl border border-white/10" sizes="672px" />
             <Highlights items={draft.highlights} />
             {draft.excerpt && <p className="mt-8 text-lg font-semibold text-zinc-200">{draft.excerpt}</p>}
             <div className="mt-10">
-              <PostContent doc={draft.content} />
+              <PostContent
+                doc={draft.content}
+                beforeFirstHeading={
+                  <PostCover seed={draft.slug} category={draft.category} image={draft.cover} className="aspect-[1200/630] rounded-3xl border border-white/10" sizes="672px" />
+                }
+              />
             </div>
             {draft.faqs.filter((f) => f.q && f.a).length > 0 && (
               <div className="mt-12 space-y-4">

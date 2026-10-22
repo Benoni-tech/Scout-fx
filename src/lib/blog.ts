@@ -63,7 +63,14 @@ export type PostSeo = {
   noindex: boolean;
 };
 
-export type PostCover = { url: string; alt: string; path: string };
+export type PostCover = {
+  url: string;
+  alt: string;
+  path: string;
+  /** Shown under the featured image, with the credit as "Photo: …". */
+  caption?: string;
+  credit?: string;
+};
 
 export type Post = {
   id: string;

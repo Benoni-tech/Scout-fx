@@ -27,13 +27,13 @@ function Heading({ children }: { children: React.ReactNode }) {
 function Item({ post, meta, label }: { post: PostSummary; meta: string; label?: string }) {
   return (
     <li>
-      <Link href={`/blog/${post.slug}`} className="group grid grid-cols-[88px_1fr] gap-3">
+      <Link href={`/blog/${post.slug}`} className="group grid grid-cols-[112px_1fr] gap-3">
         <PostCover
           seed={post.slug}
           category={post.category}
           image={post.cover}
-          className="aspect-[4/3] rounded-xl border border-white/10"
-          sizes="88px"
+          className="aspect-[1200/630] rounded-lg border border-white/10"
+          sizes="112px"
         />
         <div className="min-w-0">
           {label && <p className="text-[10px] font-bold uppercase tracking-wider text-brand-500">{label}</p>}

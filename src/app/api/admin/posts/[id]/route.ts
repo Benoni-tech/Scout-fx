@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/adminGuard";
 import { deletePost, getPost, savePost } from "@/lib/posts";
+import { postStats } from "@/lib/postStats";
 import { validatePost } from "@/lib/postValidation";
 
 type Ctx = { params: Promise<{ id: string }> };
@@ -9,8 +10,9 @@ type Ctx = { params: Promise<{ id: string }> };
 export async function GET(req: NextRequest, { params }: Ctx) {
   const admin = await requireAdmin(req);
   if (admin instanceof NextResponse) return admin;
-  const post = await getPost((await params).id);
-  return post ? NextResponse.json({ post }) : NextResponse.json({ error: "Post not found." }, { status: 404 });
+  const id = (await params).id;
+  const [post, stats] = await Promise.all([getPost(id), postStats(id)]);
+  return post ? NextResponse.json({ post, stats }) : NextResponse.json({ error: "Post not found." }, { status: 404 });
 }
 
 // PATCH <post fields> -> validate and save (also publishes/unpublishes via status)

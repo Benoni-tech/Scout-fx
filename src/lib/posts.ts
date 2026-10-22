@@ -1,6 +1,7 @@
 import { unstable_cache, revalidateTag } from "next/cache";
 import { getAdminDb } from "@/lib/firebaseAdmin";
 import { EMPTY_DOC, isLive, type Post } from "@/lib/blog";
+import { deletePostStats } from "@/lib/postStats";
 
 // Blog posts live in Firestore ("posts"). Each slug a post has ever used is reserved
 // in "postSlugs/{slug}" -> { postId }, so slugs stay unique and an old URL keeps
@@ -155,5 +156,6 @@ export async function deletePost(id: string) {
   slugs.docs.forEach((d) => batch.delete(d.ref));
   batch.delete(POSTS().doc(id));
   await batch.commit();
+  await deletePostStats(id).catch(() => {});
   revalidatePosts();
 }

@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import type { ContentNode } from "@/lib/blog";
 import { safeHref, youtubeEmbed, isAllowedImage } from "@/lib/blogContent";
+import { captionLine } from "@/lib/mediaTypes";
 
 // Renders a (cleaned) Tiptap document as article HTML. Only the node types below
 // are rendered; anything else is skipped, so stored content can never inject
@@ -65,13 +66,15 @@ function render(node: ContentNode, key: number): ReactNode {
       const src = node.attrs?.src;
       if (!isAllowedImage(src)) return null;
       const alt = String(node.attrs?.alt ?? "");
+      const line = captionLine(
+        String(node.attrs?.caption ?? node.attrs?.title ?? ""),
+        String(node.attrs?.credit ?? "")
+      );
       return (
         <figure key={key} className="not-prose my-10">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={src} alt={alt} loading="lazy" className="w-full rounded-2xl border border-white/10" />
-          {node.attrs?.title ? (
-            <figcaption className="mt-3 text-center text-sm text-zinc-500">{String(node.attrs.title)}</figcaption>
-          ) : null}
+          {line && <figcaption className="mt-3 text-sm leading-relaxed text-zinc-500">{line}</figcaption>}
         </figure>
       );
     }
@@ -114,13 +117,22 @@ function render(node: ContentNode, key: number): ReactNode {
   }
 }
 
-/** Article body styled for reading (dark theme, brand accents, drop cap). */
-export default function PostContent({ doc }: { doc: ContentNode }) {
+/**
+ * Article body styled for reading (dark theme, brand accents, drop cap).
+ * `beforeFirstHeading` (the featured image) goes just above the first subheading,
+ * or at the top when the article has none.
+ */
+export default function PostContent({ doc, beforeFirstHeading }: { doc: ContentNode; beforeFirstHeading?: ReactNode }) {
+  const body = children(doc);
+  if (beforeFirstHeading) {
+    const at = (doc.content ?? []).findIndex((c) => c.type === "heading");
+    body.splice(at < 0 ? 0 : at, 0, <div key="before-first-heading" className="not-prose my-10">{beforeFirstHeading}</div>);
+  }
   return (
     <div
       className="prose prose-invert prose-lg max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-h2:mt-14 prose-h2:text-2xl sm:prose-h2:text-3xl prose-h3:text-xl prose-p:leading-relaxed prose-p:text-zinc-300 prose-a:text-brand-500 prose-a:underline-offset-4 prose-strong:text-white prose-blockquote:border-l-brand-500 prose-blockquote:text-zinc-200 prose-blockquote:not-italic prose-li:text-zinc-300 prose-li:marker:text-brand-500 prose-hr:border-white/10 prose-th:text-white prose-td:text-zinc-300 prose-code:text-brand-500 prose-code:before:content-none prose-code:after:content-none [&>p:first-of-type]:first-letter:float-left [&>p:first-of-type]:first-letter:mr-3 [&>p:first-of-type]:first-letter:mt-1 [&>p:first-of-type]:first-letter:text-6xl [&>p:first-of-type]:first-letter:font-extrabold [&>p:first-of-type]:first-letter:leading-[0.8] [&>p:first-of-type]:first-letter:text-brand-500"
     >
-      {children(doc)}
+      {body}
     </div>
   );
 }

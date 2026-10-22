@@ -7,7 +7,9 @@ import { ExternalLink, Loader2, Pencil, Plus, Search, Trash2 } from "lucide-reac
 import { useAdmin } from "@/components/admin/AdminGate";
 import { BLOG_CATEGORIES, categoryName, isLive, postStatusLabel, type Post } from "@/lib/blog";
 
-type Row = Omit<Post, "content" | "faqs">;
+type Stats = { views: number; last7: number; last30: number; lastViewedAt: string | null };
+type Row = Omit<Post, "content" | "faqs"> & { stats: Stats };
+const fmt = (n: number) => n.toLocaleString("en-GB");
 
 const STATUS_STYLE: Record<string, string> = {
   Published: "bg-brand-500 text-black",
@@ -28,6 +30,7 @@ export default function AdminBlogPage() {
   const [status, setStatus] = useState<"all" | "Published" | "Scheduled" | "Draft">("all");
   const [category, setCategory] = useState("");
   const [busy, setBusy] = useState("");
+  const [sort, setSort] = useState<"updated" | "views" | "last7">("updated");
 
   const load = useCallback(async () => {
     setError("");
@@ -51,8 +54,20 @@ export default function AdminBlogPage() {
         (status === "all" || postStatusLabel(r) === status) &&
         (!category || r.category === category) &&
         (!q || [r.title, r.slug, r.seo?.focusKeyword].some((f) => f?.toLowerCase().includes(q)))
+    ).sort((a, b) =>
+      sort === "views" ? b.stats.views - a.stats.views : sort === "last7" ? b.stats.last7 - a.stats.last7 : 0
     );
-  }, [rows, query, status, category]);
+  }, [rows, query, status, category, sort]);
+
+  const totals = useMemo(
+    () =>
+      (rows ?? []).reduce(
+        (t, r) => ({ views: t.views + r.stats.views, last7: t.last7 + r.stats.last7, last30: t.last30 + r.stats.last30 }),
+        { views: 0, last7: 0, last30: 0 }
+      ),
+    [rows]
+  );
+  const top = useMemo(() => [...(rows ?? [])].filter((r) => r.stats.last30 > 0).sort((a, b) => b.stats.last30 - a.stats.last30)[0], [rows]);
 
   const count = (s: string) => rows?.filter((r) => postStatusLabel(r) === s).length ?? 0;
 
@@ -94,6 +109,21 @@ export default function AdminBlogPage() {
           </button>
         </div>
 
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {[
+            { label: "Views, all time", value: fmt(totals.views) },
+            { label: "Last 7 days", value: fmt(totals.last7) },
+            { label: "Last 30 days", value: fmt(totals.last30) },
+            { label: "Most read (30 days)", value: top ? top.title : "-", sub: top ? `${fmt(top.stats.last30)} views` : "No views yet" },
+          ].map((c) => (
+            <div key={c.label} className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+              <p className="text-xs text-zinc-500">{c.label}</p>
+              <p className={`mt-1 font-bold text-white ${c.sub ? "line-clamp-2 text-sm leading-snug" : "text-2xl"}`}>{c.value}</p>
+              {c.sub && <p className="mt-1 text-xs text-brand-500">{c.sub}</p>}
+            </div>
+          ))}
+        </div>
+
         <div className="mt-6 flex flex-wrap items-center gap-3">
           <div className="relative w-full sm:w-72">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
@@ -125,6 +155,16 @@ export default function AdminBlogPage() {
               <option key={c.key} value={c.key}>{c.name}</option>
             ))}
           </select>
+          <select
+            value={sort}
+            onChange={(e) => setSort(e.target.value as typeof sort)}
+            aria-label="Sort articles"
+            className="rounded-full border border-white/10 bg-black px-3 py-2 text-sm text-white"
+          >
+            <option value="updated">Recently updated</option>
+            <option value="views">Most viewed</option>
+            <option value="last7">Most viewed this week</option>
+          </select>
         </div>
 
         {error && <p className="mt-4 text-sm text-danger">{error}</p>}
@@ -136,6 +176,8 @@ export default function AdminBlogPage() {
                 <th className="px-4 py-3 font-semibold">Title</th>
                 <th className="px-4 py-3 font-semibold">Status</th>
                 <th className="px-4 py-3 font-semibold">Category</th>
+                <th className="px-4 py-3 font-semibold">Views</th>
+                <th className="px-4 py-3 font-semibold">7 days</th>
                 <th className="px-4 py-3 font-semibold">Words</th>
                 <th className="px-4 py-3 font-semibold">Updated</th>
                 <th className="px-4 py-3 font-semibold" />
@@ -144,14 +186,14 @@ export default function AdminBlogPage() {
             <tbody className="divide-y divide-white/10">
               {rows === null && (
                 <tr>
-                  <td colSpan={6} className="px-4 py-10 text-center">
+                  <td colSpan={8} className="px-4 py-10 text-center">
                     <Loader2 className="mx-auto h-5 w-5 animate-spin text-zinc-400" />
                   </td>
                 </tr>
               )}
               {rows && visible.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-4 py-10 text-center text-zinc-400">
+                  <td colSpan={8} className="px-4 py-10 text-center text-zinc-400">
                     {rows.length ? "No matches." : "No articles yet. Click New article to write the first one."}
                   </td>
                 </tr>
@@ -171,6 +213,8 @@ export default function AdminBlogPage() {
                       {label === "Scheduled" && <div className="mt-1 text-xs text-zinc-500">{when(r.publishedAt)}</div>}
                     </td>
                     <td className="px-4 py-3 text-zinc-300">{categoryName(r.category)}</td>
+                    <td className="px-4 py-3 font-semibold text-white">{fmt(r.stats.views)}</td>
+                    <td className="px-4 py-3 text-zinc-300">{r.stats.last7 ? fmt(r.stats.last7) : <span className="text-zinc-600">0</span>}</td>
                     <td className="px-4 py-3 text-zinc-400">{r.wordCount}</td>
                     <td className="px-4 py-3 text-zinc-400">
                       {when(r.updatedAt)}

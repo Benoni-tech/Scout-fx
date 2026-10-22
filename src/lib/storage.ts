@@ -1,16 +1,4 @@
-import { randomUUID } from "crypto";
-import { getAdminBucket } from "@/lib/firebaseAdmin";
-
-// Blog images in Firebase Storage. Files get a random download token, so the URL
-// works publicly while the bucket itself stays closed to browsers (Storage rules
-// can deny everything; the Admin SDK and token links aren't affected).
-
-export const IMAGE_TYPES: Record<string, string> = {
-  "image/jpeg": "jpg",
-  "image/png": "png",
-  "image/webp": "webp",
-};
-export const MAX_IMAGE_BYTES = 3 * 1024 * 1024;
+// Helpers for image uploads (see lib/media.ts for the media library itself).
 
 /** Checks the real file signature, not just what the browser claims. */
 export function sniffImage(buf: Buffer): string | null {
@@ -21,22 +9,3 @@ export function sniffImage(buf: Buffer): string | null {
 }
 
 export class StorageNotEnabledError extends Error {}
-
-export async function uploadBlogImage(buf: Buffer, contentType: string) {
-  const bucket = getAdminBucket();
-  const [exists] = await bucket.exists().catch(() => [false]);
-  if (!exists) throw new StorageNotEnabledError("Firebase Storage isn't enabled for this project yet.");
-
-  const path = `blog/${new Date().toISOString().slice(0, 7)}/${randomUUID()}.${IMAGE_TYPES[contentType]}`;
-  const token = randomUUID();
-  await bucket.file(path).save(buf, {
-    resumable: false,
-    contentType,
-    metadata: {
-      cacheControl: "public, max-age=31536000, immutable",
-      metadata: { firebaseStorageDownloadTokens: token },
-    },
-  });
-  const url = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodeURIComponent(path)}?alt=media&token=${token}`;
-  return { url, path };
-}

@@ -34,7 +34,13 @@ export function validatePost(
   const c = (body.cover ?? null) as Record<string, unknown> | null;
   const cover =
     c && isAllowedImage(c.url)
-      ? { url: c.url as string, alt: text(c.alt, 200), path: text(c.path, 300) }
+      ? {
+          url: c.url as string,
+          alt: text(c.alt, 200),
+          path: text(c.path, 300),
+          caption: text(c.caption, 300),
+          credit: text(c.credit, 120),
+        }
       : null;
   if (status === "published" && cover && !cover.alt) return { error: "Add alt text for the cover image (describe the picture)." };
 

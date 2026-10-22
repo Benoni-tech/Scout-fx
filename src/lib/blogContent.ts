@@ -71,7 +71,13 @@ function cleanAttrs(type: string, a: Record<string, unknown> = {}): Record<strin
     case "orderedList":
       return { start: int(a.start, 1, 10_000, 1) };
     case "image":
-      return { src: a.src, alt: str(a.alt, 300), title: str(a.title, 300) || null };
+      // "title" was the caption before captions had their own attribute.
+      return {
+        src: a.src,
+        alt: str(a.alt, 300),
+        caption: str(a.caption, 300) || str(a.title, 300) || null,
+        credit: str(a.credit, 120) || null,
+      };
     case "youtube":
       return { src: youtubeEmbed(a.src) };
     case "tableCell":

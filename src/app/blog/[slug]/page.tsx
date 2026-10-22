@@ -9,9 +9,11 @@ import PostContent from "@/components/blog/PostContent";
 import Highlights from "@/components/blog/Highlights";
 import { CategoryPill, postDate } from "@/components/blog/PostCards";
 import ArticleSidebar from "@/components/blog/ArticleSidebar";
+import ViewBeacon from "@/components/blog/ViewBeacon";
 import { getLivePostBySlug, getLivePosts } from "@/lib/posts";
 import { AUTHORS, categoryName } from "@/lib/blog";
 import { buildMetadata } from "@/lib/seo";
+import { captionLine } from "@/lib/mediaTypes";
 import { SITE_URL } from "@/lib/tickets";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -140,6 +142,7 @@ export default async function BlogPostPage({ params }: Props) {
 
   return (
     <article className="pb-24">
+      <ViewBeacon postId={post.id} />
       <script
         type="application/ld+json"
         // JSON.stringify output with "<" escaped can't break out of the script tag.
@@ -198,27 +201,35 @@ export default async function BlogPostPage({ params }: Props) {
             </div>
           </div>
 
-          {/* featured image */}
-          <div className="pt-8">
-            <PostCover
-              seed={post.slug}
-              category={post.category}
-              image={post.cover}
-              className="aspect-[16/9] rounded-3xl border border-white/10"
-              sizes="(min-width: 1024px) 760px, 100vw"
-              priority
-            />
-          </div>
-
           {/* need to know, then the summary */}
-          <div className="pt-4">
+          <div className="pt-8">
             <Highlights items={post.highlights} />
             {post.excerpt && <p className="mt-10 text-lg font-semibold leading-relaxed text-zinc-200 sm:text-xl">{post.excerpt}</p>}
           </div>
 
           {/* body */}
           <div className="pt-12">
-            <PostContent doc={post.content} />
+            {/* featured image (with caption and photo credit) sits just before the first subheading */}
+            <PostContent
+              doc={post.content}
+              beforeFirstHeading={
+                <figure>
+                  <PostCover
+                    seed={post.slug}
+                    category={post.category}
+                    image={post.cover}
+                    className="aspect-[1200/630] rounded-3xl border border-white/10"
+                    sizes="(min-width: 1024px) 760px, 100vw"
+                    priority
+                  />
+                  {post.cover && captionLine(post.cover.caption, post.cover.credit) && (
+                    <figcaption className="mt-3 text-sm leading-relaxed text-zinc-500">
+                      {captionLine(post.cover.caption, post.cover.credit)}
+                    </figcaption>
+                  )}
+                </figure>
+              }
+            />
 
             {post.faqs.length > 0 && (
               <section className="mt-16">

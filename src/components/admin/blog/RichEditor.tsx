@@ -1,15 +1,17 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useEditor, EditorContent, type Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import Image from "@tiptap/extension-image";
+import { ArticleImage } from "@/components/admin/blog/ImageNode";
+import type { PickedImage } from "@/components/admin/media/MediaBrowser";
+import { MEDIA_LIMITS } from "@/lib/mediaTypes";
 import Youtube from "@tiptap/extension-youtube";
 import { TableKit } from "@tiptap/extension-table";
 import { Placeholder, CharacterCount } from "@tiptap/extensions";
 import {
   Bold, Italic, Underline, Strikethrough, Heading2, Heading3, List, ListOrdered, Quote, Link2,
-  ImagePlus, Youtube as YoutubeIcon, Table as TableIcon, Minus, Undo2, Redo2, Loader2,
+  ImagePlus, Youtube as YoutubeIcon, Table as TableIcon, Minus, Undo2, Redo2,
   Rows3, Columns3, Trash2,
 } from "lucide-react";
 import type { ContentNode } from "@/lib/blog";
@@ -38,7 +40,7 @@ function Btn({
 
 const Sep = () => <span className="mx-1 h-5 w-px bg-white/10" />;
 
-function Toolbar({ editor, onUploadImage, uploading }: { editor: Editor; onUploadImage: () => void; uploading: boolean }) {
+function Toolbar({ editor, onImage }: { editor: Editor; onImage: () => void }) {
   const c = () => editor.chain().focus();
   const inTable = editor.isActive("table");
 
@@ -76,8 +78,8 @@ function Toolbar({ editor, onUploadImage, uploading }: { editor: Editor; onUploa
       <Btn title="Divider" onClick={() => c().setHorizontalRule().run()}><Minus className="h-4 w-4" /></Btn>
       <Sep />
       <Btn title="Link" active={editor.isActive("link")} onClick={setLink}><Link2 className="h-4 w-4" /></Btn>
-      <Btn title="Insert image" onClick={onUploadImage} disabled={uploading}>
-        {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImagePlus className="h-4 w-4" />}
+      <Btn title={editor.isActive("image") ? "Edit image" : "Insert image"} active={editor.isActive("image")} onClick={onImage}>
+        <ImagePlus className="h-4 w-4" />
       </Btn>
       <Btn title="YouTube video" onClick={addYoutube}><YoutubeIcon className="h-4 w-4" /></Btn>
       <Btn title="Insert table" onClick={() => c().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}><TableIcon className="h-4 w-4" /></Btn>
@@ -100,15 +102,13 @@ function Toolbar({ editor, onUploadImage, uploading }: { editor: Editor; onUploa
 export default function RichEditor({
   initial,
   onChange,
-  uploadImage,
+  pickImage,
 }: {
   initial: ContentNode;
   onChange: (doc: ContentNode, stats: EditorStats) => void;
-  /** Uploads a picked file and returns its URL, or null (after showing an error). */
-  uploadImage: (file: File) => Promise<string | null>;
+  /** Opens the media library; resolves with the chosen image (or null if closed). */
+  pickImage: () => Promise<PickedImage | null>;
 }) {
-  const fileRef = useRef<HTMLInputElement>(null);
-  const uploadingRef = useRef(false);
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
 
@@ -119,7 +119,7 @@ export default function RichEditor({
         heading: { levels: [2, 3, 4] },
         link: { openOnClick: false, autolink: true, defaultProtocol: "https", HTMLAttributes: { rel: "noopener noreferrer" } },
       }),
-      Image.configure({ HTMLAttributes: { class: "rounded-xl" } }),
+      ArticleImage,
       Youtube.configure({ nocookie: true, controls: true, width: 640, height: 360 }),
       TableKit.configure({ table: { resizable: false } }),
       Placeholder.configure({ placeholder: "Start writing… Use the toolbar for headings, lists, links and images." }),
@@ -141,16 +141,28 @@ export default function RichEditor({
     if (editor) onChangeRef.current(editor.getJSON() as ContentNode, { words: editor.storage.characterCount.words() });
   }, [editor]);
 
-  async function pickImage(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    e.target.value = "";
-    if (!file || !editor) return;
-    uploadingRef.current = true;
-    const url = await uploadImage(file);
-    uploadingRef.current = false;
-    if (!url) return;
-    const alt = window.prompt("Describe this image (alt text, for Google and screen readers)") ?? "";
-    editor.chain().focus().setImage({ src: url, alt }).run();
+  const [editing, setEditing] = useState<{ alt: string; caption: string; credit: string } | null>(null);
+
+  async function onImage() {
+    if (!editor) return;
+    if (editor.isActive("image")) {
+      const a = editor.getAttributes("image");
+      return setEditing({ alt: a.alt ?? "", caption: a.caption ?? "", credit: a.credit ?? "" });
+    }
+    const img = await pickImage();
+    if (!img) return;
+    editor
+      .chain()
+      .focus()
+      .insertContent({ type: "image", attrs: { src: img.url, alt: img.alt, caption: img.caption || null, credit: img.credit || null } })
+      .run();
+  }
+
+  async function replaceImage() {
+    const img = await pickImage();
+    if (!img || !editor) return;
+    editor.chain().focus().updateAttributes("image", { src: img.url, alt: img.alt, caption: img.caption || null, credit: img.credit || null }).run();
+    setEditing(null);
   }
 
   if (!editor) return <div className="min-h-[460px] animate-pulse rounded-2xl border border-white/10 bg-white/[0.02]" />;
@@ -158,9 +170,60 @@ export default function RichEditor({
   return (
     // No overflow-hidden here: it would make the sticky toolbar stick inside this box.
     <div className="rounded-2xl border border-white/10 bg-black/40">
-      <Toolbar editor={editor} onUploadImage={() => fileRef.current?.click()} uploading={uploadingRef.current} />
+      <Toolbar editor={editor} onImage={onImage} />
       <EditorContent editor={editor} />
-      <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={pickImage} />
+      {editing && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/80 p-4" role="dialog" aria-modal="true" aria-label="Edit image">
+          <div className="w-full max-w-md space-y-3 rounded-2xl border border-white/10 bg-zinc-950 p-5">
+            <p className="text-sm font-bold text-white">Edit image</p>
+            {(["alt", "caption", "credit"] as const).map((k) => (
+              <label key={k} className="block">
+                <span className="mb-1 block text-xs font-semibold text-zinc-300">
+                  {k === "alt" ? "Alt text (describe the image)" : k === "caption" ? "Caption" : "Photo credit"}
+                </span>
+                <input
+                  value={editing[k]}
+                  maxLength={MEDIA_LIMITS[k]}
+                  onChange={(e) => setEditing({ ...editing, [k]: e.target.value })}
+                  className="w-full rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-sm text-white focus:border-brand-500 focus:outline-none"
+                />
+              </label>
+            ))}
+            <div className="flex flex-wrap gap-2 pt-1">
+              <button
+                type="button"
+                onClick={() => {
+                  editor.chain().focus().updateAttributes("image", {
+                    alt: editing.alt.trim(),
+                    caption: editing.caption.trim() || null,
+                    credit: editing.credit.trim() || null,
+                  }).run();
+                  setEditing(null);
+                }}
+                className="rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-black"
+              >
+                Save
+              </button>
+              <button type="button" onClick={replaceImage} className="rounded-full border border-white/15 px-4 py-2 text-sm text-white hover:bg-white/5">
+                Replace image
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  editor.chain().focus().deleteSelection().run();
+                  setEditing(null);
+                }}
+                className="rounded-full px-3 py-2 text-sm text-zinc-400 hover:text-danger"
+              >
+                Remove
+              </button>
+              <button type="button" onClick={() => setEditing(null)} className="ml-auto rounded-full px-3 py-2 text-sm text-zinc-400 hover:text-white">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

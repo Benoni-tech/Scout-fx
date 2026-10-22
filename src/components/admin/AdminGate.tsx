@@ -35,6 +35,9 @@ import {
   Menu,
   PanelLeftClose,
   PanelLeftOpen,
+  ChevronDown,
+  FileText,
+  Images,
   X,
 } from "lucide-react";
 import { auth } from "@/lib/firebase";
@@ -127,14 +130,22 @@ export default function AdminGate({ children }: { children: ReactNode }) {
   );
 }
 
-type NavItem = { href: string; label: string; icon: typeof Home };
+type NavItem = { href: string; label: string; icon: typeof Home; children?: NavItem[] };
 
 const NAV: NavItem[] = [
   { href: "/admin", label: "Home", icon: Home },
   { href: "/admin/events", label: "Events", icon: CalendarDays },
   { href: "/admin/seed", label: "Seed registrations", icon: Sprout },
   { href: "/admin/community", label: "Community", icon: Users },
-  { href: "/admin/blog", label: "Blog", icon: Newspaper },
+  {
+    href: "/admin/blog",
+    label: "Blog",
+    icon: Newspaper,
+    children: [
+      { href: "/admin/blog", label: "Articles", icon: FileText },
+      { href: "/admin/media", label: "Media", icon: Images },
+    ],
+  },
   { href: "/admin/checkin", label: "Check-in", icon: ScanLine },
 ];
 
@@ -185,6 +196,32 @@ function AdminShell({ email, children }: { email: string; children: ReactNode })
     </Link>
   );
 
+  // A dropdown group (Blog: Articles, Media). Open while you're inside it; the rail shows its items' icons.
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
+  const navGroup = (item: NavItem, small: boolean) => {
+    const kids = item.children ?? [];
+    if (small) return <div key={item.href} className="space-y-1">{kids.map((k) => navLink(k, true))}</div>;
+    const inside = kids.some((k) => active(k.href));
+    const open = openGroups[item.href] ?? inside;
+    return (
+      <div key={item.href}>
+        <button
+          type="button"
+          onClick={() => setOpenGroups((g) => ({ ...g, [item.href]: !open }))}
+          aria-expanded={open}
+          className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${
+            inside ? "text-white" : "text-zinc-400 hover:bg-white/5 hover:text-white"
+          }`}
+        >
+          <item.icon className="h-4 w-4 shrink-0" />
+          <span className="flex-1 truncate text-left">{item.label}</span>
+          <ChevronDown className={`h-3.5 w-3.5 transition-transform ${open ? "rotate-180" : ""}`} />
+        </button>
+        {open && <div className="ml-4 mt-1 space-y-1 border-l border-white/10 pl-2">{kids.map((k) => navLink(k, false))}</div>}
+      </div>
+    );
+  };
+
   const sidebar = (small: boolean) => (
     <div className="flex h-full flex-col p-3">
       <div className={`mb-6 flex items-center ${small ? "flex-col gap-3" : "justify-between gap-2 px-2"} pt-2`}>
@@ -209,7 +246,7 @@ function AdminShell({ email, children }: { email: string; children: ReactNode })
         </button>
       </div>
 
-      <nav className="space-y-1">{nav.map((n) => navLink(n, small))}</nav>
+      <nav className="space-y-1">{nav.map((n) => (n.children ? navGroup(n, small) : navLink(n, small)))}</nav>
 
       {archive.length > 0 && (
         <div className="mt-6">
