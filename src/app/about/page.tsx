@@ -1,4 +1,4 @@
-import { Container, Eyebrow, SecondaryButton } from "@/components/ui";
+import { Container, SecondaryButton } from "@/components/ui";
 import { ShieldCheck, GraduationCap, Users } from "lucide-react";
 import { buildMetadata } from "@/lib/seo";
 
@@ -30,7 +30,6 @@ export default function AboutPage() {
   return (
     <section className="py-16">
       <Container className="max-w-3xl">
-        <Eyebrow>About</Eyebrow>
         <h1 className="mt-5 text-4xl font-bold leading-[1.05] tracking-tight text-gradient animate-fade-up pb-1 sm:text-5xl">
           Scout FX
         </h1>

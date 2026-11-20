@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Facebook, Instagram, Linkedin, MessageCircle } from "lucide-react";
+import { FacebookIcon, InstagramIcon, LinkedInIcon, WhatsAppIcon } from "@/components/SocialIcons";
 import { SOCIAL_LINKS, WHATSAPP_CONTACT } from "@/lib/social";
 
 const columns = [
@@ -51,27 +51,6 @@ export default function Footer({ seedOpen = false }: { seedOpen?: boolean }) {
   return (
     <footer className="mt-24 border-t border-white/10 bg-black text-white">
       <div className="mx-auto max-w-6xl px-4 py-14">
-        <div className="relative mb-14 overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.05] to-transparent p-8 sm:p-10">
-          <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-brand-500/20 blur-3xl" />
-          <div className="relative flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
-            <div>
-              <p className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
-                We scout opportunities and make{" "}
-                <span className="text-brand-500">trading easier.</span>
-              </p>
-              <p className="mt-2 text-sm text-zinc-400">
-                Crypto, forex, stocks and commodities, taught properly.
-              </p>
-            </div>
-            <Link
-              href="/join"
-              className="whitespace-nowrap rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-black transition-all hover:bg-brand-700 hover:shadow-glow"
-            >
-              Get started
-            </Link>
-          </div>
-        </div>
-
         <div className="grid grid-cols-2 gap-10 sm:grid-cols-3 lg:grid-cols-5">
           <div className="col-span-2 sm:col-span-3 lg:col-span-1">
             <Link href="/" className="flex items-center gap-2">
@@ -90,36 +69,36 @@ export default function Footer({ seedOpen = false }: { seedOpen?: boolean }) {
                 href={SOCIAL_LINKS.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-500 text-black transition-colors hover:bg-brand-700"
+                className="block h-7 w-7 text-white transition-colors hover:text-brand-500"
               >
-                <Facebook className="h-4 w-4" />
+                <FacebookIcon className="h-7 w-7" />
               </a>
               <a
                 aria-label="Scout FX on Instagram"
                 href={SOCIAL_LINKS.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-500 text-black transition-colors hover:bg-brand-700"
+                className="block h-7 w-7 text-white transition-colors hover:text-brand-500"
               >
-                <Instagram className="h-4 w-4" />
+                <InstagramIcon className="h-7 w-7" />
               </a>
               <a
                 aria-label="Scout FX on LinkedIn"
                 href={SOCIAL_LINKS.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-500 text-black transition-colors hover:bg-brand-700"
+                className="block h-7 w-7 text-white transition-colors hover:text-brand-500"
               >
-                <Linkedin className="h-4 w-4" />
+                <LinkedInIcon className="h-7 w-7" />
               </a>
               <a
                 aria-label="Scout FX on WhatsApp"
                 href={WHATSAPP_CONTACT}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-500 text-black transition-colors hover:bg-brand-700"
+                className="block h-7 w-7 text-white transition-colors hover:text-brand-500"
               >
-                <MessageCircle className="h-4 w-4" />
+                <WhatsAppIcon className="h-7 w-7" />
               </a>
             </div>
           </div>

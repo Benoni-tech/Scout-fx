@@ -39,7 +39,7 @@ export default function SpeakersGrid({ speakers }: { speakers: Speaker[] }) {
 
   return (
     <>
-      <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div className={`mt-14 grid gap-5 ${speakers.length === 1 ? "mx-auto max-w-sm" : "sm:grid-cols-2 lg:grid-cols-3"}`}>
         {speakers.map((s, i) => (
           <Reveal key={s.name} delay={i * 120}>
             <button

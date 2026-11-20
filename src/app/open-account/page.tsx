@@ -1,4 +1,4 @@
-import { Container, Eyebrow } from "@/components/ui";
+import { Container } from "@/components/ui";
 import { ShieldCheck, AlertTriangle, Clock, MessageCircle } from "lucide-react";
 import { buildMetadata } from "@/lib/seo";
 
@@ -39,7 +39,7 @@ export default function OpenAccountPage() {
   return (
     <section className="bg-grid py-16">
       <Container className="text-center">
-        <Eyebrow>HFM Affiliate ID: 30537791</Eyebrow>
+        <p className="text-xs font-semibold uppercase tracking-widest text-zinc-500">HFM Affiliate ID: 30537791</p>
         <h1 className="mx-auto mt-5 max-w-2xl text-4xl font-bold leading-[1.05] tracking-tight text-gradient animate-fade-up pb-1 sm:text-5xl">
           Trade with HFM
         </h1>

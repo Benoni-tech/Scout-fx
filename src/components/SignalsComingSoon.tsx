@@ -1,11 +1,10 @@
-import { Container, Eyebrow, PrimaryButton, SecondaryButton } from "@/components/ui";
+import { Container, PrimaryButton, SecondaryButton } from "@/components/ui";
 
 /** Shown at /signals until signals launch (see SIGNALS_LIVE in src/lib/features.ts). */
 export default function SignalsComingSoon() {
   return (
     <section className="py-24">
       <Container className="max-w-xl text-center">
-        <Eyebrow>Signals</Eyebrow>
         <h1 className="mt-5 text-4xl font-bold leading-[1.05] tracking-tight text-gradient pb-1 sm:text-5xl">
           Coming soon
         </h1>

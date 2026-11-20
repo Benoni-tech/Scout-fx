@@ -1,7 +1,10 @@
 import Link from "next/link";
-import { Container, Eyebrow } from "@/components/ui";
-import { CalendarDays, MapPin, Users } from "lucide-react";
-import { pastEvents } from "@/lib/events";
+import Image from "next/image";
+import { Container } from "@/components/ui";
+import { ArrowUpRight, CalendarDays, MapPin, Users } from "lucide-react";
+import PhotoHero from "@/components/PhotoHero";
+import { eventIsOver, upcomingEvents as allEvents, type EventItem } from "@/lib/events";
+import { eventStats } from "@/lib/eventStats";
 import { openEvents } from "@/lib/registration";
 import { buildMetadata } from "@/lib/seo";
 
@@ -11,73 +14,114 @@ export const metadata = buildMetadata({
   path: "/events",
 });
 
-export default async function EventsPage() {
-  // Events with closed registration drop off the list (they live in the admin archive).
-  const upcomingEvents = await openEvents();
+/** Photo card for an event: its first photo with the title and details over it. */
+function EventCard({ event, label, meta }: { event: EventItem; label: string; meta?: string }) {
+  const photo = event.hero?.images[0] ?? event.report?.gallery[0];
   return (
-    <section className="py-16">
-      <Container>
-        <Eyebrow>Events</Eyebrow>
-        <h1 className="mt-5 max-w-xl text-4xl font-bold leading-[1.05] tracking-tight text-gradient animate-fade-up pb-1 sm:text-5xl">
-          Seminars &amp; workshops
-        </h1>
-        <p className="mt-4 max-w-lg text-base leading-relaxed text-zinc-400">
-          In-person and online sessions on trading fundamentals, risk
-          management and strategy, free to attend.
-        </p>
+    <Link href={`/events/${event.id}`} className="group relative isolate flex min-h-[340px] flex-col justify-end overflow-hidden rounded-3xl border border-white/10 bg-zinc-950 p-6 sm:p-8">
+      {photo && (
+        <Image
+          src={photo.src}
+          alt={photo.alt}
+          fill
+          sizes="(min-width: 640px) 50vw, 100vw"
+          className="-z-10 object-cover transition-transform duration-700 group-hover:scale-105"
+          style={{ objectPosition: photo.position ?? "center" }}
+        />
+      )}
+      <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black via-black/60 to-black/10" />
+      <span className="absolute right-6 top-6 flex h-11 w-11 items-center justify-center rounded-full bg-brand-500 text-black transition-transform duration-300 group-hover:rotate-45">
+        <ArrowUpRight className="h-5 w-5" />
+      </span>
+      <p className="text-xs font-bold uppercase tracking-wider text-brand-500">{label}</p>
+      <h3 className="mt-2 text-2xl font-bold leading-tight text-white sm:text-3xl">{event.title}</h3>
+      <p className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-zinc-300">
+        <span className="flex items-center gap-1.5">
+          <CalendarDays className="h-4 w-4" /> {event.date.split(" · ")[0]}
+        </span>
+        <span className="flex items-center gap-1.5">
+          <MapPin className="h-4 w-4" /> {event.location}
+        </span>
+        {meta && (
+          <span className="flex items-center gap-1.5">
+            <Users className="h-4 w-4" /> {meta}
+          </span>
+        )}
+      </p>
+    </Link>
+  );
+}
 
-        <div className="mt-10 grid gap-5 sm:grid-cols-2">
-          {upcomingEvents.map((e) => (
-            <Link
-              key={e.id}
-              href={`/events/${e.id}`}
-              className="card p-6 card-hover"
-            >
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-500/10">
-                <CalendarDays className="h-5 w-5 text-white" />
-              </div>
-              <div className="mt-4 flex items-center gap-2">
-                <h3 className="text-lg font-bold text-white">{e.title}</h3>
-                {e.free && (
-                  <span className="rounded-full bg-brand-600 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-black">
-                    Free
-                  </span>
-                )}
-              </div>
-              <p className="mt-1 flex items-center gap-1.5 text-sm text-zinc-400">
-                <CalendarDays className="h-3.5 w-3.5" /> {e.date}
-              </p>
-              <p className="mt-1 flex items-center gap-1.5 text-sm text-zinc-400">
-                <MapPin className="h-3.5 w-3.5" /> {e.location}
-              </p>
-              {typeof e.spotsLeft === "number" && (
-                <p className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-white">
-                  <Users className="h-3.5 w-3.5" /> {e.spotsLeft} spots left
-                </p>
-              )}
-            </Link>
-          ))}
-        </div>
+export default async function EventsPage() {
+  // Events with closed registration drop off the upcoming list; finished ones with a report show under Past events.
+  const upcomingEvents = await openEvents();
+  const next = upcomingEvents[0];
+  const reported = allEvents.filter((e) => e.report && eventIsOver(e));
+  const reportStats = await Promise.all(reported.map((e) => eventStats(e.id)));
+  const heroImages = reported[0]?.hero?.images ?? next?.hero?.images ?? [];
 
-        <div className="mt-16">
-          <h2 className="text-sm font-bold uppercase tracking-wide text-zinc-400">
-            Past events
-          </h2>
-          <div className="mt-5 grid gap-4 sm:grid-cols-2">
-            {pastEvents.map((e) => (
-              <div key={e.title} className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.02] p-5">
-                <div>
-                  <p className="text-sm font-bold text-white">{e.title}</p>
-                  <p className="text-xs text-zinc-400">{e.date}</p>
-                </div>
-                <p className="text-xs font-semibold text-zinc-400">
-                  {e.attendees} attended
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </Container>
-    </section>
+  return (
+    <>
+      {heroImages.length > 0 ? (
+        <PhotoHero
+          images={heroImages}
+          firstLine="Seminars &"
+          lastLine="workshops"
+          intro="In-person and online sessions on trading fundamentals, risk management and strategy, free to attend."
+          cta={next ? { href: `/events/${next.id}`, label: "Register for the next one" } : { href: "/join", label: "Join the community" }}
+          facts={
+            next
+              ? [
+                  { label: "Next event", value: next.title },
+                  { label: "Date", value: next.date },
+                  { label: "Venue", value: next.location },
+                ]
+              : []
+          }
+          caption={reported[0] ? `Photos from our ${reported[0].title}` : undefined}
+        />
+      ) : (
+        <Container className="pt-16">
+          <h1 className="max-w-xl text-4xl font-bold leading-[1.05] tracking-tight text-gradient pb-1 sm:text-5xl">Seminars &amp; workshops</h1>
+        </Container>
+      )}
+
+      <section className="py-20">
+        <Container>
+          <h2 className="text-gradient text-3xl font-bold tracking-tight sm:text-4xl">Upcoming</h2>
+          {upcomingEvents.length ? (
+            <div className="mt-8 grid gap-5 sm:grid-cols-2">
+              {upcomingEvents.map((e) => (
+                <EventCard key={e.id} event={e} label={e.free ? "Free · Register now" : "Register now"} />
+              ))}
+            </div>
+          ) : (
+            <p className="mt-4 text-zinc-400">
+              Nothing scheduled right now.{" "}
+              <Link href="/join" className="font-semibold text-brand-500 hover:underline">
+                Join the community
+              </Link>{" "}
+              to hear first when the next one opens.
+            </p>
+          )}
+
+          {reported.length > 0 && (
+            <h2 className="text-gradient mt-20 text-3xl font-bold tracking-tight sm:text-4xl">Past events</h2>
+          )}
+          {reported.length > 0 && (
+            <div className="mt-8 grid gap-5 sm:grid-cols-2">
+              {reported.map((e, i) => (
+                <EventCard
+                  key={e.id}
+                  event={e}
+                  label="Read the report"
+                  meta={reportStats[i] ? `${reportStats[i]!.registered.toLocaleString("en-GB")} registered` : undefined}
+                />
+              ))}
+            </div>
+          )}
+        </Container>
+      </section>
+    </>
   );
 }

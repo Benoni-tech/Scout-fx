@@ -1,4 +1,4 @@
-import { Container, Eyebrow, StatCard } from "@/components/ui";
+import { Container, StatCard } from "@/components/ui";
 import { ListChecks, Target, TrendingUp, TrendingDown } from "lucide-react";
 import { buildMetadata } from "@/lib/seo";
 
@@ -22,7 +22,6 @@ export default function SignalHistoryPage() {
   return (
     <section className="py-16">
       <Container>
-        <Eyebrow>Full, unedited history</Eyebrow>
         <h1 className="mt-5 max-w-xl text-4xl font-bold leading-[1.05] tracking-tight text-gradient animate-fade-up pb-1 sm:text-5xl">
           Signal track record
         </h1>

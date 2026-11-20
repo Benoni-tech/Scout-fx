@@ -1,6 +1,6 @@
 import { unstable_cache, revalidateTag } from "next/cache";
 import { getAdminDb } from "@/lib/firebaseAdmin";
-import { upcomingEvents } from "@/lib/events";
+import { eventIsOver, getEventById, upcomingEvents } from "@/lib/events";
 
 // Whether registration is open for the Seed Program and each event. Admins flip it
 // from the dashboard (Archive / Events pages); it's stored in Firestore so no deploy
@@ -32,6 +32,9 @@ async function readStored(): Promise<Stored> {
 const readCached = unstable_cache(readStored, ["registration-settings"], { tags: [TAG], revalidate: 300 });
 
 function resolve(stored: Stored, key: RegistrationKey) {
+  // An event that has already happened is closed, whatever the switch says.
+  const event = key.startsWith("event:") ? getEventById(key.slice("event:".length)) : undefined;
+  if (event && eventIsOver(event)) return false;
   return stored[key]?.open ?? defaultOpen(key);
 }
 

@@ -1,4 +1,4 @@
-import { Container, Eyebrow, PrimaryButton, SecondaryButton } from "@/components/ui";
+import { Container, PrimaryButton, SecondaryButton } from "@/components/ui";
 import { Mail, MessageCircle, Facebook, Instagram, Linkedin } from "lucide-react";
 import { SOCIAL_LINKS, WHATSAPP_CONTACT } from "@/lib/social";
 import { buildMetadata } from "@/lib/seo";
@@ -46,7 +46,6 @@ export default function ContactPage() {
   return (
     <section className="py-16">
       <Container className="max-w-3xl">
-        <Eyebrow>Contact</Eyebrow>
         <h1 className="mt-5 text-4xl font-bold leading-[1.05] tracking-tight text-gradient animate-fade-up pb-1 sm:text-5xl">
           Get in touch
         </h1>

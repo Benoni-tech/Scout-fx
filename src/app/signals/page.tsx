@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Container, Eyebrow, StatCard, PrimaryButton, SecondaryButton } from "@/components/ui";
+import { Container, StatCard, PrimaryButton, SecondaryButton } from "@/components/ui";
 import { Activity, Target, TrendingUp, AlertTriangle, ListChecks, Bell, ShieldCheck } from "lucide-react";
 import { buildMetadata } from "@/lib/seo";
 import { SIGNALS_LIVE } from "@/lib/features";
@@ -30,7 +30,6 @@ export default function SignalsLandingPage() {
   return (
     <section className="py-16">
       <Container>
-        <Eyebrow>Rule-based, logged, public</Eyebrow>
         <h1 className="mt-5 max-w-xl text-4xl font-bold leading-[1.05] tracking-tight text-gradient animate-fade-up pb-1 sm:text-5xl">
           Signals with a track record you can check
         </h1>

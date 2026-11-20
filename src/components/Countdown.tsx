@@ -16,6 +16,8 @@ function diff(targetISO: string): TimeLeft {
   };
 }
 
+const pad2 = (n: number) => String(n).padStart(2, "0");
+
 const units: { key: keyof TimeLeft; label: string }[] = [
   { key: "days", label: "Days" },
   { key: "hours", label: "Hours" },
@@ -23,7 +25,7 @@ const units: { key: keyof TimeLeft; label: string }[] = [
   { key: "seconds", label: "Seconds" },
 ];
 
-export default function Countdown({ targetISO }: { targetISO: string }) {
+export default function Countdown({ targetISO, inline = false }: { targetISO: string; inline?: boolean }) {
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({
     days: 0,
     hours: 0,
@@ -42,6 +44,17 @@ export default function Countdown({ targetISO }: { targetISO: string }) {
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
   }, [targetISO]);
+
+  // One line for tight spots such as the photo hero: "15d 11h 37m 02s".
+  if (inline) {
+    return (
+      <span className="tabular-nums">
+        {isLive
+          ? "Happening now"
+          : `${timeLeft.days}d ${pad2(timeLeft.hours)}h ${pad2(timeLeft.minutes)}m ${pad2(timeLeft.seconds)}s`}
+      </span>
+    );
+  }
 
   if (isLive) {
     return (

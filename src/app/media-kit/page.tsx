@@ -1,5 +1,5 @@
 import { testimonials } from "@/lib/testimonials";
-import { Container, Eyebrow, StatCard } from "@/components/ui";
+import { Container, StatCard } from "@/components/ui";
 import { Users, TrendingUp, Megaphone, Quote } from "lucide-react";
 import { SOCIAL_LINKS, WHATSAPP_CONTACT } from "@/lib/social";
 import { buildMetadata } from "@/lib/seo";
@@ -30,7 +30,6 @@ export default function MediaKitPage() {
       <Container>
         <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
           <div>
-            <Eyebrow>Media kit</Eyebrow>
             <h1 className="mt-5 text-4xl font-bold leading-[1.05] tracking-tight text-gradient animate-fade-up pb-1 sm:text-5xl">
               Scout FX
             </h1>

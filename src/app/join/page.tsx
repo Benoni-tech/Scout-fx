@@ -1,4 +1,4 @@
-import { Container, Eyebrow } from "@/components/ui";
+import { Container } from "@/components/ui";
 import LeadForm from "@/components/LeadForm";
 import { CheckCircle2 } from "lucide-react";
 import { buildMetadata } from "@/lib/seo";
@@ -24,7 +24,6 @@ export default function JoinPage() {
       <PagePixel contentName="Scout FX community" contentType="community" />
       <Container className="grid gap-12 lg:grid-cols-2 lg:items-center">
         <div>
-          <Eyebrow>Free to join</Eyebrow>
           <h1 className="mt-5 text-4xl font-bold leading-[1.05] tracking-tight text-gradient animate-fade-up pb-1 sm:text-5xl">
             Join the community
           </h1>

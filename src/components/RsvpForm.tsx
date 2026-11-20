@@ -7,7 +7,8 @@ import { captureUtm, Utm } from "@/lib/utm";
 import Honeypot, { honeypotValue } from "@/components/Honeypot";
 import { FieldError, GHANA_NOTICE, useContactChecks } from "@/components/FormChecks";
 
-export default function RsvpForm({ eventId, eventName }: { eventId: string; eventName?: string }) {
+/** `stacked` puts the fields one under another, for narrow cards. */
+export default function RsvpForm({ eventId, eventName, stacked = false }: { eventId: string; eventName?: string; stacked?: boolean }) {
   const [form, setForm] = useState({ name: "", email: "", whatsapp: "" });
   const [status, setStatus] = useState<
     "idle" | "loading" | "success" | "error"
@@ -126,7 +127,7 @@ export default function RsvpForm({ eventId, eventName }: { eventId: string; even
   return (
     <form onSubmit={handleSubmit} noValidate>
       <Honeypot />
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className={`grid gap-4 ${stacked ? "" : "lg:grid-cols-3"}`}>
         {fields.map((f) => (
           <label key={f.key} className="block">
             <span className="mb-2 block text-xs font-semibold uppercase tracking-widest text-zinc-400">

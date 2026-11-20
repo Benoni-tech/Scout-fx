@@ -1,4 +1,4 @@
-import { Container, Eyebrow, StatCard, SecondaryButton } from "@/components/ui";
+import { Container, StatCard, SecondaryButton } from "@/components/ui";
 import { Users, TrendingUp, Handshake, Mic, Megaphone } from "lucide-react";
 import { buildMetadata } from "@/lib/seo";
 
@@ -36,7 +36,6 @@ export default function PartnershipsPage() {
   return (
     <section className="py-16">
       <Container>
-        <Eyebrow>Partnerships</Eyebrow>
         <h1 className="mt-5 max-w-xl text-4xl font-bold leading-[1.05] tracking-tight text-gradient animate-fade-up pb-1 sm:text-5xl">
           Work with Scout FX
         </h1>

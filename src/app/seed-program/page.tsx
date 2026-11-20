@@ -18,7 +18,6 @@ import {
 } from "lucide-react";
 import {
   Container,
-  Eyebrow,
   SectionHeading,
   PrimaryButton,
   SecondaryButton,
@@ -85,14 +84,6 @@ export default async function SeedProgramPage() {
 
         <Container className="relative grid items-center gap-14 lg:grid-cols-[1.15fr_1fr]">
           <div className="text-center lg:text-left">
-            <div className="animate-fade-up">
-              <Eyebrow>
-                <span className="rounded-full bg-brand-500 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-black">
-                  {open ? "New" : "Closed"}
-                </span>
-                {SEED_PROGRAM.name}
-              </Eyebrow>
-            </div>
             <h1
               className="mt-7 animate-fade-up pb-1 text-5xl font-bold leading-[1.02] tracking-tight sm:text-6xl md:text-7xl"
               style={{ animationDelay: "80ms" }}
@@ -321,10 +312,6 @@ export default async function SeedProgramPage() {
                 {open ? (
                   <>
                     <div className="mx-auto max-w-2xl text-center">
-                      <Eyebrow>
-                        <Sprout className="h-3.5 w-3.5 text-brand-500" />
-                        Registration open
-                      </Eyebrow>
                       <h2 className="text-gradient mt-6 text-3xl font-bold leading-tight tracking-tight sm:text-5xl">
                         Register for the Seed Program
                       </h2>
@@ -340,10 +327,6 @@ export default async function SeedProgramPage() {
                   </>
                 ) : (
                   <div className="mx-auto max-w-2xl text-center">
-                    <Eyebrow>
-                      <Sprout className="h-3.5 w-3.5 text-brand-500" />
-                      Registration closed
-                    </Eyebrow>
                     <h2 className="text-gradient mt-6 text-3xl font-bold leading-tight tracking-tight sm:text-5xl">
                       Registration has closed
                     </h2>
