@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Manrope } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -9,10 +9,14 @@ import { SITE_URL } from "@/lib/tickets";
 import { SITE_NAME } from "@/lib/seo";
 import { registrationOpen } from "@/lib/registration";
 
-const manrope = Manrope({
-  subsets: ["latin"],
+// Bundled locally (not next/font/google) so builds never depend on reaching Google Fonts.
+// Variable font, latin subset: covers weights 200–800.
+const manrope = localFont({
+  src: "./fonts/manrope-latin-var.woff2",
   variable: "--font-manrope",
-  weight: ["400", "500", "600", "700", "800"],
+  weight: "200 800",
+  style: "normal",
+  display: "swap",
 });
 
 export const viewport: Viewport = { themeColor: "#000000" };
