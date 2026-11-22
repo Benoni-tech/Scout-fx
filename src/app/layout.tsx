@@ -9,7 +9,7 @@ import { SITE_URL } from "@/lib/tickets";
 import { SITE_NAME } from "@/lib/seo";
 import { registrationOpen } from "@/lib/registration";
 
-// Bundled locally (not next/font/google) so builds never depend on reaching Google Fonts.
+// Bundled locally so builds never depend on reaching the Google Fonts servers.
 // Variable font, latin subset: covers weights 200–800.
 const manrope = localFont({
   src: "./fonts/manrope-latin-var.woff2",

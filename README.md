@@ -69,7 +69,7 @@ See `.env.example`. You'll need:
 
 ## Design system
 
-- Font: Manrope (all weights via `next/font/google`)
+- Font: Manrope, bundled locally via `next/font/local` (`src/app/fonts/`)
 - Accent: neon yellow `#FBFE00` on black `#0B0B10` (`brand-*`/`gold-*` 50–700 are yellow tints; 800–900 are dark olive for accent text on white)
 - Components: `src/components/ui.tsx` has shared primitives
   (`Container`, `Eyebrow`, `SectionHeading`, `StatCard`, buttons)
