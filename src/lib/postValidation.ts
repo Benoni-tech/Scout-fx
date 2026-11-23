@@ -1,4 +1,4 @@
-import { isCategory, SLUG_RE, type Post } from "@/lib/blog";
+import { isCategory, isTag, MAX_TAGS, SLUG_RE, type Post } from "@/lib/blog";
 import { cleanContent, countWords, isAllowedImage, readingMinutes, safeHref } from "@/lib/blogContent";
 
 // Server-side checks for a post sent from the admin editor. Returns the exact
@@ -67,6 +67,7 @@ export function validatePost(
       updatedAt: new Date().toISOString(),
       updatedBy: by,
       category: body.category,
+      tags: [...new Set(Array.isArray(body.tags) ? body.tags : [])].filter(isTag).slice(0, MAX_TAGS),
       excerpt: text(body.excerpt, 300),
       highlights: (Array.isArray(body.highlights) ? body.highlights : [])
         .map((h) => text(h, 220))

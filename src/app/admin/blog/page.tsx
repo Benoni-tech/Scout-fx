@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ExternalLink, Loader2, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { useAdmin } from "@/components/admin/AdminGate";
-import { BLOG_CATEGORIES, categoryName, isLive, postStatusLabel, type Post } from "@/lib/blog";
+import { BLOG_CATEGORIES, BLOG_TAGS, categoryName, tagName, isLive, postStatusLabel, type Post } from "@/lib/blog";
 
 type Stats = { views: number; last7: number; last30: number; lastViewedAt: string | null };
 type Row = Omit<Post, "content" | "faqs"> & { stats: Stats };
@@ -29,6 +29,7 @@ export default function AdminBlogPage() {
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<"all" | "Published" | "Scheduled" | "Draft">("all");
   const [category, setCategory] = useState("");
+  const [tag, setTag] = useState("");
   const [busy, setBusy] = useState("");
   const [sort, setSort] = useState<"updated" | "views" | "last7">("updated");
 
@@ -53,11 +54,12 @@ export default function AdminBlogPage() {
       (r) =>
         (status === "all" || postStatusLabel(r) === status) &&
         (!category || r.category === category) &&
+        (!tag || (r.tags ?? []).includes(tag as Post["tags"][number])) &&
         (!q || [r.title, r.slug, r.seo?.focusKeyword].some((f) => f?.toLowerCase().includes(q)))
     ).sort((a, b) =>
       sort === "views" ? b.stats.views - a.stats.views : sort === "last7" ? b.stats.last7 - a.stats.last7 : 0
     );
-  }, [rows, query, status, category, sort]);
+  }, [rows, query, status, category, tag, sort]);
 
   const totals = useMemo(
     () =>
@@ -156,6 +158,17 @@ export default function AdminBlogPage() {
             ))}
           </select>
           <select
+            value={tag}
+            onChange={(e) => setTag(e.target.value)}
+            aria-label="Filter by tag"
+            className="rounded-full border border-white/10 bg-black px-3 py-2 text-sm text-white"
+          >
+            <option value="">All tags</option>
+            {BLOG_TAGS.map((t) => (
+              <option key={t.key} value={t.key}>{t.name}</option>
+            ))}
+          </select>
+          <select
             value={sort}
             onChange={(e) => setSort(e.target.value as typeof sort)}
             aria-label="Sort articles"
@@ -212,7 +225,10 @@ export default function AdminBlogPage() {
                       <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${STATUS_STYLE[label]}`}>{label}</span>
                       {label === "Scheduled" && <div className="mt-1 text-xs text-zinc-500">{when(r.publishedAt)}</div>}
                     </td>
-                    <td className="px-4 py-3 text-zinc-300">{categoryName(r.category)}</td>
+                    <td className="px-4 py-3 text-zinc-300">
+                      {categoryName(r.category)}
+                      {(r.tags ?? []).length > 0 && <div className="text-xs text-zinc-500">{r.tags.map(tagName).join(", ")}</div>}
+                    </td>
                     <td className="px-4 py-3 font-semibold text-white">{fmt(r.stats.views)}</td>
                     <td className="px-4 py-3 text-zinc-300">{r.stats.last7 ? fmt(r.stats.last7) : <span className="text-zinc-600">0</span>}</td>
                     <td className="px-4 py-3 text-zinc-400">{r.wordCount}</td>

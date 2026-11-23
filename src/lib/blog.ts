@@ -17,6 +17,11 @@ export const BLOG_CATEGORIES = [
     name: "Charts and Markets",
     description: "Technical analysis, indicators and gold.",
   },
+  {
+    key: "news",
+    name: "News",
+    description: "Market-moving news on forex, gold and the cedi, and what it means for traders.",
+  },
 ] as const;
 
 export type CategoryKey = (typeof BLOG_CATEGORIES)[number]["key"];
@@ -27,6 +32,38 @@ export function categoryName(key: string) {
 
 export function isCategory(key: unknown): key is CategoryKey {
   return BLOG_CATEGORIES.some((c) => c.key === key);
+}
+
+// Tags cut across categories: a category says what a post is about, tags say
+// what kind of post it is and what it covers. A fixed list (not free text) keeps
+// "Analysis" and "analysis" from becoming two thin pages.
+export const BLOG_TAGS = [
+  { key: "outlook", name: "Outlook", description: "What to watch in the markets in the days and weeks ahead." },
+  { key: "analysis", name: "Analysis", description: "In-depth breakdowns of price moves, setups and the reasons behind them." },
+  { key: "weekly-recap", name: "Weekly Recap", description: "The week in forex and gold, summed up." },
+  { key: "gold", name: "Gold", description: "Gold (XAU/USD): price action, drivers and how to trade it." },
+  { key: "forex-pairs", name: "Forex Pairs", description: "EUR/USD, GBP/USD, USD/JPY and the other major and minor pairs." },
+  { key: "central-banks", name: "Central Banks", description: "The Fed, ECB, Bank of England, Bank of Ghana and their rate decisions." },
+  { key: "economic-data", name: "Economic Data", description: "CPI, NFP, GDP and the other releases that move markets." },
+  { key: "ghana-and-cedi", name: "Ghana & Cedi", description: "The cedi, Ghana's economy and trading from Ghana." },
+  { key: "strategy", name: "Strategy", description: "Trading methods, entries, exits and plans you can test." },
+  { key: "beginner", name: "Beginner", description: "Easy-to-follow articles for people new to trading." },
+] as const;
+
+export type TagKey = (typeof BLOG_TAGS)[number]["key"];
+
+/** Most tags one post can have. */
+export const MAX_TAGS = 3;
+
+/** A tag page only shows in Google and the sitemap once it has this many live posts. */
+export const TAG_INDEX_MIN = 3;
+
+export function tagName(key: string) {
+  return BLOG_TAGS.find((t) => t.key === key)?.name ?? key;
+}
+
+export function isTag(key: unknown): key is TagKey {
+  return BLOG_TAGS.some((t) => t.key === key);
 }
 
 export const AUTHORS = {
@@ -83,6 +120,7 @@ export type Post = {
   updatedAt: string;
   updatedBy: string;
   category: CategoryKey;
+  tags: TagKey[];
   excerpt: string;
   /** "Need to know" key points shown after the featured image (up to 3). */
   highlights: string[];

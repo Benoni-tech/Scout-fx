@@ -3,7 +3,7 @@ import Image from "next/image";
 import { ArrowLeft, ArrowRight, Facebook, Instagram, Linkedin, MessageCircle } from "lucide-react";
 import PostCover from "@/components/blog/PostCover";
 import { CategoryPill, postDate, type PostSummary } from "@/components/blog/PostCards";
-import { AUTHORS, BLOG_CATEGORIES } from "@/lib/blog";
+import { AUTHORS, BLOG_CATEGORIES, BLOG_TAGS } from "@/lib/blog";
 import { SOCIAL_LINKS, WHATSAPP_CONTACT } from "@/lib/social";
 
 // Featured images are 1200×630; cards use the same shape so the whole image shows.
@@ -168,7 +168,16 @@ function Widget({ title, children }: { title: string; children: React.ReactNode 
   );
 }
 
-export function BlogSidebar({ counts }: { counts: Record<string, number> }) {
+export function BlogSidebar({
+  counts,
+  tagCounts = {},
+  activeTag,
+}: {
+  counts: Record<string, number>;
+  tagCounts?: Record<string, number>;
+  activeTag?: string;
+}) {
+  const tags = BLOG_TAGS.filter((t) => (tagCounts[t.key] ?? 0) > 0);
   const socials = [
     { label: "Facebook", sub: "Like", href: SOCIAL_LINKS.facebook, Icon: Facebook },
     { label: "Instagram", sub: "Follow", href: SOCIAL_LINKS.instagram, Icon: Instagram },
@@ -209,6 +218,26 @@ export function BlogSidebar({ counts }: { counts: Record<string, number> }) {
           ))}
         </ul>
       </Widget>
+
+      {tags.length > 0 && (
+        <Widget title="Topics">
+          <div className="flex flex-wrap gap-2">
+            {tags.map((t) => (
+              <Link
+                key={t.key}
+                href={`/blog/tag/${t.key}`}
+                aria-current={activeTag === t.key ? "page" : undefined}
+                className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
+                  activeTag === t.key ? "border-brand-500 bg-brand-500 text-black" : "border-white/10 text-zinc-300 hover:border-white/25 hover:text-white"
+                }`}
+              >
+                {t.name}
+                <span className={activeTag === t.key ? "text-black/60" : "text-zinc-500"}>{tagCounts[t.key]}</span>
+              </Link>
+            ))}
+          </div>
+        </Widget>
+      )}
 
       <section className="relative overflow-hidden rounded-2xl border border-white/10 bg-zinc-950 p-5">
         <div className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-brand-500/15 blur-2xl" />

@@ -5,7 +5,7 @@ import { PostCard, type PostSummary } from "@/components/blog/PostCards";
 import {
   BlogSidebar, MiniCard, OverlayCard, PAGE_SIZE, Pagination, RankRow, SectionTitle, SideCard, SplitFeature,
 } from "@/components/blog/Magazine";
-import { BLOG_CATEGORIES } from "@/lib/blog";
+import { BLOG_CATEGORIES, BLOG_TAGS } from "@/lib/blog";
 
 // Note: the shared <Container> can't go narrower or wider than max-w-6xl,
 // so these pages use their own wrappers.
@@ -13,6 +13,10 @@ const wrap = "mx-auto max-w-6xl px-4";
 
 function countsOf(all: PostSummary[]) {
   return Object.fromEntries(BLOG_CATEGORIES.map((c) => [c.key, all.filter((p) => p.category === c.key).length]));
+}
+
+function tagCountsOf(all: PostSummary[]) {
+  return Object.fromEntries(BLOG_TAGS.map((t) => [t.key, all.filter((p) => (p.tags ?? []).includes(t.key)).length]));
 }
 
 function CategoryChips({ all, active }: { all: PostSummary[]; active?: string }) {
@@ -105,7 +109,7 @@ export function BlogFront({ all, mostRead, pages }: { all: PostSummary[]; mostRe
           )}
           <Pagination page={1} pages={pages} base="/blog" />
         </div>
-        <BlogSidebar counts={countsOf(all)} />
+        <BlogSidebar counts={countsOf(all)} tagCounts={tagCountsOf(all)} />
       </section>
 
       {/* most read (by views over the last 30 days) */}
@@ -142,6 +146,7 @@ export function BlogList({
   heading,
   subheading,
   activeCategory,
+  activeTag,
 }: {
   all: PostSummary[];
   posts: PostSummary[];
@@ -151,6 +156,7 @@ export function BlogList({
   heading: string;
   subheading?: string;
   activeCategory?: string;
+  activeTag?: string;
 }) {
   const shown = posts.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
   return (
@@ -166,7 +172,7 @@ export function BlogList({
       <section className={`${wrap} grid gap-12 pt-12 lg:grid-cols-[minmax(0,1fr)_320px]`}>
         <div className="min-w-0">
           <SectionTitle aside={pages > 1 ? <span className="text-sm text-zinc-500">Page {page} of {pages}</span> : undefined}>
-            {activeCategory ? "Articles" : "All articles"}
+            {activeCategory || activeTag ? "Articles" : "All articles"}
           </SectionTitle>
           {shown.length ? (
             <div className="grid gap-6 md:grid-cols-2">
@@ -179,7 +185,7 @@ export function BlogList({
           )}
           <Pagination page={page} pages={pages} base={base} />
         </div>
-        <BlogSidebar counts={countsOf(all)} />
+        <BlogSidebar counts={countsOf(all)} tagCounts={tagCountsOf(all)} activeTag={activeTag} />
       </section>
     </div>
   );

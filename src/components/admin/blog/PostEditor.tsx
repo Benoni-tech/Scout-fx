@@ -13,7 +13,7 @@ import Highlights from "@/components/blog/Highlights";
 import MediaPicker from "@/components/admin/media/MediaPicker";
 import type { PickedImage } from "@/components/admin/media/MediaBrowser";
 import {
-  BLOG_CATEGORIES, SEO_LIMITS, categoryName, isLive, postStatusLabel, slugify,
+  BLOG_CATEGORIES, BLOG_TAGS, MAX_TAGS, SEO_LIMITS, categoryName, isLive, postStatusLabel, slugify,
   type ContentNode, type Faq, type Post, type PostCover as Cover, type PostSeo,
 } from "@/lib/blog";
 import { firstParagraph, hasInternalLink, plainText } from "@/lib/blogContent";
@@ -22,6 +22,7 @@ type Draft = {
   title: string;
   slug: string;
   category: Post["category"];
+  tags: Post["tags"];
   excerpt: string;
   highlights: string[];
   cover: Cover | null;
@@ -46,6 +47,7 @@ function draftFrom(p: Post): Draft {
     title: p.title,
     slug: p.slug,
     category: p.category,
+    tags: p.tags ?? [],
     excerpt: p.excerpt,
     highlights: p.highlights ?? [],
     cover: p.cover,
@@ -451,7 +453,7 @@ export default function PostEditor({ id }: { id: string }) {
             )}
           </Panel>
 
-          <Panel title="Category and summary">
+          <Panel title="Category, tags and summary">
             <Field label="Category">
               <select value={draft.category} onChange={(e) => set("category", e.target.value as Post["category"])} className={input}>
                 {BLOG_CATEGORIES.map((c) => (
@@ -459,6 +461,38 @@ export default function PostEditor({ id }: { id: string }) {
                 ))}
               </select>
             </Field>
+            <div>
+              <span className="mb-1 flex items-center justify-between text-xs font-semibold text-zinc-300">
+                Tags
+                <span className="font-normal text-zinc-500">{draft.tags.length}/{MAX_TAGS}</span>
+              </span>
+              <div className="flex flex-wrap gap-1.5">
+                {BLOG_TAGS.map((t) => {
+                  const on = draft.tags.includes(t.key);
+                  const full = !on && draft.tags.length >= MAX_TAGS;
+                  return (
+                    <button
+                      key={t.key}
+                      type="button"
+                      title={t.description}
+                      aria-pressed={on}
+                      disabled={full}
+                      onClick={() => set("tags", on ? draft.tags.filter((k) => k !== t.key) : [...draft.tags, t.key])}
+                      className={`rounded-full border px-2.5 py-1 text-xs font-semibold transition-colors ${
+                        on
+                          ? "border-brand-500 bg-brand-500 text-black"
+                          : full
+                            ? "cursor-not-allowed border-white/5 text-zinc-600"
+                            : "border-white/15 text-zinc-300 hover:border-white/30 hover:text-white"
+                      }`}
+                    >
+                      {t.name}
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="mt-1.5 text-xs text-zinc-500">Up to {MAX_TAGS}: the kind of article (Outlook, Analysis…) and what it covers.</p>
+            </div>
             <Field label="Excerpt (shown on cards and under the title)" counter={<Counter n={draft.excerpt.length} max={300} />}>
               <textarea value={draft.excerpt} onChange={(e) => set("excerpt", e.target.value.slice(0, 300))} rows={3} className={input} placeholder="One or two sentences on what the reader will learn." />
             </Field>

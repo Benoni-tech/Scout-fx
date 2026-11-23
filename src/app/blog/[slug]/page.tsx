@@ -7,11 +7,11 @@ import Faq from "@/components/Faq";
 import PostCover from "@/components/blog/PostCover";
 import PostContent from "@/components/blog/PostContent";
 import Highlights from "@/components/blog/Highlights";
-import { CategoryPill, postDate } from "@/components/blog/PostCards";
+import { CategoryPill, TagLinks, postDate } from "@/components/blog/PostCards";
 import ArticleSidebar from "@/components/blog/ArticleSidebar";
 import ViewBeacon from "@/components/blog/ViewBeacon";
 import { getLivePostBySlug, getLivePosts } from "@/lib/posts";
-import { AUTHORS, categoryName } from "@/lib/blog";
+import { AUTHORS, categoryName, tagName } from "@/lib/blog";
 import { buildMetadata } from "@/lib/seo";
 import { captionLine } from "@/lib/mediaTypes";
 import { SITE_URL } from "@/lib/tickets";
@@ -93,11 +93,19 @@ export default async function BlogPostPage({ params }: Props) {
   const i = all.findIndex((p) => p.id === post.id);
   const newer = all[i - 1];
   const older = all[i + 1];
-  // Sidebar: "Related news" is the same category (topped up to 3 with the newest
-  // others when a category is small); "Up next" is the newest of the rest.
+  // Sidebar: "Related news" ranks shared tags (2 points each) above the same category
+  // (1 point), newest first on a tie, topped up to 3 with the newest others;
+  // "Up next" is the newest of the rest.
   const others = all.filter((p) => p.id !== post.id);
-  const sameCategory = others.filter((p) => p.category === post.category).slice(0, 4);
-  const related = [...sameCategory, ...others.filter((p) => !sameCategory.includes(p))].slice(0, Math.max(3, sameCategory.length));
+  const score = (p: (typeof others)[number]) =>
+    p.tags.filter((t) => post.tags.includes(t)).length * 2 + (p.category === post.category ? 1 : 0);
+  const close = others
+    .map((p, i) => ({ p, i, s: score(p) }))
+    .filter((x) => x.s > 0)
+    .sort((a, b) => b.s - a.s || a.i - b.i)
+    .slice(0, 4)
+    .map((x) => x.p);
+  const related = [...close, ...others.filter((p) => !close.includes(p))].slice(0, Math.max(3, close.length));
   const upNext = others.filter((p) => !related.includes(p)).slice(0, 4);
   const author = AUTHORS[post.author];
   const url = `${SITE_URL}/blog/${post.slug}`;
@@ -106,7 +114,8 @@ export default async function BlogPostPage({ params }: Props) {
   const jsonLd = [
     {
       "@context": "https://schema.org",
-      "@type": "Article",
+      // News posts are marked as news so Google can treat them as such.
+      "@type": post.category === "news" ? "NewsArticle" : "Article",
       headline: post.title,
       description: post.seo.description || post.excerpt,
       image: post.cover?.url ?? `${SITE_URL}/blog/${post.slug}/opengraph-image`,
@@ -116,7 +125,7 @@ export default async function BlogPostPage({ params }: Props) {
       publisher: { "@type": "Organization", name: "Scout FX", logo: { "@type": "ImageObject", url: `${SITE_URL}/logo.png` } },
       mainEntityOfPage: url,
       articleSection: categoryName(post.category),
-      keywords: [post.seo.focusKeyword, ...post.seo.keywords].filter(Boolean).join(", ") || undefined,
+      keywords: [post.seo.focusKeyword, ...post.seo.keywords, ...post.tags.map(tagName)].filter(Boolean).join(", ") || undefined,
       wordCount: post.wordCount,
     },
     {
@@ -238,6 +247,13 @@ export default async function BlogPostPage({ params }: Props) {
                   <Faq items={post.faqs} />
                 </div>
               </section>
+            )}
+
+            {post.tags.length > 0 && (
+              <div className="mt-16 flex flex-wrap items-center gap-3">
+                <span className="text-xs font-bold uppercase tracking-widest text-zinc-500">Topics</span>
+                <TagLinks tags={post.tags} />
+              </div>
             )}
 
             {/* author */}

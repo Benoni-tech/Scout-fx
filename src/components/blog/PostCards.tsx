@@ -2,11 +2,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import PostCover from "@/components/blog/PostCover";
-import { AUTHORS, categoryName, type Post } from "@/lib/blog";
+import { AUTHORS, categoryName, tagName, type Post } from "@/lib/blog";
 
 export type PostSummary = Pick<
   Post,
-  "id" | "title" | "slug" | "excerpt" | "category" | "cover" | "publishedAt" | "readingMinutes" | "author"
+  "id" | "title" | "slug" | "excerpt" | "category" | "tags" | "cover" | "publishedAt" | "readingMinutes" | "author"
 >;
 
 export function postDate(iso: string | null) {
@@ -22,6 +22,26 @@ export function CategoryPill({ category, solid = false }: { category: string; so
     >
       {categoryName(category)}
     </span>
+  );
+}
+
+/** Tag links shown on an article ("# Outlook"). */
+export function TagLinks({ tags }: { tags: string[] }) {
+  if (!tags.length) return null;
+  return (
+    <ul className="flex flex-wrap gap-2">
+      {tags.map((t) => (
+        <li key={t}>
+          <Link
+            href={`/blog/tag/${t}`}
+            className="inline-flex rounded-full border border-white/15 px-3 py-1 text-xs font-semibold text-zinc-300 transition-colors hover:border-brand-500 hover:text-brand-500"
+          >
+            <span className="mr-1 text-brand-500">#</span>
+            {tagName(t)}
+          </Link>
+        </li>
+      ))}
+    </ul>
   );
 }
 

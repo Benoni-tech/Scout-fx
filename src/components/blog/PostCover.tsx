@@ -92,6 +92,7 @@ const motifs: Record<string, (p: { rnd: () => number }) => ReactElement> = {
   "start-here": Bars,
   "mindset-and-risk": Waves,
   "charts-and-markets": Candles,
+  news: Rings,
 };
 
 /**

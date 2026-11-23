@@ -1,6 +1,6 @@
 import { unstable_cache, revalidateTag } from "next/cache";
 import { getAdminDb } from "@/lib/firebaseAdmin";
-import { EMPTY_DOC, isLive, type Post } from "@/lib/blog";
+import { EMPTY_DOC, isLive, isTag, type Post } from "@/lib/blog";
 import { deletePostStats } from "@/lib/postStats";
 
 // Blog posts live in Firestore ("posts"). Each slug a post has ever used is reserved
@@ -18,7 +18,7 @@ export function revalidatePosts() {
 function toPost(id: string, d: FirebaseFirestore.DocumentData): Post {
   const data = d as Omit<Post, "id">;
   // Older posts may predate a field; fill the defaults.
-  return { ...data, highlights: data.highlights ?? [], id };
+  return { ...data, highlights: data.highlights ?? [], tags: (data.tags ?? []).filter(isTag), id };
 }
 
 // ---------- public (cached; refreshed on every save, and every 5 minutes for scheduled posts)
@@ -106,6 +106,7 @@ export async function createPost(input: { title: string; slug: string; category:
       updatedAt: now,
       updatedBy: by,
       category: input.category,
+      tags: [],
       excerpt: "",
       highlights: [],
       cover: null,
